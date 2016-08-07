@@ -1,0 +1,28 @@
+check:
+    summary: Checks a page
+    usage: alfred check personal http://kcmerrill.com kcmerrill@gmail.com 10m
+    command: |
+        mkdir -p /tmp/website/checks
+        wget {{ index .Args 1 }} -O /tmp/website/checks/{{ index .Args 0}}
+    ok: up
+    fail: notify
+    wait: 3s
+    every: "{{ index .Args 3 }}"
+
+mail:
+    summary: Sending an email
+    command: |
+        echo "{{ index .Args 0 }} site is down! " |  mail -s "Website down" {{ index .Args 2}}
+
+slack:
+    summary: "Sending a slack message to #general"
+
+down:
+    summary: The website is down
+
+up:
+    summary: The website is up
+
+notify:
+    summary: Notify the website is down
+    tasks: down slack mail
