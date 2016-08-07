@@ -21,7 +21,7 @@ A simple go/yaml powered make file with a bit of a twist.
 * Start alfred as a webserver to start tasks remotely
 * No need to be in the same directory when running alfred if it's local, as long as it's in a parent directory
 * Fire off multiple tasks at once (coming soon)
-* Plugin-able via `kcmerrill/packs.go` so if I don't have a module you need/want, you can make it yourself
+* Plugin-able via `kcmerrill/packs.go` so if I don't have a module you need/want, you can make it yourself (coming soon)
 
 
 ## Why
