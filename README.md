@@ -75,4 +75,5 @@ check:
 
   notify:
       summary: Notify the website is down
-      tasks: down slack mail```
+      tasks: down slack mail
+```
