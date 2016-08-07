@@ -46,7 +46,8 @@ Using the example below there a few things to notice.
 8. `wait` and `command` uses go text/templates. The main thing that provides at this point is access to `.Args`. Note, index .Args 0 starts immediately after the task to run.
 
 ## Example
-```  check:
+```
+check:
       summary: Checks a page
       usage: alfred check personal http://kcmerrill.com kcmerrill@gmail.com 10m
       command: |
