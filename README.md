@@ -1,9 +1,15 @@
 # alfred
 Because even Batman needs a little help.
+
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/alfred.jpg "Alfred")
 
-A simple go/yaml powered make file with a bit of a twist. 
+## Installation
+``` $ go get github.com/kcmerrill/alfred ```
 
+## What is it
+A simple go/yaml powered make file with a bit of a twist.
+
+## Features
 * Tasks can call other tasks
 * Tasks can be run every <insert duration>
 * Tasks can pause
@@ -15,7 +21,7 @@ A simple go/yaml powered make file with a bit of a twist.
 
 
 ## Why
-I have a lot of tasks I do daily that I'd like a remote repository to use. Not only can I update them, but others can also use it too. I love make files, but wanted just a bit more functionality while keeping it simple. 
+I have a lot of tasks I do daily that I'd like a remote repository to use. Not only can I update them, but others can also use it too. I love make files, but wanted just a bit more functionality while keeping it simple.
 
 ## Example
 ```  check:
