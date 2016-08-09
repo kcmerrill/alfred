@@ -2,7 +2,7 @@ setup:
     summary: Install a github repo
     usage: alfred common/github setup user/repo foldername
     git: clone {{ index .Args 0 }} {{ index .Args 1 }}
-    ok: alfred-setup
+    tasks: alfred-setup
 
 alfred-setup:
     summary: Run alfred setup
