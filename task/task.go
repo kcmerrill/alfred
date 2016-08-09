@@ -73,6 +73,16 @@ func (t *Task) Prepare(args []string) bool {
 	} else {
 		return false
 	}
+
+	/* All of the modules */
+	for key, value := range t.Modules {
+		if module_ok, module_translated := t.template(value); module_ok {
+			t.Modules[key] = module_translated
+		} else {
+			return false
+		}
+	}
+
 	/* if we made it here, then we are good to go */
 	return true
 }
