@@ -1,7 +1,7 @@
 setup:
     summary: Install a github repo
     usage: alfred common/github setup user/repo foldername
-    git: checkout {{ index .Args 0 }} {{ index .Args 1 }}
+    git: clone {{ index .Args 0 }} {{ index .Args 1 }}
     ok: alfred-setup
 
 alfred-setup:
