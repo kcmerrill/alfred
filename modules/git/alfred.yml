@@ -1,7 +1,8 @@
 install:
     summary: Install a private git project
-    tasks: clone alfred
+    tasks: clone
     usage: alfred common/alfred setup kcmerrill/yoda yoda
+    alfred: setup {{ index .Args 0}} {{ index .Args 1 }}
 
 clone:
     summary: Clone project

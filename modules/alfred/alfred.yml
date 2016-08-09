@@ -1,5 +1,6 @@
 setup:
     summary: Run alfred setup
-    command: alfred install
+    command: alfred setup
     dir: ./{{ index .Args 1 }}
-    usage: alfred setup
+    usage: alfred setup user/repo foldername
+    git:
