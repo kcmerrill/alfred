@@ -16,12 +16,11 @@ A simple go/yaml powered make file with a bit of a twist.
 * Tasks can call other tasks depending on success/failure
 * Alfred uses go templates so you can inject variables making tasks reusable
 * Common tasks can be invoked inside using alfred
-* Common tasks will be stored in this repository for shared use(git, docker, mail, slack, etc ...) (coming soon)
+* Common tasks will be stored in this repository for shared use(git, docker, mail, slack, etc ...) (Available ... more coming soon)
 * Optional private/public repositories so you can share private tasks with coworkers (coming soon)
 * Start alfred as a webserver to start tasks remotely
 * No need to be in the same directory when running alfred if it's local, as long as it's in a parent directory
 * Fire off multiple tasks at once (coming soon)
-* Plugin-able via `kcmerrill/packs.go` so if I don't have a module you need/want, you can make it yourself (coming soon)
 
 
 ## Why
@@ -79,13 +78,13 @@ check:
 ```
 
 ## Example 2
-You can use alfred to get a project running. Useful if your projects have a bajillion steps, or if you're like me and you are typically responsible for dev enviornments at your work. Using alfred, you can run setup. In this example, we will use a common github module to clone a github project in a folder of your choosing, update all the submodules, create symlinks composer update and run version as the final check to ensure things are working. 
+You can use alfred to get a project running. Useful if your projects have a bajillion steps, or if you're like me and you are typically responsible for dev enviornments at your work. Using alfred, you can run setup. In this example, we will use a common github module to clone a github project in a folder of your choosing, update all the submodules, create symlinks composer update and run version as the final check to ensure things are working.
 
 ```alfred common/github setup kcmerrill/yoda yoda```
 
-We used common/github to clone the repository _FIRST_ then run alfred setup inside of it. This is useful because some projects are private and you do not have access to the alfred file like you normally would. 
+We used common/github to clone the repository _FIRST_ then run alfred setup inside of it. This is useful because some projects are private and you do not have access to the alfred file like you normally would.
 
-If it is a public repository, like `kcmerrill/yoda` is, then you can simply call it remotely. In this case, `install` is the task that will get yoda setup. 
+If it is a public repository, like `kcmerrill/yoda` is, then you can simply call it remotely. In this case, `install` is the task that will get yoda setup.
 
 ```alfred kcmerrill/yoda install```
 
