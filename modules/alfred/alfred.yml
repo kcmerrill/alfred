@@ -1,0 +1,5 @@
+setup:
+    summary: Run alfred setup
+    command: alfred install
+    dir: ./{{ index .Args 1 }}
+    usage: alfred setup

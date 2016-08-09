@@ -1,12 +1,7 @@
 install:
     summary: Install a private git project
     tasks: clone alfred
-    usage: alfred common/git install kcmerrill/yoda yoda
-
-alfred:
-    summary: Run alfred install
-    command: alfred install
-    dir: ./{{ index .Args 1 }}
+    usage: alfred common/alfred setup kcmerrill/yoda yoda
 
 clone:
     summary: Clone project
@@ -16,7 +11,10 @@ clone:
 
 checkout:
     summary: Checkout commit
-    command: git checkout {{ index .Args 0}}
+    command: |
+        git reset HEAD --hard
+        git checkout {{ index .Args 0}}
+        git pull
 
 submodule-update-init:
     summary: Update/Init submodules
@@ -25,5 +23,7 @@ submodule-update-init:
 
 submodule:
     summary: Checkout submodule
-    command: git reset HEAD --hard && git checkout {{ index .Args 1}}
     dir: ./{{ index .Args 0 }}
+    command: |
+        git reset HEAD --hard
+        git checkout {{ index .Args 1}}
