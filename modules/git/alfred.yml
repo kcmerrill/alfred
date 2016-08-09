@@ -1,0 +1,3 @@
+test:
+    summary: git test
+    command: echo testing git module

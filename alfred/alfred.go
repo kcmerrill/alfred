@@ -95,9 +95,8 @@ func (a *Alfred) runTask(task string, args []string) bool {
 			}
 		}
 
-		/* Wait ... */
-		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
-			<-time.After(wait_duration)
+		/* Go through each of the modules ... */
+		for module, cmd := range a.Tasks[task].Modules {
 		}
 
 		/* Ok, we made it here ... Is this task a task group? */
@@ -105,6 +104,11 @@ func (a *Alfred) runTask(task string, args []string) bool {
 			if !a.runTask(t, args) {
 				break
 			}
+		}
+
+		/* Wait ... */
+		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
+			<-time.After(wait_duration)
 		}
 
 		/* Do we need to break or should we keep going? */

@@ -20,6 +20,7 @@ type Task struct {
 	Fail    string
 	Args    []string
 	Time    *time.Time
+	Modules map[string]string `yaml:",inline"`
 }
 
 func (t *Task) FailedTasks() []string {
@@ -53,29 +54,31 @@ func (t *Task) Prepare(args []string) bool {
 	t.Args = args
 	t.Time = new(time.Time)
 
-	/* Make sure the every isn't empty ... */
-	if t.Every != "" {
-		template := template.Must(template.New("every").Parse(t.Every))
-		b := new(bytes.Buffer)
-		err := template.Execute(b, t)
-		if err == nil {
-			t.Every = b.String()
-		} else {
-			return false
-		}
+	/* get to translating */
+	if every_ok, every_translated := t.template(t.Every); every_ok {
+		t.Every = every_translated
+	} else {
+		return false
 	}
 
-	/* Make sure the command isn't empty ... */
-	if t.Command != "" {
-		template := template.Must(template.New("command").Parse(t.Command))
-		b := new(bytes.Buffer)
-		err := template.Execute(b, t)
-		if err == nil {
-			t.Command = b.String()
-		} else {
-			return false
-		}
+	if cmd_ok, cmd_translated := t.template(t.Command); cmd_ok {
+		t.Command = cmd_translated
+	} else {
+		return false
 	}
-	/* If there isn't a command, then no failures can be there if we try to prep it */
+
+	/* if we made it here, then we are good to go */
 	return true
+}
+
+func (t *Task) template(translate string) (bool, string) {
+	template := template.Must(template.New("translate").Parse(translate))
+	b := new(bytes.Buffer)
+	err := template.Execute(b, t)
+	if err == nil {
+		return true, b.String()
+	} else {
+		return false, translate
+	}
+	return true, translate
 }
