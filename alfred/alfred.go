@@ -178,15 +178,16 @@ func (a *Alfred) findRemote() bool {
 	if a.isRemote() {
 		remote, module := a.remote.Parse(os.Args[1])
 		/* default to plain jane github */
-		url := "https://raw.githubusercontent.com/kcmerrill/" + remote + "/master/" + module + "/alfred.yml"
+		url := "https://raw.githubusercontent.com/" + remote + "/master/" + module + "/alfred.yml"
 		if a.remote.Exists(remote) {
 			url = a.remote.URL(remote, module)
 		}
 
 		/* try to fetch now */
 		resp, err := http.Get(url)
-		if err != nil && resp.StatusCode == 200 {
-			return false
+		if err != nil || resp.StatusCode != 200 {
+			say("ERROR", "Unknown module "+os.Args[1])
+			return true
 		}
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
@@ -195,7 +196,7 @@ func (a *Alfred) findRemote() bool {
 			a.location = url
 			return true
 		}
-		return false
+		return true
 	}
 	return false
 }
