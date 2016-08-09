@@ -46,7 +46,7 @@ Using the example below there a few things to notice.
 7. `every` is also a go duration(see `wait`). That means run this task(and all of it's tasks that it calls) every so often. Useful for checking things.
 8. `wait` and `command` uses go text/templates. The main thing that provides at this point is access to `.Args`. Note, index .Args 0 starts immediately after the task to run.
 
-## Example
+## Example 1
 ```
 check:
       summary: Checks a page
@@ -77,3 +77,16 @@ check:
       summary: Notify the website is down
       tasks: down slack mail
 ```
+
+## Example 2
+You can use alfred to get running a project. Useful if your projects have a bajillion steps, or if you're like me and you are typically responsible for dev enviornments at your work. Using alfred, you can run setup. In this example, we will use a common github module to clone a github project in a folder of your choosing, update all the submodules, create symlinks composer update and run version as the final check to ensure things are working. 
+
+```alfred common/github setup kcmerrill/yoda yoda```
+
+We used common/github to clone the repository _FIRST_ then run alfred setup inside of it. This is useful because some projects are private and you do not have access to the alfred file like you normally would. 
+
+If it is a public repository, like `kcmerrill/yoda` is, then you can simply call it remotely. In this case, `install` is the task that will get yoda setup. 
+
+```alfred kcmerrill/yoda install```
+
+That will seek out the project on github, look in the master branch and then call the `install` task within the yaml file. Which will then proceed to check out the code for you. Take a peek at `kcmerrill/yoda` for it's `alfred.yml` to see how it's setup.
