@@ -10,18 +10,19 @@ import (
 )
 
 type Task struct {
-	Summary string
-	Command string
-	Usage   string
-	Dir     string
-	Tasks   string
-	Every   string
-	Wait    string
-	Ok      string
-	Fail    string
-	Args    []string
-	Time    *time.Time
-	Modules map[string]string `yaml:",inline"`
+	Summary  string
+	Command  string
+	Usage    string
+	Dir      string
+	Tasks    string
+	Every    string
+	Wait     string
+	Ok       string
+	Fail     string
+	Args     []string
+	Time     *time.Time
+	Modules  map[string]string `yaml:",inline"`
+	Defaults []string
 }
 
 func (t *Task) FailedTasks() []string {
@@ -52,7 +53,17 @@ func (t *Task) RunCommand(cmd string, args []string) bool {
 }
 
 func (t *Task) Prepare(args []string) bool {
-	t.Args = args
+	t.Args = t.Defaults
+
+	/* override defaults with the args */
+	for index, value := range args {
+		if len(t.Args) > index {
+			t.Args[index] = value
+		} else {
+			t.Args = append(t.Args, value)
+		}
+	}
+
 	t.Time = new(time.Time)
 
 	/* get to translating */

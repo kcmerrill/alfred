@@ -178,7 +178,7 @@ func (a *Alfred) findRemote() bool {
 	if a.isRemote() {
 		remote, module := a.remote.Parse(os.Args[1])
 		/* default to plain jane github */
-		url := "https://raw.githubusercontent.com/" + remote + "/master/" + module + "/alfred.yml"
+		url := "https://raw.githubusercontent.com/" + os.Args[1] + "/master/alfred.yml"
 		if a.remote.Exists(remote) {
 			url = a.remote.URL(remote, module)
 		}
