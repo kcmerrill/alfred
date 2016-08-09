@@ -13,6 +13,7 @@ type Task struct {
 	Summary string
 	Command string
 	Usage   string
+	Dir     string
 	Tasks   string
 	Every   string
 	Wait    string
@@ -35,9 +36,9 @@ func (t *Task) TaskGroup() []string {
 	return strings.Fields(t.Tasks)
 }
 
-func (t *Task) RunCommand(args []string) bool {
-	if t.Command != "" {
-		cmd := exec.Command("bash", "-c", t.Command)
+func (t *Task) RunCommand(cmd string, args []string) bool {
+	if cmd != "" {
+		cmd := exec.Command("bash", "-c", cmd)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
@@ -67,6 +68,11 @@ func (t *Task) Prepare(args []string) bool {
 		return false
 	}
 
+	if dir_ok, dir_translated := t.template(t.Dir); dir_ok {
+		t.Dir = dir_translated
+	} else {
+		return false
+	}
 	/* if we made it here, then we are good to go */
 	return true
 }

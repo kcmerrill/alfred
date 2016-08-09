@@ -5,23 +5,18 @@ import (
 )
 
 type Remote struct {
-	Repos []string
+	Repos map[string]string
 }
 
 func New() *Remote {
 	r := &Remote{}
-
+	r.Repos = make(map[string]string)
 	/* common repo is stored for official buisness ;) */
 	r.Repos["common"] = "https://raw.githubusercontent.com/kcmerrill/alfred/master/modules/"
 	return r
 }
 
 func (r *Remote) Exists(remote string) bool {
-	/* is it a proper remote? If not, lets assume it's common */
-	if !strings.Contains(remote, "/") {
-		remote = "common/" + remote
-	}
-
 	/* does it exist? */
 	if _, exists := r.Repos[remote]; exists {
 		return true
@@ -39,4 +34,22 @@ func (r *Remote) URL(remote, module string) string {
 
 	/* hmmmmm ... can't find anything */
 	return ""
+}
+
+func (r *Remote) ModulePath(remote string) string {
+	/* is it a proper remote? If not, lets assume it's common */
+	if !strings.Contains(remote, "/") {
+		remote = "common/" + remote
+	}
+
+	return remote
+}
+
+func (r *Remote) Parse(remoteModule string) (string, string) {
+	if strings.Contains(remoteModule, "/") {
+		s := strings.Split(remoteModule, "/")
+		return s[0], s[1]
+	}
+
+	return "", ""
 }

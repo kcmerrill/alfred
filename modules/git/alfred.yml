@@ -1,3 +1,22 @@
-test:
-    summary: git test
-    command: echo testing git module
+install:
+    summary: Install a git project
+    tasks: clone submodule-update-init
+
+clone:
+    summary: Clone project
+    command: ls {{index .Args 1}} || git clone git@github.com:{{ index .Args 0 }}.git {{ index .Args 1}}
+    usage: alfred common/git checkout projectname projectfolder
+
+checkout:
+    summary: Checkout commit
+    command: git checkout {{ index .Args 0}}
+
+submodule-update-init:
+    summary: Update/Init submodules
+    dir: ./{{index .Args 1}}
+    command: git submodule update --init --recursive || true
+
+submodule:
+    summary: Checkout submodule
+    command: git reset HEAD --hard && git checkout {{ index .Args 1}}
+    dir: ./{{ index .Args 0 }}
