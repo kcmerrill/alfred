@@ -23,6 +23,25 @@ type Task struct {
 	Time     *time.Time
 	Modules  map[string]string `yaml:",inline"`
 	Defaults []string
+	Alias    string
+	Private  bool
+}
+
+func (t *Task) IsPrivate() bool {
+	return t.Private
+}
+
+func (t *Task) IsAlias(name string) bool {
+	for _, alias := range t.Aliases() {
+		if name == alias {
+			return true
+		}
+	}
+	return false
+}
+
+func (t *Task) Aliases() []string {
+	return strings.Fields(t.Alias)
 }
 
 func (t *Task) FailedTasks() []string {

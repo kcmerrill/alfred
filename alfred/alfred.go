@@ -30,6 +30,8 @@ func New() {
 	if a.findRemote() || a.findLocal() {
 		err := yaml.Unmarshal([]byte(a.contents), &a)
 		if err == nil {
+			/* Setup our aliases */
+			a.aliases()
 			/* Ok, so we have instructions ... do we have a task to run? */
 			a.findTask()
 		} else {
@@ -52,7 +54,7 @@ func (a *Alfred) findTask() {
 		a.List()
 		break
 	case len(os.Args) >= 2 && !a.isRemote():
-		if a.isValidTask(os.Args[1]) {
+		if a.isValidTask(os.Args[1]) && !a.Tasks[os.Args[1]].IsPrivate() {
 			if !a.runTask(os.Args[1], os.Args[2:]) {
 				os.Exit(1)
 			}
@@ -62,7 +64,7 @@ func (a *Alfred) findTask() {
 		}
 		break
 	case len(os.Args) >= 3 && a.isRemote():
-		if a.isValidTask(os.Args[2]) {
+		if a.isValidTask(os.Args[2]) && !a.Tasks[os.Args[2]].IsPrivate() {
 			if !a.runTask(os.Args[2], os.Args[3:]) {
 				os.Exit(1)
 			}
@@ -228,7 +230,14 @@ func (a *Alfred) findLocal() bool {
 func (a *Alfred) List() {
 	fmt.Println()
 	for name, task := range a.Tasks {
+		if task.IsAlias(name) {
+			continue
+		}
 		say(name, task.Summary)
+
+		if task.Alias != "" {
+			fmt.Println("  ", "Alias:", task.Alias)
+		}
 
 		if task.Usage != "" {
 			fmt.Println("  ", "Usage:", task.Usage)
@@ -238,6 +247,16 @@ func (a *Alfred) List() {
 			fmt.Println("  ", "Tasks:", task.Tasks)
 		}
 
+	}
+}
+
+func (a *Alfred) aliases() {
+	for _, task := range a.Tasks {
+		if len(task.Aliases()) > 0 {
+			for _, alias := range task.Aliases() {
+				a.Tasks[alias] = task
+			}
+		}
 	}
 }
 
