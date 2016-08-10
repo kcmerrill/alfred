@@ -213,7 +213,7 @@ func (a *Alfred) findLocal() bool {
 					a.contents = contents
 					a.location = dir + "/alfred.yml"
 					/* Be sure that we ar relative to where we found the config file */
-					os.Chdir(dir)
+					a.dir = dir
 					return true
 				}
 			}
