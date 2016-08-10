@@ -170,7 +170,7 @@ eighteen:
     command: test $(whoami) = "root"
     wait: 10s
     every: 1m
-    ok: eighteen
+    ok: twenty
     failed: nineteen
 
 nineteen:
