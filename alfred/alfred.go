@@ -9,24 +9,34 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"sort"
 	"strings"
 	"time"
 )
 
+/* Our main object that holds the yaml file, tasks etc */
 type Alfred struct {
+	/* The contents of the yaml file */
 	contents []byte
+	/* Where the alfred.yml file was found */
 	location string
-	Tasks    map[string]*task.Task `yaml:",inline"`
-	remote   *remote.Remote
-	dir      string
+	/* All of the tasks parsed from the yaml file */
+	Tasks map[string]*task.Task `yaml:",inline"`
+	/* Alfred remotes(private/public repos) */
+	remote *remote.Remote
+	/* Originating directory */
+	dir string
 }
 
+/* Setup our alfred struct */
 func New() {
 	a := new(Alfred)
 	a.remote = remote.New()
 
+	/* Grab the current directory and save if off */
 	a.dir, _ = os.Getwd()
 
+	/* Try to find alfred.yml remotely(easy, needs a /) or find it locally */
 	if a.findRemote() || a.findLocal() {
 		err := yaml.Unmarshal([]byte(a.contents), &a)
 		if err == nil {
@@ -35,24 +45,33 @@ func New() {
 			/* Ok, so we have instructions ... do we have a task to run? */
 			a.findTask()
 		} else {
+			/* A problem with the yaml file */
 			say("ERROR", err.Error())
 			os.Exit(1)
 		}
 	} else {
-		/* Bummer ... */
+		/* Bummer ... nothing found */
 		say("ERROR", "Unable to find a job.")
 		os.Exit(1)
 	}
 }
 
+/* Depending on how you call alfred, depends on how it needs to find he task
+   `alfred taskname` called taskname locally
+   `alfred common/taskname` called taskname on the remote called common, finding a folder with taskname with an alfred.yml file in it.
+   Remote files REQUIRE a "/"
+*/
 func (a *Alfred) findTask() {
 	switch {
+	/* Look locally, List tasks within its alfred.yml file */
 	case len(os.Args) == 1:
 		a.List()
 		break
+	/* Look remotely and list the tasks within it's alfred.yml file */
 	case len(os.Args) == 2 && a.isRemote():
 		a.List()
 		break
+	/* Called a local task */
 	case len(os.Args) >= 2 && !a.isRemote():
 		if a.isValidTask(os.Args[1]) && !a.Tasks[os.Args[1]].IsPrivate() {
 			if !a.runTask(os.Args[1], os.Args[2:]) {
@@ -63,6 +82,7 @@ func (a *Alfred) findTask() {
 			os.Exit(1)
 		}
 		break
+	/* Called a remote task */
 	case len(os.Args) >= 3 && a.isRemote():
 		if a.isValidTask(os.Args[2]) && !a.Tasks[os.Args[2]].IsPrivate() {
 			if !a.runTask(os.Args[2], os.Args[3:]) {
@@ -76,6 +96,7 @@ func (a *Alfred) findTask() {
 	}
 }
 
+/* Meat and potatoes. Finds the task and runs it */
 func (a *Alfred) runTask(task string, args []string) bool {
 	/* Verify again it's a valid task */
 	if !a.isValidTask(task) {
@@ -83,7 +104,9 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		return false
 	}
 
+	/* Infinite loop Used for the every command */
 	for {
+
 		/* change to the original directory */
 		err := os.Chdir(a.dir)
 		if err != nil {
@@ -111,7 +134,7 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		}
 
 		/* Lets execute the command if it has one */
-		if !a.Tasks[task].RunCommand(a.Tasks[task].Command, args) {
+		if !a.Tasks[task].RunCommand(a.Tasks[task].Command) {
 			/* Failed? Lets run the failed tasks */
 			for _, failed := range a.Tasks[task].FailedTasks() {
 				if !a.runTask(failed, args) {
@@ -130,7 +153,7 @@ func (a *Alfred) runTask(task string, args []string) bool {
 
 		/* Go through each of the modules ... */
 		for module, cmd := range a.Tasks[task].Modules {
-			if !a.Tasks[task].RunCommand(os.Args[0]+" "+a.remote.ModulePath(module)+" "+cmd, args) {
+			if !a.Tasks[task].RunCommand(os.Args[0] + " " + a.remote.ModulePath(module) + " " + cmd) {
 				/* It failed :( */
 				return false
 			}
@@ -162,6 +185,7 @@ func (a *Alfred) runTask(task string, args []string) bool {
 	return true
 }
 
+/* Ensure that the task exists */
 func (a *Alfred) isValidTask(task string) bool {
 	if _, exists := a.Tasks[task]; exists {
 		return true
@@ -169,6 +193,7 @@ func (a *Alfred) isValidTask(task string) bool {
 	return false
 }
 
+/* The first argument MUST contain a "/" to be considered remote */
 func (a *Alfred) isRemote() bool {
 	if len(os.Args) >= 2 && strings.Contains(os.Args[1], "/") {
 		return true
@@ -176,16 +201,21 @@ func (a *Alfred) isRemote() bool {
 	return false
 }
 
+/* Bounce around the web until we find something, or we don't .. */
 func (a *Alfred) findRemote() bool {
+	/* Make sure remote is a valid possibility */
 	if a.isRemote() {
 		remote, module := a.remote.Parse(os.Args[1])
+
 		/* default to plain jane github */
 		url := "https://raw.githubusercontent.com/" + os.Args[1] + "/master/alfred.yml"
+
+		/* Does a remote exist? If so, we should use the remote syntax */
 		if a.remote.Exists(remote) {
 			url = a.remote.URL(remote, module)
 		}
 
-		/* try to fetch now */
+		/* try to fetch the alfred file */
 		resp, err := http.Get(url)
 		if err != nil || resp.StatusCode != 200 {
 			say("ERROR", "Unknown module "+os.Args[1])
@@ -194,6 +224,7 @@ func (a *Alfred) findRemote() bool {
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err == nil {
+			/* We found something ... lets use it! */
 			a.contents = body
 			a.location = url
 			return true
@@ -203,13 +234,20 @@ func (a *Alfred) findRemote() bool {
 	return false
 }
 
+/* This function will look locally for an alfred.yml file. First
+starting in the working directory and then going back up the parent
+directory until either an alfred.yml file is found, or you're in the
+root directory */
 func (a *Alfred) findLocal() bool {
+	/* Grab the current directory */
 	dir, err := os.Getwd()
 	if err == nil {
+		/* Just keep going ... */
 		for {
 			/* Keep going up a directory */
 			if _, stat_err := os.Stat(dir + "/alfred.yml"); stat_err == nil {
 				if contents, read_err := ioutil.ReadFile(dir + "/alfred.yml"); read_err == nil {
+					/* Sweet. We found an alfred file. Lets save it off and return */
 					a.contents = contents
 					a.location = dir + "/alfred.yml"
 					/* Be sure that we ar relative to where we found the config file */
@@ -224,12 +262,22 @@ func (a *Alfred) findLocal() bool {
 			}
 		}
 	}
+	/* We didn't find anything. /cry */
 	return false
 }
 
+/* List out all of the available commands we can run */
 func (a *Alfred) List() {
+	/* Get/Sort list of tasks ... */
+	t := []string{}
+	for task, _ := range a.Tasks {
+		t = append(t, task)
+	}
+	sort.Strings(t)
+
 	fmt.Println()
-	for name, task := range a.Tasks {
+	for _, name := range t {
+		task := a.Tasks[name]
 		if task.IsAlias(name) {
 			continue
 		}
@@ -250,8 +298,10 @@ func (a *Alfred) List() {
 	}
 }
 
+/* If any commands have aliases, lets copy the tasks to their new names */
 func (a *Alfred) aliases() {
 	for _, task := range a.Tasks {
+		/* Does this task have an alias? If so, lets create it! */
 		if len(task.Aliases()) > 0 {
 			for _, alias := range task.Aliases() {
 				a.Tasks[alias] = task
@@ -260,6 +310,7 @@ func (a *Alfred) aliases() {
 	}
 }
 
+/* Alfred speaks! */
 func say(task, msg string) {
 	fmt.Println("["+task+"]", msg)
 }

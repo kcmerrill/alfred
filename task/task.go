@@ -9,6 +9,24 @@ import (
 	"time"
 )
 
+/* Contains our task information
+A brief explination:
+ - Summary: text showing what the command is about
+ - Command: the shell command to run
+ - Usage: explains how to use the command
+ - Dir: Change to this directory for this particular command
+ - Tasks: a space seperated list of strings that represent tasks to run
+ - Every: a string representation of golang duration to run this task for.
+ - Wait: a string representation of golang duration that pauses the task before continuing
+ - Ok: Similiar to Tasks, except only when the task is succesful
+ - Fail: Similiar to Tasks, except only when the task fails
+ - Args: Used for templates to pass in arguments
+ - Time: Used primarily for templates inside alfred.yml files
+ - Modules: Used for private/public repos and resuseable tasks
+ - Defaults: Used to set default values
+ - Alias: Space seperated strings determining how else the task can be invoked
+ - Private: Some methods should only be called via other tasks and not as a standalone. If so, private accomplishes this
+*/
 type Task struct {
 	Summary  string
 	Command  string
@@ -27,10 +45,12 @@ type Task struct {
 	Private  bool
 }
 
+/* Is the task private? */
 func (t *Task) IsPrivate() bool {
 	return t.Private
 }
 
+/* Is this task an alias? */
 func (t *Task) IsAlias(name string) bool {
 	for _, alias := range t.Aliases() {
 		if name == alias {
@@ -40,37 +60,45 @@ func (t *Task) IsAlias(name string) bool {
 	return false
 }
 
+/* Grab a list of aliases */
 func (t *Task) Aliases() []string {
 	return strings.Fields(t.Alias)
 }
 
+/* Grab a list of failed tasks */
 func (t *Task) FailedTasks() []string {
 	return strings.Fields(t.Fail)
 }
 
+/* Grab a list of tasks to run when succesful */
 func (t *Task) OkTasks() []string {
 	return strings.Fields(t.Ok)
 }
 
+/* Return a list of tasks to run */
 func (t *Task) TaskGroup() []string {
 	return strings.Fields(t.Tasks)
 }
 
-func (t *Task) RunCommand(cmd string, args []string) bool {
+/* Execute a task ... */
+func (t *Task) RunCommand(cmd string) bool {
 	if cmd != "" {
 		cmd := exec.Command("bash", "-c", cmd)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		if cmd.Run() == nil {
+			/* Was it succesful? */
 			return true
 		} else {
 			return false
 		}
 	}
+	/* If there was no command to run, then don't fail the task */
 	return true
 }
 
+/* Setup a bunch of things, including templates and argument defeaults */
 func (t *Task) Prepare(args []string) bool {
 	t.Args = t.Defaults
 
@@ -117,6 +145,7 @@ func (t *Task) Prepare(args []string) bool {
 	return true
 }
 
+/* Translate a string to a template */
 func (t *Task) template(translate string) (bool, string) {
 	template := template.Must(template.New("translate").Parse(translate))
 	b := new(bytes.Buffer)

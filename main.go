@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
+	/* Giddy up! */
 	alfred.New()
 }
