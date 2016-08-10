@@ -89,3 +89,101 @@ If it is a public repository, like `kcmerrill/yoda` is, then you can simply call
 ```alfred kcmerrill/yoda install```
 
 That will seek out the project on github, look in the master branch and then call the `install` task within the yaml file. Which will then proceed to check out the code for you. Take a peek at `kcmerrill/yoda` for it's `alfred.yml` to see how it's setup.
+
+## Example 3 (demo-everything)
+You can see this file in the examples folder. I will try to update this when features get added
+
+```
+one:
+    summary: Displaying the task name
+
+two:
+    summary: A simple echo
+    command: echo "A simple echo command"
+
+three:
+    summary: Change the working directory
+    dir: /tmp
+    command: pwd
+
+four:
+    summary: Notice how the directory has changed back?
+    command: pwd
+
+five:
+    summary: Step five, but aliased as step six too! Space seperated
+    command: ls
+    alias: six six.one six.two
+
+seven:
+    summary: Step seven is a simple ls, but will automagically call step 8
+    command: ls
+    ok: eight
+
+eight:
+    summary: This was only called because step seven was succesful
+
+nine:
+    summary: Try to ls a folder that _hopefully_ doesn't exist
+    command: ls /kcwashere
+    fail: ten
+
+ten:
+    summary: Only called because step 9 failed
+
+eleven:
+    summary: Call multiple tasks as a task group, space seperated
+    tasks: four five six
+
+twelve:
+    summary: Call alfred within itself
+    command: alfred eleven
+
+thirteen:
+    summary: Run ls every 3 seconds, or any golang duration
+    command: ls
+    every: 3s
+
+fourteen:
+    summary: Pass along arguments using go/text templates. Try running without an argument.
+    command: ls {{ index .Args 0 }}
+    usage: alfred fourteen foldername
+
+fifteen:
+    summary: Pass along arguments again ... but use defaults
+    command: ls {{ index .Args 0 }}
+    defaults:
+        - /tmp
+
+sixteen:
+    summary: Remotes allow you to reuse common components. This will completely setup a git project as an example
+    dir: /tmp
+    git: clone kcmerrill/yoda yoda
+
+seventeen:
+    summary: Wait! Sure, you can sleep, but this will let you do so via a golang duration
+    wait: 5s
+    command: ls
+
+eighteen:
+    summary: You can combine everything you've seen above. Infinite loop
+    command: test $(whoami) = "root"
+    wait: 10s
+    every: 1m
+    ok: eighteen
+    failed: nineteen
+
+nineteen:
+    summary: You are not root, but checkout this multiline command
+    command: |
+        cd /tmp && pwd
+        cd /tmp
+        pwd
+
+twenty:
+    summary: As long as an alfred file is in a parent directory, you can call it and alfred will find it
+    command: |
+        mkdir fakedirectory
+        cd fakedirectory
+        alfred four
+```
