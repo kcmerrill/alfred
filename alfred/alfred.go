@@ -105,6 +105,8 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		return false
 	}
 
+	taskok := true
+
 	/* Infinite loop Used for the every command */
 	for {
 
@@ -142,18 +144,20 @@ func (a *Alfred) runTask(task string, args []string) bool {
 					break
 				}
 			}
+			taskok = false
 		}
 
 		/* Go through each of the modules ... */
 		for module, cmd := range a.Tasks[task].Modules {
 			if !a.Tasks[task].RunCommand(os.Args[0] + " " + a.remote.ModulePath(module) + " " + cmd) {
 				/* It failed :( */
+				taskok = false
 				break
 			}
 		}
 
 		/* Handle exits ... */
-		if a.Tasks[task].Exit != "" {
+		if !taskok && a.Tasks[task].Exit != "" {
 			if exitCode, err := strconv.Atoi(a.Tasks[task].Exit); err == nil {
 				os.Exit(exitCode)
 			}
