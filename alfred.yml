@@ -16,7 +16,7 @@ test:
 
 commit:
     summary: Commit changes
-    command: git add . && (git commit || true)
+    command: git add . && git commit
     exit: 42
 
 push:
