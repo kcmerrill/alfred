@@ -26,6 +26,7 @@ A brief explination:
  - Defaults: Used to set default values
  - Alias: Space seperated strings determining how else the task can be invoked
  - Private: Some methods should only be called via other tasks and not as a standalone. If so, private accomplishes this
+ - Exit: on failure, exit completely with given status code
 */
 type Task struct {
 	Summary  string
@@ -43,6 +44,7 @@ type Task struct {
 	Defaults []string
 	Alias    string
 	Private  bool
+	Exit     string
 }
 
 /* Is the task private? */

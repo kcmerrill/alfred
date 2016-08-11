@@ -1,0 +1,29 @@
+build:
+    summary: Build alfred
+    command: go install
+    tasks: run
+
+run:
+    summary: Run alfred
+    command: alfred
+
+deploy:
+    summary: Push alfred
+    tasks: test status commit
+    ok: push
+
+test:
+    summary: Testing ...
+
+status:
+    summary: Git status
+    command: git status
+    wait: 2s
+
+commit:
+    summary: Commit changes
+    command: git add --all && git commit
+
+push:
+    summary: Push up your changes
+    command: git push origin master

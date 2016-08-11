@@ -10,6 +10,7 @@ import (
 	"os"
 	"path"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -138,15 +139,14 @@ func (a *Alfred) runTask(task string, args []string) bool {
 			/* Failed? Lets run the failed tasks */
 			for _, failed := range a.Tasks[task].FailedTasks() {
 				if !a.runTask(failed, args) {
-					return false
+					break
 				}
 			}
-			return false
 		} else {
 			/* Woot! Lets run the ok tasks */
 			for _, ok_tasks := range a.Tasks[task].OkTasks() {
 				if !a.runTask(ok_tasks, args) {
-					return false
+					break
 				}
 			}
 		}
@@ -155,20 +155,28 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		for module, cmd := range a.Tasks[task].Modules {
 			if !a.Tasks[task].RunCommand(os.Args[0] + " " + a.remote.ModulePath(module) + " " + cmd) {
 				/* It failed :( */
-				return false
+				break
 			}
 		}
 
-		/* Ok, we made it here ... Is this task a task group? */
-		for _, t := range a.Tasks[task].TaskGroup() {
-			if !a.runTask(t, args) {
-				return false
+		/* Handle exits ... */
+		if a.Tasks[task].Exit != "" {
+			if exitCode, err := strconv.Atoi(a.Tasks[task].Exit); err == nil {
+				os.Exit(exitCode)
 			}
+			return false
 		}
 
 		/* Wait ... */
 		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
 			<-time.After(wait_duration)
+		}
+
+		/* Ok, we made it here ... Is this task a task group? */
+		for _, t := range a.Tasks[task].TaskGroup() {
+			if !a.runTask(t, args) {
+				break
+			}
 		}
 
 		/* Do we need to break or should we keep going? */
@@ -278,23 +286,23 @@ func (a *Alfred) List() {
 	fmt.Println()
 	for _, name := range t {
 		task := a.Tasks[name]
-		if task.IsAlias(name) {
+		if task.IsAlias(name) || task.IsPrivate() {
 			continue
 		}
+
 		say(name, task.Summary)
 
 		if task.Alias != "" {
-			fmt.Println("  ", "Alias:", task.Alias)
+			fmt.Println("  ", "- Alias:", task.Alias)
 		}
 
 		if task.Usage != "" {
-			fmt.Println("  ", "Usage:", task.Usage)
+			fmt.Println("  ", "- Usage:", task.Usage)
 		}
 
 		if task.Tasks != "" {
-			fmt.Println("  ", "Tasks:", task.Tasks)
+			fmt.Println("  ", "- Tasks:", task.Tasks)
 		}
-
 	}
 }
 
