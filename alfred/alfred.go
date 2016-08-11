@@ -136,15 +136,11 @@ func (a *Alfred) runTask(task string, args []string) bool {
 			}
 		}
 
-		/* Lets execute the command if it has one */
-		if !a.Tasks[task].RunCommand(a.Tasks[task].Command) {
-			/* Failed? Lets run the failed tasks */
-			for _, failed := range a.Tasks[task].FailedTasks() {
-				if !a.runTask(failed, args) {
-					break
-				}
+		/* Ok, we made it here ... Is this task a task group? */
+		for _, t := range a.Tasks[task].TaskGroup() {
+			if !a.runTask(t, args) {
+				break
 			}
-			taskok = false
 		}
 
 		/* Go through each of the modules ... */
@@ -154,6 +150,17 @@ func (a *Alfred) runTask(task string, args []string) bool {
 				taskok = false
 				break
 			}
+		}
+
+		/* Lets execute the command if it has one */
+		if !a.Tasks[task].RunCommand(a.Tasks[task].Command) {
+			/* Failed? Lets run the failed tasks */
+			for _, failed := range a.Tasks[task].FailedTasks() {
+				if !a.runTask(failed, args) {
+					break
+				}
+			}
+			taskok = false
 		}
 
 		/* Handle exits ... */
@@ -167,13 +174,6 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		/* Wait ... */
 		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
 			<-time.After(wait_duration)
-		}
-
-		/* Ok, we made it here ... Is this task a task group? */
-		for _, t := range a.Tasks[task].TaskGroup() {
-			if !a.runTask(t, args) {
-				break
-			}
 		}
 
 		/* Woot! Lets run the ok tasks */
