@@ -7,7 +7,7 @@ build:
     summary: Build alfred
     command: go install && alfred
 
-deploy:
+push:
     summary: Push alfred
     tasks: test dockerize commit pause push docker.push
 
@@ -16,13 +16,8 @@ test:
 
 commit:
     summary: Commit changes
-    command: git add . && git commit
+    command: git add . && git commit && git push origin master
     exit: 42
-
-push:
-    summary: Push up your changes
-    command: git push origin master
-    tasks: commit dockerize docker.push
 
 pause:
     summary: Press [ENTER] to continue
