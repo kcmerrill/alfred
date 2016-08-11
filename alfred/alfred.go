@@ -142,13 +142,6 @@ func (a *Alfred) runTask(task string, args []string) bool {
 					break
 				}
 			}
-		} else {
-			/* Woot! Lets run the ok tasks */
-			for _, ok_tasks := range a.Tasks[task].OkTasks() {
-				if !a.runTask(ok_tasks, args) {
-					break
-				}
-			}
 		}
 
 		/* Go through each of the modules ... */
@@ -175,6 +168,13 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		/* Ok, we made it here ... Is this task a task group? */
 		for _, t := range a.Tasks[task].TaskGroup() {
 			if !a.runTask(t, args) {
+				break
+			}
+		}
+
+		/* Woot! Lets run the ok tasks */
+		for _, ok_tasks := range a.Tasks[task].OkTasks() {
+			if !a.runTask(ok_tasks, args) {
 				break
 			}
 		}

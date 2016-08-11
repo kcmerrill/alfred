@@ -1,29 +1,40 @@
+code.laptop:
+    summary: Open Vim -> Build -> Test -> Repeat
+    command: vim alfred/alfred.go
+    tasks: build test pause code.laptop
+
 build:
     summary: Build alfred
-    command: go install
-    tasks: run
-
-run:
-    summary: Run alfred
-    command: alfred
+    command: go install && alfred
 
 deploy:
     summary: Push alfred
-    tasks: test status commit
-    ok: push
+    tasks: test dockerize commit pause push docker.push
 
 test:
     summary: Testing ...
 
-status:
-    summary: Git status
-    command: git status
-    wait: 2s
-
 commit:
     summary: Commit changes
-    command: git add --all && git commit
+    command: git add . && git commit
+    exit: 42
 
 push:
     summary: Push up your changes
     command: git push origin master
+    tasks: commit dockerize docker.push
+
+pause:
+    summary: Press [ENTER] to continue
+    command: read input
+    private: true
+
+dockerize:
+    summary: Dockerize alfred
+    command: |
+        cp $(which alfred) bin/.
+        docker build -t kcmerrill/alfred .
+
+docker.push:
+    summary: Push kcmerrill/alfred to dockerhub
+    command: docker push kcmerrill/alfred
