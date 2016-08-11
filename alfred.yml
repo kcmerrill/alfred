@@ -9,7 +9,7 @@ build:
 
 push:
     summary: Push alfred
-    tasks: test dockerize commit pause push docker.push
+    tasks: build test dockerize commit pause push docker.push
 
 test:
     summary: Testing ...
