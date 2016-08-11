@@ -1,7 +1,7 @@
 code.laptop:
     summary: Open Vim -> Build -> Test -> Repeat
     command: vim alfred/alfred.go
-    tasks: build test verification code.laptop
+    tasks: build test pause code.laptop
 
 build:
     summary: Build alfred
@@ -25,6 +25,7 @@ commit:
     exit: 42
 
 verification:
+    alias: pause
     summary: Press [ENTER] to continue
     command: read input
     private: true
