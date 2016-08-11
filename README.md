@@ -121,15 +121,19 @@ seven:
     ok: eight
 
 eight:
-    summary: This was only called because step seven was succesful
+    summary: This was only called because step seven was succesful.
+    command: echo "Also,notice this is private. Cannot be called directly"
+    private: true
 
 nine:
-    summary: Try to ls a folder that _hopefully_ doesn't exist
-    command: ls /kcwashere
+    summary: Try to ls a folder that _hopefully_ doesn't exist. Notice exit code
+    command: echo "Even though alfred worked, you can specifically set exit codes." && ls /kcwashere
     fail: ten
 
 ten:
     summary: Only called because step 9 failed
+    command: echo "Again, notice how this step is private"
+    private: true
 
 eleven:
     summary: Call multiple tasks as a task group, space seperated
@@ -158,7 +162,7 @@ fifteen:
 sixteen:
     summary: Remotes allow you to reuse common components. This will completely setup a git project as an example
     dir: /tmp
-    git: clone kcmerrill/yoda yoda
+    git: clone kcmerrill/alfred alfred
 
 seventeen:
     summary: Wait! Sure, you can sleep, but this will let you do so via a golang duration
@@ -167,15 +171,26 @@ seventeen:
 
 eighteen:
     summary: You can combine everything you've seen above. Infinite loop
-    command: test $(whoami) = "root"
+    command: test $(whoami) = "rooto"
     wait: 10s
-    every: 1m
-    ok: twenty
-    failed: nineteen
+    every: 7s
+    fail: nineteen
+    ok: nineteen.1
+    exit: 42
 
 nineteen:
-    summary: You are not root, but checkout this multiline command
+    summary: You are not root, but checkout this multiline command while you're here
+    private: true
     command: |
+        cd /tmp && pwd
+        cd /tmp
+        pwd
+
+nineteen.1:
+    summary: You apparently _ARE_ root. Cowers in feer of your l33t/\/355.
+    private: true
+    command: |
+        echo "Checkout this multi line command!"
         cd /tmp && pwd
         cd /tmp
         pwd
@@ -185,5 +200,14 @@ twenty:
     command: |
         mkdir fakedirectory
         cd fakedirectory
+        echo "Current directory:"
+        pwd
+        echo "Now call alfred four, which is an alfred command that pwd"
         alfred four
+
+twentyone:
+    summary: Even though alfred worked, If the command failed you can still exit after running all of the failed tasks
+    command: ls /asdf
+    fail: four
+    exit: 42
 ```
