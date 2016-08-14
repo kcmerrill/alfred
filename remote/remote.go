@@ -8,11 +8,14 @@ type Remote struct {
 	Repos map[string]string
 }
 
-func New() *Remote {
+func New(repos map[string]string) *Remote {
 	r := &Remote{}
-	r.Repos = make(map[string]string)
-	/* common repo is stored for official buisness ;) */
+	r.Repos = repos
+
+	/* these repos are stored for official buisness ;) */
 	r.Repos["common"] = "https://raw.githubusercontent.com/kcmerrill/alfred/master/modules/"
+	r.Repos["official"] = "https://raw.githubusercontent.com/kcmerrill/alfred/master/modules/"
+	r.Repos["alfred"] = "https://raw.githubusercontent.com/kcmerrill/alfred/master/modules/"
 	return r
 }
 

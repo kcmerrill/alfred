@@ -211,3 +211,16 @@ twentyone:
     fail: four
     exit: 42
 ```
+
+## Remote/Custom modules
+In order to extend alfred to things out of the box, you can create your own modules. To do so, create an alfred configuration file. Here is an example:
+```
+$ cat ~/.alfred/config.yml
+remote:
+    kcmerrill: http://kcmerrill.com:8081/shares/
+```
+You can add as many remotes as you'd like. By default there will be a few "official" remotes automagically added. `official`, `kcmerrill`, `alfred`. A remote consist of a name, a forward slash and a name. If you're ok with having your custom work shared on github, you can setup a module repository.
+
+Alfred comes with a really basic web server so you can host private/sensative modules on your internal network. To start the webserver you can simply: `alfred --serve --dir . --port 8080`. Note, `dir` and `port` are not required and default to `.` and `8080` respectively.
+
+The folder in which you start serving your alfred files should contain a `modulename/alfred.yml` and inside the alfred.yml is your standard yaml file.

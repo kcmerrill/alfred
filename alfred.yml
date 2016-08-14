@@ -6,6 +6,7 @@ code.laptop:
 build:
     summary: Build alfred
     command: go install && alfred
+    fail: pause
 
 push:
     summary: Push alfred
@@ -14,6 +15,7 @@ push:
 
 test:
     summary: Testing ...
+    fail: pause
 
 commit:
     summary: Commit changes

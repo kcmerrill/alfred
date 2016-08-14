@@ -27,12 +27,21 @@ type Alfred struct {
 	remote *remote.Remote
 	/* Originating directory */
 	dir string
+	/* Alfred configuration */
+	config struct {
+		Remote map[string]string
+	}
 }
 
 /* Setup our alfred struct */
 func New() {
 	a := new(Alfred)
-	a.remote = remote.New()
+
+	/* Grab our configuration */
+	a.Config()
+
+	/* Setup our remotes */
+	a.remote = remote.New(a.config.Remote)
 
 	/* Grab the current directory and save if off */
 	a.dir, _ = os.Getwd()
@@ -230,9 +239,11 @@ func (a *Alfred) findRemote() bool {
 		/* try to fetch the alfred file */
 		resp, err := http.Get(url)
 		if err != nil || resp.StatusCode != 200 {
-			say("ERROR", "Unknown module "+os.Args[1])
+			say("error", "Unknown module "+os.Args[1])
+			say("url", url)
 			return true
 		}
+
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err == nil {
