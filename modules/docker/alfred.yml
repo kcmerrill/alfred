@@ -19,4 +19,4 @@ exec:
 
 enter:
     summary: Enter container
-    docker: exec {{ index.Args 0 }} bash
+    docker: exec {{ index .Args 0 }} bash
