@@ -2,9 +2,6 @@ package alfred
 
 import (
 	"fmt"
-	"github.com/kcmerrill/alfred/remote"
-	"github.com/kcmerrill/alfred/task"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -13,6 +10,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/kcmerrill/alfred/remote"
+	"github.com/kcmerrill/alfred/task"
+	"gopkg.in/yaml.v2"
 )
 
 /* Our main object that holds the yaml file, tasks etc */
@@ -125,15 +126,9 @@ func (a *Alfred) runTask(task string, args []string) bool {
 			fmt.Println(err.Error())
 		}
 
-		/* First, lets show the summary */
-		if a.Tasks[task].Summary != "" {
-			fmt.Println("")
-			say(task, a.Tasks[task].Summary)
-		}
-
 		/* Lets prep it, and if it's bunk, lets see if we can pump out it's usage */
 		if !a.Tasks[task].Prepare(args) {
-			say(task, "ERROR: Missing argument(s).")
+			say(task+":error", "Missing argument(s).")
 			return false
 		}
 
@@ -145,6 +140,23 @@ func (a *Alfred) runTask(task string, args []string) bool {
 			}
 		}
 
+		/* Go through each of the modules ...
+		- before command, docker stop for example
+		*/
+		for module, cmd := range a.Tasks[task].Modules {
+			if !a.Tasks[task].RunCommand(os.Args[0] + " " + a.remote.ModulePath(module) + " " + cmd) {
+				/* It failed :( */
+				taskok = false
+				break
+			}
+		}
+
+		/* First, lets show the summary */
+		if a.Tasks[task].Summary != "" {
+			fmt.Println("")
+			say(task, a.Tasks[task].Summary)
+		}
+
 		/* Lets execute the command if it has one */
 		if !a.Tasks[task].RunCommand(a.Tasks[task].Command) {
 			/* Failed? Lets run the failed tasks */
@@ -154,15 +166,6 @@ func (a *Alfred) runTask(task string, args []string) bool {
 				}
 			}
 			taskok = false
-		}
-
-		/* Go through each of the modules ... */
-		for module, cmd := range a.Tasks[task].Modules {
-			if !a.Tasks[task].RunCommand(os.Args[0] + " " + a.remote.ModulePath(module) + " " + cmd) {
-				/* It failed :( */
-				taskok = false
-				break
-			}
 		}
 
 		/* Handle exits ... */

@@ -12,3 +12,11 @@ stop:
 remove:
     summary: Remove container
     command: docker rm --volumes  {{ index .Args 0 }}
+
+exec:
+    command: docker exec -ti {{ index .Args 0 }} {{ index .Args 1 }}
+    private: true
+
+enter:
+    summary: Enter container
+    docker: exec {{ index.Args 0 }} bash
