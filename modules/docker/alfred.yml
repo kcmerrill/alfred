@@ -15,7 +15,3 @@ remove:
 
 exec:
     command: docker exec -ti {{ index .Args 0 }} {{ index .Args 1 }}
-
-enter:
-    summary: Enter container
-    docker: exec {{ index .Args 0 }} bash
