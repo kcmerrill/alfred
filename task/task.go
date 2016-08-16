@@ -115,6 +115,15 @@ func (t *Task) Prepare(args []string) bool {
 
 	t.Time = new(time.Time)
 
+	/* All of the modules */
+	for key, value := range t.Modules {
+		if module_ok, module_translated := t.template(value); module_ok {
+			t.Modules[key] = module_translated
+		} else {
+			return false
+		}
+	}
+
 	/* get to translating */
 	if every_ok, every_translated := t.template(t.Every); every_ok {
 		t.Every = every_translated
@@ -132,15 +141,6 @@ func (t *Task) Prepare(args []string) bool {
 		t.Dir = dir_translated
 	} else {
 		return false
-	}
-
-	/* All of the modules */
-	for key, value := range t.Modules {
-		if module_ok, module_translated := t.template(value); module_ok {
-			t.Modules[key] = module_translated
-		} else {
-			return false
-		}
 	}
 
 	/* if we made it here, then we are good to go */
