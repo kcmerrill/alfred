@@ -1,7 +1,7 @@
 setup:
     summary: Install a github repo
     usage: alfred common/github setup user/repo foldername
-    git: clone {{ index .Args 0 }} {{ index .Args 1 }}
+    git: clone {{ index .Args 0 }} $(ls -td -- */ | head -n 1)
     tasks: alfred-setup
     exit: 1
 
@@ -9,12 +9,11 @@ setup-revision:
     summary: Install a github repo with a specific revision
     usage: alfred common/github setup user/repo foldername commitid
     command: |
-        alfred official/git clone {{ index .Args 0 }} {{ index .Args 1 }}
-        alfred official/git checkout {{ index .Args 2 }}
+        alfred official/git clone {{ index .Args 0 }} $(ls -td -- */ | head -n 1)
+        alfred official/git checkout {{ index .Args 1 }}
     tasks: alfred-setup
 
 alfred-setup:
     summary: Run alfred setup
-    dir: ./{{ index .Args 1 }}
-    command: alfred setup
+    command: cd $(ls -td -- */ | head -n 1) && alfred setup
 
