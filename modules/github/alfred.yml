@@ -1,7 +1,7 @@
 setup:
     summary: Install a github repo
     usage: alfred common/github setup user/repo foldername
-    git: clone {{ index .Args 0 }} $(ls -td -- */ | head -n 1)
+    git: clone {{ index .Args 0 }}
     tasks: alfred-setup
     exit: 1
 
