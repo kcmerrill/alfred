@@ -6,9 +6,9 @@ clone:
 
 checkout:
     summary: Checkout commit
-    command: |
-        git reset HEAD --hard
-        git checkout {{ index .Args 0}}
+    command: >
+        git reset HEAD --hard && 
+        git checkout {{ index .Args 0 }} && 
         git pull
 
 submodule-update-init:
@@ -19,6 +19,6 @@ submodule-update-init:
 submodule:
     summary: Checkout submodule
     dir: ./{{ index .Args 0 }}
-    command: |
-        git reset HEAD --hard
+    command: > 
+        git reset HEAD --hard && 
         git checkout {{ index .Args 1}}
