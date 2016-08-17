@@ -20,5 +20,5 @@ alfred-setup-revision:
     summary: Run alfred setup with a specific revision
     command: >
         cd $(ls -td -- */ | head -n 1) && 
-        alfred official/git checkout {{ index .Args 1 }} && 
+        alfred official/git checkout {{ index .Args 2 }} && 
         alfred setup
