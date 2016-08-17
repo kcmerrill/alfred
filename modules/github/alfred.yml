@@ -8,8 +8,8 @@ setup:
 setup-revision:
     summary: Install a github repo with a specific revision
     usage: alfred common/github setup user/repo foldername commitid
-    command: |
-        alfred official/git clone {{ index .Args 0 }}
+    command: >
+        alfred official/git clone {{ index .Args 0 }} && 
         alfred official/git checkout {{ index .Args 1 }}
     tasks: alfred-setup
 
