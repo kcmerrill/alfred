@@ -4,6 +4,14 @@ setup:
     git: clone {{ index .Args 0 }} {{ index .Args 1 }}
     tasks: alfred-setup
 
+setup-revision:
+    summary: Install a github repo
+    usage: alfred common/github setup user/repo foldername
+    command: |
+        alfred official/github clone {{ index .Args 0 }}
+        alfred official/github checkout {{ index .Args 2 }}
+    tasks: alfred-setup
+
 alfred-setup:
     summary: Run alfred setup
     dir: ./{{ index .Args 1 }}
