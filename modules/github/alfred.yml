@@ -10,6 +10,7 @@ setup-revision:
     usage: alfred common/github setup user/repo foldername commitid
     command: >
         alfred official/git clone {{ index .Args 0 }} && 
+        cd $(ls -td -- */ | head -n 1) && 
         alfred official/git checkout {{ index .Args 1 }}
     tasks: alfred-setup
 
