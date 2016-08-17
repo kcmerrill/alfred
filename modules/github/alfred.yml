@@ -16,7 +16,7 @@ alfred-setup:
     summary: Run alfred setup
     command: cd $(ls -td -- */ | head -n 1) && alfred setup
 
-alfred-setup:
+alfred-setup-revision:
     summary: Run alfred setup with a specific revision
     command: >
         cd $(ls -td -- */ | head -n 1) && 
