@@ -9,12 +9,16 @@ setup-revision:
     summary: Install a github repo with a specific revision
     usage: alfred common/github setup user/repo foldername commitid
     command: >
-        alfred official/git clone {{ index .Args 0 }} && 
-        cd $(ls -td -- */ | head -n 1) && 
-        alfred official/git checkout {{ index .Args 1 }}
-    tasks: alfred-setup
+        alfred official/git clone {{ index .Args 0 }} 
+    tasks: alfred-setup-revision
 
 alfred-setup:
     summary: Run alfred setup
     command: cd $(ls -td -- */ | head -n 1) && alfred setup
 
+alfred-setup:
+    summary: Run alfred setup with a specific revision
+    command: >
+        cd $(ls -td -- */ | head -n 1) && 
+        alfred official/git checkout {{ index .Args 1 }} && 
+        alfred setup
