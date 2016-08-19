@@ -14,8 +14,6 @@ func New(repos map[string]string) *Remote {
 
 	/* these repos are stored for official buisness ;) */
 	r.Repos["common"] = "https://raw.githubusercontent.com/kcmerrill/alfred/master/modules/"
-	r.Repos["official"] = "https://raw.githubusercontent.com/kcmerrill/alfred/master/modules/"
-	r.Repos["alfred"] = "https://raw.githubusercontent.com/kcmerrill/alfred/master/modules/"
 	return r
 }
 
@@ -51,6 +49,13 @@ func (r *Remote) ModulePath(remote string) string {
 func (r *Remote) Parse(remoteModule string) (string, string) {
 	if strings.Contains(remoteModule, "/") {
 		s := strings.Split(remoteModule, "/")
+		/* Set some defaults */
+		if s[0] == "" {
+			s[0] = "common"
+		}
+		if s[1] == "" {
+			s[1] = "alfred"
+		}
 		return s[0], s[1]
 	}
 

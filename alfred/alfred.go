@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/kcmerrill/alfred/remote"
@@ -180,6 +181,17 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
 			<-time.After(wait_duration)
 		}
+
+		var wg sync.WaitGroup
+		/* Do we have any tasks we need to run in parallel? */
+		for _, t := range a.Tasks[task].MultiTask() {
+			wg.Add(1)
+			go func(t string, args []string) {
+				defer wg.Done()
+				a.runTask(t, args)
+			}(t, args)
+		}
+		wg.Wait()
 
 		/* Ok, we made it here ... Is this task a task group? */
 		for _, t := range a.Tasks[task].TaskGroup() {

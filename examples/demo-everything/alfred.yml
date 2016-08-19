@@ -114,3 +114,20 @@ twentyone:
     command: ls /asdf
     fail: four
     exit: 42
+
+twentytwo:
+    summary: Multitasks! You can combine this with other things too!
+    multitask: long-task1 long-task2 long-task1 long-task2
+
+
+long-task1:
+    summary: This long task takes 10 seconds
+    command: |
+        sleep 10
+        echo "Done with 10 second long task"
+
+long-task2:
+    summary: This long task takes 9 seconds
+    command: |
+        sleep 9
+        echo "Done with 9 second long task"

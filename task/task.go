@@ -29,22 +29,23 @@ A brief explination:
  - Exit: on failure, exit completely with given status code
 */
 type Task struct {
-	Summary  string
-	Command  string
-	Usage    string
-	Dir      string
-	Tasks    string
-	Every    string
-	Wait     string
-	Ok       string
-	Fail     string
-	Args     []string
-	Time     *time.Time
-	Modules  map[string]string `yaml:",inline"`
-	Defaults []string
-	Alias    string
-	Private  bool
-	Exit     string
+	Summary   string
+	Command   string
+	Usage     string
+	Dir       string
+	Tasks     string
+	Multitask string
+	Every     string
+	Wait      string
+	Ok        string
+	Fail      string
+	Args      []string
+	Time      *time.Time
+	Modules   map[string]string `yaml:",inline"`
+	Defaults  []string
+	Alias     string
+	Private   bool
+	Exit      string
 }
 
 /* Is the task private? */
@@ -80,6 +81,11 @@ func (t *Task) OkTasks() []string {
 /* Return a list of tasks to run */
 func (t *Task) TaskGroup() []string {
 	return strings.Fields(t.Tasks)
+}
+
+/* Return a list of multitasks to run */
+func (t *Task) MultiTask() []string {
+	return strings.Fields(t.Multitask)
 }
 
 /* Execute a task ... */
