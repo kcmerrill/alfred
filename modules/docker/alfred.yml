@@ -15,3 +15,6 @@ remove:
 
 exec:
     command: docker exec -ti {{ index .Args 0 }} {{ index .Args 1 }}
+
+pull:
+    command: docker pull {{ index .Args 0 }}
