@@ -21,6 +21,7 @@ A brief explination:
  - Ok: Similiar to Tasks, except only when the task is succesful
  - Fail: Similiar to Tasks, except only when the task fails
  - Args: Used for templates to pass in arguments
+ - Vars: Used for templates to pass in variables
  - Time: Used primarily for templates inside alfred.yml files
  - Modules: Used for private/public repos and resuseable tasks
  - Defaults: Used to set default values
@@ -40,6 +41,7 @@ type Task struct {
 	Ok        string
 	Fail      string
 	Args      []string
+	Vars      map[string]string
 	Time      *time.Time
 	Modules   map[string]string `yaml:",inline"`
 	Defaults  []string
@@ -106,9 +108,23 @@ func (t *Task) RunCommand(cmd string) bool {
 	return true
 }
 
+/* Evaluate */
+func (t *Task) Eval(cmd string) string {
+	out, err := exec.Command(cmd).Output()
+	if err != nil {
+		return cmd
+	}
+	return string(out)
+}
+
 /* Setup a bunch of things, including templates and argument defeaults */
-func (t *Task) Prepare(args []string) bool {
+func (t *Task) Prepare(args []string, vars map[string]string) bool {
 	t.Args = t.Defaults
+
+	/* override variable defaults with actual vars */
+	for key, value := range vars {
+		t.Vars[key] = t.Eval(value)
+	}
 
 	/* override defaults with the args */
 	for index, value := range args {

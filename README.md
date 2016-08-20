@@ -20,7 +20,8 @@ A simple go/yaml powered make file with a bit of a twist.
 * Optional private/public repositories so you can share private tasks with coworkers
 * Start alfred as a webserver to start tasks remotely
 * No need to be in the same directory when running alfred if it's local, as long as it's in a parent directory
-* Fire off multiple tasks at once 
+* Fire off multiple tasks at once
+* Variables, regular text and command line evaluated
 
 
 ## Why
@@ -212,9 +213,24 @@ twentyone:
     exit: 42
 
 twentytwo:
-    summary: Multitasks! You can combine this with other modules too(like every for example)!
+    summary: Multitasks! You can combine this with other things too!
     multitask: long-task1 long-task2 long-task1 long-task2
 
+alfred.vars:
+    firstname: casey
+    user: whoami
+    pwd: pwd
+
+twentythree:
+    summary: Lets test out alfred.vars
+    command: |
+        echo The variable firstname lastname = {{ index .Vars "firstname" }} {{ index .Vars "lastname" }}
+        echo You are the user {{ index .Vars "user" }}
+        echo The pwd of this directory is {{ index .Vars "pwd" }}
+    #Default vars if none are set ...
+    vars:
+        firstname: kc
+        lastname: merrill
 
 long-task1:
     summary: This long task takes 10 seconds

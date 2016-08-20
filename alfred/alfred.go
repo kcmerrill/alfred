@@ -23,6 +23,8 @@ type Alfred struct {
 	contents []byte
 	/* Where the alfred.yml file was found */
 	location string
+	/* Variables */
+	Vars map[string]string `yaml:"alfred.vars"`
 	/* All of the tasks parsed from the yaml file */
 	Tasks map[string]*task.Task `yaml:",inline"`
 	/* Alfred remotes(private/public repos) */
@@ -128,7 +130,7 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		}
 
 		/* Lets prep it, and if it's bunk, lets see if we can pump out it's usage */
-		if !a.Tasks[task].Prepare(args) {
+		if !a.Tasks[task].Prepare(args, a.Vars) {
 			say(task+":error", "Missing argument(s).")
 			return false
 		}
