@@ -121,6 +121,10 @@ func (t *Task) Eval(cmd string) string {
 func (t *Task) Prepare(args []string, vars map[string]string) bool {
 	t.Args = t.Defaults
 
+	if t.Vars == nil {
+		t.Vars = make(map[string]string, 0)
+	}
+
 	/* override variable defaults with actual vars */
 	for key, value := range vars {
 		t.Vars[key] = t.Eval(value)
