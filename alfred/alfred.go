@@ -203,10 +203,13 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		}
 
 		/* Woot! Lets run the ok tasks */
-		for _, ok_tasks := range a.Tasks[task].OkTasks() {
-			if !a.runTask(ok_tasks, args) {
-				break
+		if taskok {
+			for _, ok_tasks := range a.Tasks[task].OkTasks() {
+				if !a.runTask(ok_tasks, args) {
+					break
+				}
 			}
+
 		}
 
 		/* Do we need to break or should we keep going? */
