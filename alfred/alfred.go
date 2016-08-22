@@ -118,11 +118,10 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		return false
 	}
 
-	taskok := true
-
 	/* Infinite loop Used for the every command */
 	for {
 
+		taskok := true
 		/* change to the original directory */
 		err := os.Chdir(a.dir)
 		if err != nil {
