@@ -169,7 +169,7 @@ func TestTaskFail(t *testing.T) {
 	}
 
 	/* Make sure we failed, and we see the output */
-	if !strings.Contains(sut, "ls: /kcwashere: No such file or directory") {
+	if !strings.Contains(sut, "No such file or directory") {
 		t.Logf("ls /kcwashere should not have existed ...")
 		t.FailNow()
 	}
