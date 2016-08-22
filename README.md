@@ -1,6 +1,8 @@
 # alfred
 Because even Batman needs a little help.
 
+[![Build Status](https://travis-ci.org/kcmerrill/alfred.svg?branch=master)](https://travis-ci.org/kcmerrill/alfred)
+
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/alfred.jpg "Alfred")
 
 ## Installation
@@ -124,6 +126,7 @@ seven:
     summary: Step seven is a simple ls, but will automagically call step 8
     command: ls
     ok: eight
+    fail: ten
 
 eight:
     summary: This was only called because step seven was succesful.
@@ -134,6 +137,7 @@ nine:
     summary: Try to ls a folder that _hopefully_ doesn't exist. Notice exit code
     command: echo "Even though alfred worked, you can specifically set exit codes." && ls /kcwashere
     fail: ten
+    ok: eight
 
 ten:
     summary: Only called because step 9 failed
@@ -149,9 +153,9 @@ twelve:
     command: alfred eleven
 
 thirteen:
-    summary: Run ls every 3 seconds, or any golang duration
+    summary: Run ls every 1 seconds, or any golang duration
     command: ls
-    every: 3s
+    every: 1s
 
 fourteen:
     summary: Pass along arguments using go/text templates. Try running without an argument.
@@ -162,7 +166,7 @@ fifteen:
     summary: Pass along arguments again ... but use defaults
     command: ls {{ index .Args 0 }}
     defaults:
-        - /tmp
+        - "."
 
 sixteen:
     summary: Remotes allow you to reuse common components. This will completely setup a git project as an example
@@ -203,8 +207,8 @@ nineteen.1:
 twenty:
     summary: As long as an alfred file is in a parent directory, you can call it and alfred will find it
     command: |
-        mkdir fakedirectory
-        cd fakedirectory
+        mkdir directory
+        cd directory
         echo "Current directory:"
         pwd
         echo "Now call alfred four, which is an alfred command that pwd"
