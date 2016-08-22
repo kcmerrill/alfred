@@ -4,6 +4,7 @@ go:
     - tip
 
 install:
+    - go get
     - go install github.com/kcmerrill/alfred/
 
 script: go test
