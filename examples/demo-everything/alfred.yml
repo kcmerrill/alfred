@@ -31,8 +31,8 @@ eight:
     private: true
 
 nine:
-    summary: Try to ls a folder that _hopefully_ doesn't exist. Notice exit code
-    command: echo "Even though alfred worked, you can specifically set exit codes." && ls /kcwashere
+    summary: run an app that does not exist
+    command: echo "Even though alfred worked, you can specifically set exit codes." && doesnotexist
     fail: ten
     ok: eight
 
