@@ -1,0 +1,9 @@
+language: go
+
+go:
+    - tip
+
+install:
+    - go install github.com/kcmerrill/alfred/
+
+script: go test
