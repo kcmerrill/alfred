@@ -1,6 +1,6 @@
 automagicproxy:
     summary: Start Automagicproxy
-    docker: kill.remove
+    docker: kill.remove automagicproxy
     command: >
         docker
         run
