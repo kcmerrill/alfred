@@ -44,8 +44,4 @@ phpinfo:
         cd phpinfo
         echo "<?php phpinfo();" > index.php
         alfred /docker kill.remove phpinfo
-        docker
-        -P
-        -v $PWD/phpinfo:/var/www/html
-        --name phpinfo
-        kcmerrill/base
+        docker -P -v $PWD/phpinfo:/var/www/html --name phpinfo kcmerrill/base
