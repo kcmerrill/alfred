@@ -1,7 +1,7 @@
 # alfred
 Because even Batman needs a little help.
 
-[![Build Status](https://travis-ci.org/kcmerrill/alfred.svg?branch=master)](https://travis-ci.org/kcmerrill/alfred)
+[![Build Status](https://travis-ci.org/kcmerrill/alfred.svg?branch=master)](https://travis-ci.org/kcmerrill/alfred)[![Join the chat at https://gitter.im/kcmerrill/alfred](https://badges.gitter.im/kcmerrill/alfred.svg)](https://gitter.im/kcmerrill/alfred?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/alfred.jpg "Alfred")
 
@@ -38,7 +38,7 @@ I have a lot of tasks I do daily that I'd like a remote repository to use. Not o
 ## Screencast
 A video(~35 minutes long) showing alfred and how to use it. Using contrivied examples, I believe it should get the point across. 
 
-[![Alfred Overview](http://i3.ytimg.com/vi/xY65f2gOTJs/hqdefault.jpg)](https://www.youtube.com/watch?v=xY65f2gOTJs)
+[![Alfred Overview](http://i3.ytimg.com/vi/v2ivtM5anbk/hqdefault.jpg)](https://www.youtube.com/watch?v=v2ivtM5anbk)
 
 ## Quick docs
 Using the example below there a few things to notice.
