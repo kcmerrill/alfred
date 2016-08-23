@@ -35,6 +35,11 @@ I have a lot of tasks I do daily that I'd like a remote repository to use. Not o
 * Start/Stop remote tasks
 * Simple Nagios, Jenkins, pingdom replacement
 
+## Screencast
+A video(~35 minutes long) showing alfred and how to use it. Using contrivied examples, I believe it should get the point across. 
+
+[![Alfred Overview](http://i3.ytimg.com/vi/xY65f2gOTJs/hqdefault.jpg)](https://www.youtube.com/watch?v=xY65f2gOTJs)
+
 ## Quick docs
 Using the example below there a few things to notice.
 
