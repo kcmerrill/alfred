@@ -25,7 +25,7 @@ staticwebserver:
         kcmerrill/base
 
 webserver:
-    summary: Start a static webserver
+    summary: Start a webserver(requires html directory)
     tasks: automagicproxy
     command: |
         alfred /docker kill.remove ${PWD##*/}
