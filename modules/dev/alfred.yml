@@ -1,0 +1,51 @@
+automagicproxy:
+    summary: Start Automagicproxy
+    docker: kill.remove
+    command: >
+        docker
+        run
+        -d
+        -p 80:80
+        -p 443:443
+        -v /var/run/docker.sock:/var/run/docker.sock
+        --restart=always
+        --name automagicproxy
+        kcmerrill/automagicproxy
+
+
+staticwebserver:
+    summary: Start a static webserver
+    tasks: automagicproxy
+    command: |
+        alfred /docker kill.remove ${PWD##*/}
+        docker
+        -P
+        -v $PWD:/var/www/html
+        --name ${PWD##*/}
+        kcmerrill/base
+
+webserver:
+    summary: Start a static webserver
+    tasks: automagicproxy
+    command: |
+        alfred /docker kill.remove ${PWD##*/}
+        docker
+        -P
+        -v $PWD:/var/www
+        --name ${PWD##*/}
+        kcmerrill/base
+
+
+phpinfo:
+    summary: PHPInfo for kcmerrill/base
+    tasks: automagicproxy
+    command: |
+        mkdir phpinfo
+        cd phpinfo
+        echo "<?php phpinfo();" > index.php
+        alfred /docker kill.remove phpinfo
+        docker
+        -P
+        -v $PWD/phpinfo:/var/www/html
+        --name phpinfo
+        kcmerrill/base
