@@ -18,30 +18,21 @@ staticwebserver:
     tasks: automagicproxy
     command: |
         alfred /docker kill.remove ${PWD##*/}
-        docker
-        -P
-        -v $PWD:/var/www/html
-        --name ${PWD##*/}
-        kcmerrill/base
+        docker -P -v $PWD:/var/www/html --name ${PWD##*/} kcmerrill/base
 
 webserver:
     summary: Start a webserver(requires html directory)
     tasks: automagicproxy
     command: |
         alfred /docker kill.remove ${PWD##*/}
-        docker
-        -P
-        -v $PWD:/var/www
-        --name ${PWD##*/}
-        kcmerrill/base
+        docker -P -v $PWD:/var/www --name ${PWD##*/} kcmerrill/base
 
 
 phpinfo:
     summary: PHPInfo for kcmerrill/base
     tasks: automagicproxy
+    dir: phpinfo
     command: |
-        mkdir phpinfo
-        cd phpinfo
         echo "<?php phpinfo();" > index.php
         alfred /docker kill.remove phpinfo
         docker run -P -v $PWD/phpinfo:/var/www/html --name phpinfo kcmerrill/base

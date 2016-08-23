@@ -137,8 +137,12 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		/* Lets change the directory if set */
 		if a.Tasks[task].Dir != "" {
 			if err := os.Chdir(a.Tasks[task].Dir); err != nil {
-				say(task+":dir", "Invalid directory")
-				return false
+				if err := os.MkdirAll(a.Tasks[task].Dir, 0755); err != nil {
+					say(task+":dir", "Invalid directory")
+					return false
+				} else {
+					os.Chdir(a.Tasks[task].Dir)
+				}
 			}
 		}
 
