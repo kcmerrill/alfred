@@ -8,6 +8,10 @@ Because even Batman needs a little help.
 ## Installation
 ``` $ go get github.com/kcmerrill/alfred ```
 
+Fan of docker? It's in a container too!
+```$ alias alfred="docker run -ti --rm -v $PWD:$PWD -w $PWD kcmerrill/alfred"```
+
+
 ## What is it
 A simple go/yaml powered make file with a bit of a twist.
 
@@ -36,7 +40,7 @@ I have a lot of tasks I do daily that I'd like a remote repository to use. Not o
 * Simple Nagios, Jenkins, pingdom replacement
 
 ## Screencast
-A video(~35 minutes long) showing alfred and how to use it. Using contrivied examples, I believe it should get the point across. 
+A video(~35 minutes long) showing alfred and how to use it. Using contrivied examples, I believe it should get the point across.
 
 [![Alfred Overview](http://i3.ytimg.com/vi/v2ivtM5anbk/hqdefault.jpg)](https://www.youtube.com/watch?v=v2ivtM5anbk)
 
