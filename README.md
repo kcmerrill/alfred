@@ -9,6 +9,7 @@ Because even Batman needs a little help.
 ``` $ go get github.com/kcmerrill/alfred ```
 
 Fan of docker? It's in a container too!
+
 ```$ alias alfred="docker run -ti --rm -v $PWD:$PWD -w $PWD kcmerrill/alfred"```
 
 
