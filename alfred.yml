@@ -22,6 +22,8 @@ push:
 
 test:
     summary: Testing ...
+    command: |
+        go test
     fail: pause
 
 commit:
