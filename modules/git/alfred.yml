@@ -21,7 +21,7 @@ submodule-update-init:
 
 submodule:
     summary: Checkout submodule
-    dir: {{ index .Args 0 }}
+    dir: "{{ index .Args 0 }}"
     command: >
         git reset HEAD --hard &&
         git checkout {{ index .Args 1}}
