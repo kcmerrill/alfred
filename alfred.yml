@@ -1,6 +1,9 @@
 setup:
     summary: Setup alfred
-    command: go get
+    command: |
+        go get
+        go build
+        alfred
 
 code.laptop:
     summary: Open Vim -> Build -> Test -> Repeat
