@@ -1,3 +1,7 @@
+setup:
+    summary: Setup alfred
+    command: go get
+
 code.laptop:
     summary: Open Vim -> Build -> Test -> Repeat
     command: vim alfred/alfred.go
@@ -28,13 +32,14 @@ commit:
 
 verification:
     alias: pause
-    summary: Press [ENTER] to continue
+    summary: Ok with these changes? Hit [enter] if so.
     command: read input
     private: true
 
 dockerize:
     summary: Dockerize alfred
     command: |
+        mkdir -p bin/
         cp $(which alfred) bin/.
         docker build -t kcmerrill/alfred .
 
