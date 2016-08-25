@@ -10,7 +10,7 @@ github-revision:
     usage: alfred /project setup user/repo commitid
     command: |
         alfred /git clone {{ index .Args 0 }}
-        alfred /git
+        alfred /git checkout {{ index .Args 1 }}
 
 setup:
     summary: Run alfred setup
