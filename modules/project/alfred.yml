@@ -25,4 +25,5 @@ setup-revision:
         alfred /git checkout {{ index .Args 1 }}
         alfred setup
     defaults:
+        - master
 
