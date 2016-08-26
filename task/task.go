@@ -1,7 +1,9 @@
 package task
 
 import (
+	"bufio"
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -28,6 +30,7 @@ A brief explination:
  - Alias: Space seperated strings determining how else the task can be invoked
  - Private: Some methods should only be called via other tasks and not as a standalone. If so, private accomplishes this
  - Exit: on failure, exit completely with given status code
+ - Log: When set, will write to a file(assuming directory structure exists)
 */
 type Task struct {
 	Summary   string
@@ -48,6 +51,7 @@ type Task struct {
 	Alias     string
 	Private   bool
 	Exit      string
+	Log       string
 }
 
 /* Is the task private? */
@@ -91,7 +95,70 @@ func (t *Task) MultiTask() []string {
 }
 
 /* Execute a task ... */
-func (t *Task) RunCommand(cmd string) bool {
+func (t *Task) RunCommand(cmd, name string, formatted bool) bool {
+	if cmd != "" {
+		if t.Log == "" && formatted == false {
+			return t.CommandBasic(cmd)
+		} else {
+			return t.CommandComplex(cmd, name)
+		}
+	}
+	/* If there was no command to run, then don't fail the task */
+	return true
+}
+
+/* Execute a complex command(we need to either log, and/or format output ) */
+func (t *Task) CommandComplex(cmd, name string) bool {
+	if cmd != "" {
+
+		var l *os.File
+		var err error
+
+		/* If log is set ... lets use it */
+		if t.Log != "" {
+			l, err = os.OpenFile(t.Log, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755)
+			if err != nil {
+				/* Don't quit ... but don't log either */
+				t.Log = ""
+			}
+			defer l.Close()
+		}
+
+		cmd := exec.Command("bash", "-c", cmd)
+		cmdReader, err := cmd.StdoutPipe()
+
+		if err != nil {
+			return false
+		}
+
+		scanner := bufio.NewScanner(cmdReader)
+		go func() {
+			for scanner.Scan() {
+				s := fmt.Sprintf("%s\n", scanner.Text())
+				fmt.Printf("%s| %s", name, s)
+				if t.Log != "" {
+					l.WriteString(s)
+				}
+
+			}
+		}()
+
+		err = cmd.Start()
+		if err != nil {
+			return false
+		}
+
+		err = cmd.Wait()
+		if err != nil {
+			return false
+		}
+	}
+	/* If there was no command to run, then don't fail the task */
+	return true
+}
+
+/* Execute a task ... */
+func (t *Task) CommandBasic(cmd string) bool {
 	if cmd != "" {
 		cmd := exec.Command("bash", "-c", cmd)
 		cmd.Stdin = os.Stdin

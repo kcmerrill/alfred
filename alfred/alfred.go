@@ -88,7 +88,7 @@ func (a *Alfred) findTask() {
 	/* Called a local task */
 	case len(os.Args) >= 2 && !a.isRemote():
 		if a.isValidTask(os.Args[1]) && !a.Tasks[os.Args[1]].IsPrivate() {
-			if !a.runTask(os.Args[1], os.Args[2:]) {
+			if !a.runTask(os.Args[1], os.Args[2:], false) {
 				os.Exit(1)
 			}
 		} else {
@@ -99,7 +99,7 @@ func (a *Alfred) findTask() {
 	/* Called a remote task */
 	case len(os.Args) >= 3 && a.isRemote():
 		if a.isValidTask(os.Args[2]) && !a.Tasks[os.Args[2]].IsPrivate() {
-			if !a.runTask(os.Args[2], os.Args[3:]) {
+			if !a.runTask(os.Args[2], os.Args[3:], false) {
 				os.Exit(1)
 			}
 		} else {
@@ -111,7 +111,7 @@ func (a *Alfred) findTask() {
 }
 
 /* Meat and potatoes. Finds the task and runs it */
-func (a *Alfred) runTask(task string, args []string) bool {
+func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 	/* Verify again it's a valid task */
 	if !a.isValidTask(task) {
 		say(task, "Invalid task.")
@@ -120,7 +120,6 @@ func (a *Alfred) runTask(task string, args []string) bool {
 
 	/* Infinite loop Used for the every command */
 	for {
-
 		taskok := true
 		/* change to the original directory */
 		err := os.Chdir(a.dir)
@@ -150,7 +149,7 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		- before command, docker stop for example
 		*/
 		for module, cmd := range a.Tasks[task].Modules {
-			if !a.Tasks[task].RunCommand(os.Args[0] + " " + a.remote.ModulePath(module) + " " + cmd) {
+			if !a.Tasks[task].RunCommand(os.Args[0]+" "+a.remote.ModulePath(module)+" "+cmd, task, formatted) {
 				/* It failed :( */
 				taskok = false
 				break
@@ -164,10 +163,10 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		}
 
 		/* Lets execute the command if it has one */
-		if !a.Tasks[task].RunCommand(a.Tasks[task].Command) {
+		if !a.Tasks[task].RunCommand(a.Tasks[task].Command, task, formatted) {
 			/* Failed? Lets run the failed tasks */
 			for _, failed := range a.Tasks[task].FailedTasks() {
-				if !a.runTask(failed, args) {
+				if !a.runTask(failed, args, formatted) {
 					break
 				}
 			}
@@ -193,14 +192,14 @@ func (a *Alfred) runTask(task string, args []string) bool {
 			wg.Add(1)
 			go func(t string, args []string) {
 				defer wg.Done()
-				a.runTask(t, args)
+				a.runTask(t, args, true)
 			}(t, args)
 		}
 		wg.Wait()
 
 		/* Ok, we made it here ... Is this task a task group? */
 		for _, t := range a.Tasks[task].TaskGroup() {
-			if !a.runTask(t, args) {
+			if !a.runTask(t, args, formatted) {
 				break
 			}
 		}
@@ -208,7 +207,7 @@ func (a *Alfred) runTask(task string, args []string) bool {
 		/* Woot! Lets run the ok tasks */
 		if taskok {
 			for _, ok_tasks := range a.Tasks[task].OkTasks() {
-				if !a.runTask(ok_tasks, args) {
+				if !a.runTask(ok_tasks, args, formatted) {
 					break
 				}
 			}

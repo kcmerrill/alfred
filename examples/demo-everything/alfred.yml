@@ -148,3 +148,8 @@ long-task2:
     command: |
         sleep 9
         echo "Done with 9 second long task"
+
+twentyfour:
+    summary: Lets test out the log!
+    log: /tmp/log.txt
+    command: echo "This should be in /tmp/log.txt"
