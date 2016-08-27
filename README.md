@@ -48,7 +48,7 @@ A video(~35 minutes long) showing alfred and how to use it. Using contrivied exa
 ## Docker-compose replacement(as an example)
 I recently used alfred to setup a process that cuts the time to download/lift/build containers literally in half.
 
-![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_benchmark.jpg "Alfred")
+![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_benchmark.png "Alfred")
 
 ## Example 1
 This example demonstrates the reuseability of alfred. This check is hosted within the common module `check`, so as long as you have the binary installed, you can tap into quite a few shared libraries. This is one of them. This particular module is dependant on another module, the `notify` module.
@@ -282,6 +282,6 @@ Alfred comes with a really basic web server so you can host private/sensative mo
 The folder in which you start serving your alfred files should contain a `modulename/alfred.yml` and inside the alfred.yml is your standard yaml file.
 
 ## Common modules
-![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_slack.jpg "Alfred")
+![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_slack.png "Alfred")
 
 This is the `notify` module in action.
