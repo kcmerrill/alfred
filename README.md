@@ -3,7 +3,7 @@ Because even Batman needs a little help.
 
 [![Build Status](https://travis-ci.org/kcmerrill/alfred.svg?branch=master)](https://travis-ci.org/kcmerrill/alfred) [![Join the chat at https://gitter.im/kcmerrill/alfred](https://badges.gitter.im/kcmerrill/alfred.svg)](https://gitter.im/kcmerrill/alfred?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/alfred.jpg "Alfred")
+![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred.jpg "Alfred")
 
 ## Installation
 ``` $ go get github.com/kcmerrill/alfred ```
@@ -44,6 +44,12 @@ I have a lot of tasks I do daily that I'd like a remote repository to use. Not o
 A video(~35 minutes long) showing alfred and how to use it. Using contrivied examples, I believe it should get the point across.
 
 [![Alfred Overview](http://i3.ytimg.com/vi/v2ivtM5anbk/hqdefault.jpg)](https://www.youtube.com/watch?v=v2ivtM5anbk)
+
+## Docker-compose replacement(as an example)
+I recently used alfred to setup a process that cuts the time to download/lift/build containers literally in half.
+
+![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_benchmark.jpg "Alfred")
+
 
 ## Quick docs
 Using the example below there a few things to notice.
@@ -280,3 +286,8 @@ You can add as many remotes as you'd like. By default there will be one remote a
 Alfred comes with a really basic web server so you can host private/sensative modules on your internal network. To start the webserver you can simply: `alfred --serve --dir . --port 8080`. Note, `dir` and `port` are not required and default to `.` and `8080` respectively.
 
 The folder in which you start serving your alfred files should contain a `modulename/alfred.yml` and inside the alfred.yml is your standard yaml file.
+
+## Common modules
+![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_slack.jpg "Alfred")
+
+This is the `notify` module in action.
