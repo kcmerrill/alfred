@@ -45,53 +45,48 @@ A video(~35 minutes long) showing alfred and how to use it. Using contrivied exa
 
 [![Alfred Overview](http://i3.ytimg.com/vi/v2ivtM5anbk/hqdefault.jpg)](https://www.youtube.com/watch?v=v2ivtM5anbk)
 
-## Quick docs
-Using the example below there a few things to notice.
-
-1. `check` `mail` `slack` `down` `up` `notify` are all names of tasks. `check` is the main entrypoint task, however, you can put whatever you'd like for your own use case. You can call each one via `alfred _taskname_`.
-2. `usage` gives a quick example of how to use that particular task
-3. `command` is a string, or in this case the `|` denotes a multiline string to be run. It's run via `bash -c`
-4. If `command` exits properly with a `0` exit code, call tasks within `ok`
-5. `ok`, `fail`, `tasks` all can take a string with space seperated task names. Note the `notify` task.
-5. `wait` a simple pause. You can use sleep X however, wait takes in a string that parses into a go duration. So `1s` = 1 second, `1h` = 1 hour,  `1m` = 1 month and so on.
-6. `summary` explains what is happening when it's happening
-7. `every` is also a go duration(see `wait`). That means run this task(and all of it's tasks that it calls) every so often. Useful for checking things.
-8. `wait` and `command` uses go text/templates. The main thing that provides at this point is access to `.Args`. Note, index .Args 0 starts immediately after the task to run.
-
 ## Example 1
+This example demonstrates the reuseability of alfred. This check is hosted within the common module `check`, so as long as you have the binary installed, you can tap into quite a few shared libraries. This is one of them. This particular module is dependant on another module, the `notify` module.
+
+In order to use this, common module simply run the following command, replacing `kcmerrill.com` with your website, and your `supersecretkey` with a slack incoming webhook key/secret(typically the last two segments of the webhook url)
+
+`alfred /http.slack "kcmerrill.com" "supersecretkey"` *10
+
+`* optional int in minutes to notify intervals when the website is down`
+
+By leveraging the common module, alfred will post into slack letting you know that your website is down.
+
 ```
-check:
-    summary: Checks a page
-    usage: alfred check personal http://kcmerrill.com kcmerrill@gmail.com 10m
-    command: |
-        mkdir -p /tmp/website/checks && wget {{ index .Args 1 }} -O /tmp/website/checks/{{ index .Args 0}}
-    ok: up
-    fail: notify
-    wait: 3s
-    every: "{{ index .Args 3 }}"
+http.slack:
+    summary: HTTP Check
+    usage: alfred /http.slack "website" "supersecretkey"
+    dir: /tmp/http/{{ index .Args 0 }}
+    command: wget {{ index .Args 0 }}
+    ok: cleanup
+    fail: send.notification
+    every: 10s
 
-mail:
-    summary: Sending an email
-    command: |
-        echo "{{ index .Args 0 }} site is down! " |  mail -s "Website down" {{ index .Args 2}}
+send.notification:
+    dir: /tmp/http/{{ index .Args 0 }}
+    command: test ! -f last_notified || test $(find -amin +{{ index .Args 2 }} | wc -l) -ge "2"
     private: true
-
-slack:
-    summary: "Sending a slack message to #general"
-    private: true
-
-down:
-    summary: The website is down
-    private: true
-
-up:
-    summary: The website is up
-    private: true
+    ok: notify
+    defaults:
+        - ""
+        - ""
+        - "10"
 
 notify:
-    summary: Notify the website is down
-    tasks: down slack mail
-    private: true
+    dir: /tmp/http/{{ index .Args 0 }}
+    summary: Send slack notification
+    notify: slack "{{ index .Args 1 }}" "{{ index .Args 0 }} is down"
+    command: touch last_notified
+
+cleanup:
+    dir: /tmp/http/{{ index .Args 0 }}
+    command: |
+        rm -rf last_notified
+        rm -rf index.html*
 ```
 
 ## Example 2
