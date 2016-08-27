@@ -15,16 +15,19 @@ send.notification:
     defaults:
         - ""
         - ""
-        - "10"
+        - "60"
+    private: true
 
 notify:
     dir: /tmp/http/{{ index .Args 0 }}
     summary: Send slack notification
     notify: slack "{{ index .Args 1 }}" "{{ index .Args 0 }} is down"
     command: touch last_notified
+    private: true
 
 cleanup:
     dir: /tmp/http/{{ index .Args 0 }}
     command: |
         rm -rf last_notified
         rm -rf index.html*
+    private: true
