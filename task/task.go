@@ -51,6 +51,7 @@ type Task struct {
 	Alias     string
 	Private   bool
 	Exit      string
+	Skip      bool
 	Log       string
 }
 

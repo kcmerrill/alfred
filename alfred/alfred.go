@@ -173,6 +173,11 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			taskok = false
 		}
 
+		/* Handle skips ... */
+		if !taskok && a.Tasks[task].Skip {
+			return false
+		}
+
 		/* Handle exits ... */
 		if !taskok && a.Tasks[task].Exit != "" {
 			if exitCode, err := strconv.Atoi(a.Tasks[task].Exit); err == nil {
