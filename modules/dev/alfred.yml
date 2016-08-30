@@ -2,6 +2,7 @@ automagicproxy:
     summary: Start Automagicproxy
     docker: kill.remove automagicproxy
     command: >
+        docker exec -ti automagicproxy hostname ||
         docker
         run
         -d
@@ -11,6 +12,9 @@ automagicproxy:
         --restart=always
         --name automagicproxy
         kcmerrill/automagicproxy
+        {{ index .Args 0 }}
+    defaults:
+        - ""
 
 
 staticwebserver:
