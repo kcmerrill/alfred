@@ -12,6 +12,8 @@ automagicproxy:
         --restart=always
         --name automagicproxy
         kcmerrill/automagicproxy
+        --dockerized
+        --containerized
         {{ index .Args 0 }}
     defaults:
         - ""
