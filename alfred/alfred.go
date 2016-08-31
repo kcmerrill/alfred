@@ -54,8 +54,8 @@ func New() {
 	if a.findRemote() || a.findLocal() {
 		err := yaml.Unmarshal([]byte(a.contents), &a)
 		if err == nil {
-			/* Setup our aliases */
-			a.aliases()
+			/* Setup our aliases/promote commands */
+			a.prepare()
 			/* Ok, so we have instructions ... do we have a task to run? */
 			a.findTask()
 		} else {
@@ -325,37 +325,62 @@ func (a *Alfred) List() {
 	}
 	sort.Strings(t)
 
-	fmt.Println()
-	for _, name := range t {
-		task := a.Tasks[name]
-		if task.IsAlias(name) || task.IsPrivate() {
-			continue
+	promoted := false
+
+	for _, which := range []string{"basic", "promoted"} {
+		if which == "promoted" && promoted {
+			fmt.Println("")
+			fmt.Println("----")
+			fmt.Println("")
 		}
+		for _, name := range t {
+			task := a.Tasks[name]
+			if task.IsAlias(name) || task.IsPrivate() {
+				continue
+			}
 
-		say(name, task.Summary)
+			if which == "basic" && strings.HasSuffix(name, "*") {
+				promoted = true
+				continue
+			}
 
-		if task.Alias != "" {
-			fmt.Println("  ", "- Alias:", task.Alias)
-		}
+			if which == "promoted" && !strings.HasSuffix(name, "*") {
+				continue
+			}
 
-		if task.Usage != "" {
-			fmt.Println("  ", "- Usage:", task.Usage)
-		}
+			say(strings.Replace(name, "*", "", -1), task.Summary)
 
-		if task.Tasks != "" {
-			fmt.Println("  ", "- Tasks:", task.Tasks)
+			if task.Alias != "" {
+				fmt.Println("  ", "- Alias:", task.Alias)
+			}
+
+			if task.Usage != "" {
+				fmt.Println("  ", "- Usage:", task.Usage)
+			}
+
+			if task.Tasks != "" {
+				fmt.Println("  ", "- Tasks:", task.Tasks)
+			}
 		}
 	}
+
 }
 
-/* If any commands have aliases, lets copy the tasks to their new names */
-func (a *Alfred) aliases() {
-	for _, task := range a.Tasks {
+/* If any commands have aliases, lets copy the tasks to their new names
+   Also, if we have an astrick in the name, lets promote it
+*/
+func (a *Alfred) prepare() {
+	for name, task := range a.Tasks {
 		/* Does this task have an alias? If so, lets create it! */
 		if len(task.Aliases()) > 0 {
 			for _, alias := range task.Aliases() {
 				a.Tasks[alias] = task
 			}
+		}
+
+		/* Should this task be promoted? */
+		if strings.HasSuffix(name, "*") {
+			a.Tasks[strings.Replace(name, "*", "", -1)] = task
 		}
 	}
 }

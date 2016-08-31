@@ -153,3 +153,13 @@ twentyfour:
     summary: Lets test out the log!
     log: /tmp/log.txt
     command: echo "This should be in /tmp/log.txt"
+
+twentyfive:
+    summary: Skip! Same as "exit" however, it only skips the task and _not_ exit the application
+    command: ls /shouldhopefullyfail
+    skip: true
+
+
+twentysix*:
+    summary: Notice the astrick? It means it's a "main" task. Useful for a long alfred file
+    command: echo "See how it pops out from the rest?"
