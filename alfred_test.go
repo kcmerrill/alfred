@@ -58,9 +58,13 @@ func TestListing(t *testing.T) {
 		t.Fail()
 	}
 
-	/* Check alphabetic ordering ... */
-	if !strings.HasSuffix(sut, "[two] A simple echo") {
-		t.Logf("Task one was not in the alfred listing")
+	/* Check promoted/alphabetic ordering ... */
+	if !strings.HasSuffix(sut, `[two] A simple echo
+
+----
+
+[twentysix] Notice the astrick? It means it's a "main" task. Useful for a long alfred file`) {
+		t.Logf("Alphabetical ordering is off, and so is promoted")
 		t.Fail()
 	}
 
