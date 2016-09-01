@@ -126,17 +126,35 @@ func (t *Task) CommandComplex(cmd, name string) bool {
 		}
 
 		cmd := exec.Command("bash", "-c", cmd)
-		cmdReader, err := cmd.StdoutPipe()
+		cmdReaderStdOut, errStdOut := cmd.StdoutPipe()
 
-		if err != nil {
+		if errStdOut != nil {
 			return false
 		}
 
-		scanner := bufio.NewScanner(cmdReader)
+		scannerStdOut := bufio.NewScanner(cmdReaderStdOut)
 		go func() {
-			for scanner.Scan() {
-				s := fmt.Sprintf("%s\n", scanner.Text())
+			for scannerStdOut.Scan() {
+				s := fmt.Sprintf("%s\n", scannerStdOut.Text())
 				fmt.Printf("%s| %s", name, s)
+				if t.Log != "" {
+					l.WriteString(s)
+				}
+
+			}
+		}()
+
+		cmdReaderStdErr, errStdErr := cmd.StderrPipe()
+
+		if errStdErr != nil {
+			return false
+		}
+
+		scannerStdErr := bufio.NewScanner(cmdReaderStdErr)
+		go func() {
+			for scannerStdErr.Scan() {
+				s := fmt.Sprintf("%s\n", scannerStdErr.Text())
+				fmt.Printf("%s:error| %s", name, s)
 				if t.Log != "" {
 					l.WriteString(s)
 				}
