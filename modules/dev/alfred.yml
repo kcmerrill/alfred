@@ -1,6 +1,5 @@
 automagicproxy:
     summary: Start Automagicproxy
-    docker: kill.remove automagicproxy
     command: >
         docker exec -ti automagicproxy hostname ||
         docker
