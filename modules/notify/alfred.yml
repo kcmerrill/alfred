@@ -15,5 +15,5 @@ slack:
     defaults:
         - "123123/123123123"
         - "Alfred says hello!"
-        - "#general"
+        - "@kcmerrill"
 
