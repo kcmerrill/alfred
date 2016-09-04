@@ -1,0 +1,22 @@
+init:
+    summary: Initialize alfred
+    command: |
+        mkdir -p $HOME/.alfred
+        touch $HOME/.alfred/config.yml
+        printf "private*:\n    summary: This is your private alfred file." >> $HOME/.alfred/alfred.yml
+        printf "... done"
+    tasks: edit
+
+edit:
+    summary: Edit your private alfred file
+    command: |
+        vim $HOME/.alfred/alfred.yml
+
+update.linux:
+    summary: Update alfred(linux). Sudo required
+    dir: /tmp
+    command: |
+        wget http://kcmerrill.com/downloads/alfred.ubuntu
+        chmod +x alfred.ubuntu
+        sudo mv alfred.ubuntu /usr/local/bin/alfred
+

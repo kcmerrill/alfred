@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/user"
 	"path"
 	"sort"
 	"strconv"
@@ -51,7 +52,7 @@ func New() {
 	a.dir, _ = os.Getwd()
 
 	/* Try to find alfred.yml remotely(easy, needs a /) or find it locally */
-	if a.findRemote() || a.findLocal() {
+	if a.findRemote() || a.findLocal() || a.findPrivate() {
 		err := yaml.Unmarshal([]byte(a.contents), &a)
 		if err == nil {
 			/* Setup our aliases/promote commands */
@@ -275,6 +276,7 @@ func (a *Alfred) findRemote() bool {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err == nil {
 			/* We found something ... lets use it! */
+			//a.contents = append(append(a.contents, []byte("\n")...), body...)
 			a.contents = body
 			a.location = url
 			return true
@@ -298,6 +300,7 @@ func (a *Alfred) findLocal() bool {
 			if _, stat_err := os.Stat(dir + "/alfred.yml"); stat_err == nil {
 				if contents, read_err := ioutil.ReadFile(dir + "/alfred.yml"); read_err == nil {
 					/* Sweet. We found an alfred file. Lets save it off and return */
+					//a.contents = append(append(a.contents, []byte("\n")...), contents...)
 					a.contents = contents
 					a.location = dir + "/alfred.yml"
 					/* Be sure that we ar relative to where we found the config file */
@@ -312,6 +315,34 @@ func (a *Alfred) findLocal() bool {
 			}
 		}
 	}
+	/* We didn't find anything. /cry */
+	return false
+}
+
+/* Look in the user's home directory for an alfred.yml file */
+func (a *Alfred) findPrivate() bool {
+	/* Grab the current directory */
+	dir, err := os.Getwd()
+	if err == nil {
+		/* Set the current directory if all is good */
+		a.dir = dir
+
+		usr, err := user.Current()
+		if err != nil {
+			return false
+		}
+
+		privateFile := usr.HomeDir + "/.alfred/alfred.yml"
+
+		if _, stat_err := os.Stat(privateFile); stat_err == nil {
+			if contents, read_err := ioutil.ReadFile(privateFile); read_err == nil {
+				a.contents = contents
+				a.location = dir + "/alfred.yml"
+				return true
+			}
+		}
+	}
+
 	/* We didn't find anything. /cry */
 	return false
 }
