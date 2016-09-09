@@ -17,6 +17,8 @@ setup:
     command: |
         cd $(ls -td -- */ | head -n 1)
         alfred setup
+        alfred up
+        alfred test
 
 setup-revision:
     summary: Checkout a specific revision
@@ -24,6 +26,8 @@ setup-revision:
         cd $(ls -td -- */ | head -n 1)
         alfred /git checkout {{ index .Args 1 }}
         alfred setup
+        alfred up
+        alfred test
     defaults:
         - master
 
