@@ -43,6 +43,7 @@ type Task struct {
 	Wait      string
 	Ok        string
 	Fail      string
+	AllArgs   string
 	Args      []string
 	Vars      map[string]string
 	Time      *time.Time
@@ -239,6 +240,12 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 	/* get to translating */
 	if every_ok, every_translated := t.template(t.Every); every_ok {
 		t.Every = every_translated
+	} else {
+		return false
+	}
+
+	if allargs_ok, allargs_translated := t.template(strings.Join(args, " ")); allargs_ok {
+		t.AllArgs = allargs_translated
 	} else {
 		return false
 	}
