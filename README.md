@@ -8,11 +8,6 @@ Because even Batman needs a little help.
 ## Installation
 ``` $ go get github.com/kcmerrill/alfred ```
 
-Fan of docker? It's in a container too!
-
-```$ alias alfred="docker run -ti --rm -v $PWD:$PWD -w $PWD kcmerrill/alfred"```
-
-
 ## What is it
 A simple go/yaml powered make file with a bit of a twist.
 
