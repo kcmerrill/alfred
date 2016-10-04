@@ -38,6 +38,7 @@ I have a lot of tasks I do daily that I'd like a remote repository to use. Not o
 * Setup/Update/Deploy projects in your dev env
 * Start/Stop remote tasks
 * Simple Nagios, Jenkins, pingdom replacement
+* Monitor crons(alert on failures, update endpoints etc ... )
 
 ## Screencast
 A video(~35 minutes long) showing alfred and how to use it. Using contrivied examples, I believe it should get the point across.
@@ -50,6 +51,34 @@ I recently used alfred to setup a process that cuts the time to download/lift/bu
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_benchmark.png "Alfred")
 
 ## Example 1
+Use alfred to monitor crons. Just wrap your command in an alfred task, and depending on success failure do something with it. In this case, we can use alfred to send in a datapoint to datadog
+
+```
+* * 1 * * alfred monitor python somescript.py
+```
+
+```
+monitor:
+    summary: Monitor a specific cron job
+    command: {{ .AllArgs }}
+    ok: success
+    fail: failed
+
+ok:
+    summary: Send ok data point to datadog agent
+    command: |
+        echo "cron.{{ index .Args 1 }}.ok:1|c|#cron" | nc -w 1 -u 0.0.0.0 8125
+    private: true
+
+failed:
+    summary: Send failure data point to datadog agent
+    command: |
+        echo "cron.{{ index .Args 1 }}.failed:1|c|#cron" | nc -w 1 -u 0.0.0.0 8125
+    private: true
+
+```
+
+## Example 2
 This example demonstrates the reuseability of alfred. This check is hosted within the common module `check`, so as long as you have the binary installed, you can tap into quite a few shared libraries. This is one of them. This particular module is dependant on another module, the `notify` module.
 
 In order to use this, common module simply run the following command, replacing `kcmerrill.com` with your website, and your `supersecretkey` with a slack incoming webhook key/secret(typically the last two segments of the webhook url)

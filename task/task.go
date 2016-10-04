@@ -22,6 +22,7 @@ A brief explination:
  - Wait: a string representation of golang duration that pauses the task before continuing
  - Ok: Similiar to Tasks, except only when the task is succesful
  - Fail: Similiar to Tasks, except only when the task fails
+ - AllArgs: Contains all of the arguments passed into alfred(that are not alfred specific)
  - Args: Used for templates to pass in arguments
  - Vars: Used for templates to pass in variables
  - Time: Used primarily for templates inside alfred.yml files
