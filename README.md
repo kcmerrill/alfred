@@ -45,7 +45,7 @@ blurt:
 
 ```
 
-Then, anywhere in the top-level or children directories to the `alfred.yml` file:
+Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 
 `alfred` Will show you all of the available tasks and a quick summary.
 
