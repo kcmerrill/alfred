@@ -6,10 +6,53 @@ Because even Batman needs a little help.
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred.jpg "Alfred")
 
 ## Installation
-``` $ go get github.com/kcmerrill/alfred ```
+` $ go get github.com/kcmerrill/alfred`
 
 ## What is it
 A simple go/yaml powered make file with a bit of a twist.
+
+## TL;DR
+Create a file named: `alfred.yml`
+
+```
+# Create a task, name it whatever you'd like.
+say.hello:
+    # Lets give it a quick summary. Optional.
+    summary: I will say hello!
+    # Describe how to use this task. Optional.
+    usage: alfred say.hello
+    # The command to perform
+    command: echo "Hello!"   
+    
+say.howareyou:
+    # Lets give it a quick summary. Optional.
+    summary: I will ask how you are
+    # Describe how to use this task. Optional.
+    usage: alfred say.howareyou
+    # The command to perform
+    command: echo "How are you?"    
+        
+speak:
+    # You can call multiple tasks in an order
+    tasks: say.hello say.howareyou
+    
+blurt:
+    # You can run multiple tasks at the same time
+    multitask: say.hello say.howareyou
+
+```
+
+Then, anywhere in the top-level or children directories to the `alfred.yml` file:
+
+`alfred` Will show you all of the available tasks and a quick summary.
+
+`alfred say.hello` Will simply say hello
+
+`alfred say.howareyou` Will ask how you are
+
+`alfred speak` will perform both tasks in the specified order
+
+`alfred blurt` will perform both tasks at the same time
 
 ## Features
 * Tasks can call other tasks
