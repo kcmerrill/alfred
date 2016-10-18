@@ -30,7 +30,10 @@ say.howareyou:
     # Describe how to use this task. Optional.
     usage: alfred say.howareyou
     # The command to perform
-    command: echo "How are you?"    
+    command: | 
+        echo "How"
+        echo "Are"
+        echo "You?"
         
 speak:
     # You can call multiple tasks in an order
