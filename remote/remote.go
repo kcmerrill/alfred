@@ -54,7 +54,7 @@ func (r *Remote) Parse(remoteModule string) (string, string) {
 			s[0] = "common"
 		}
 		if s[1] == "" {
-			s[1] = "alfred"
+			s[1] = "self"
 		}
 		return s[0], s[1]
 	}
