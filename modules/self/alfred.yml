@@ -7,10 +7,15 @@ init:
         printf "... done"
     tasks: edit
 
-edit:
+private:
     summary: Edit your private alfred file
     command: |
         vim $HOME/.alfred/alfred.yml
+
+edit:
+    summary: Edit the currently used alfred file
+    command: |
+        vim alfred.yml
 
 update.linux:
     summary: Update alfred(linux). Sudo required
