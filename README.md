@@ -5,16 +5,6 @@ Because even Batman needs a little help.
 
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred.jpg "Alfred")
 
-## Installation
-` $ go get github.com/kcmerrill/alfred`
-
-## Binaries
-![Mac OSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64)
-
-![Windows](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/windows_logo.png "Windows") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/windows/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/windows/amd64)
-
-![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
-
 ## What is it
 A simple go/yaml powered make file with a bit of a twist.
 
@@ -63,6 +53,16 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 `alfred speak` will perform both tasks in the specified order
 
 `alfred blurt` will perform both tasks at the same time
+
+## Installation
+` $ go get github.com/kcmerrill/alfred`
+
+## Binaries
+![Mac OSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64)
+
+![Windows](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/windows_logo.png "Windows") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/windows/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/windows/amd64)
+
+![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
 
 ## Features
 * Tasks can call other tasks
