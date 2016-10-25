@@ -376,3 +376,8 @@ The folder in which you start serving your alfred files should contain a `module
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_slack.png "Alfred")
 
 This is the `notify` module in action.
+
+## Testing
+You might say I've cheated the testing route by only scraping the output. You'd be right.
+
+"I live with a wizard. I cheat" ~ Mouse

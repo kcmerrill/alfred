@@ -281,8 +281,10 @@ func TestRetryLogic(t *testing.T) {
 
 	/* Verfify our retry logic via error message */
 	if !strings.Contains(sut, "[twentyseven] Retry logic. Try X times before continuing on\nls: /step27-idonotexist: No such file or directory\nls: /step27-idonotexist: No such file or directory\nls: /step27-idonotexist: No such file or directory") {
-		t.Logf("Expected Retry logic 3 times")
-		t.FailNow()
+		if !strings.Contains(sut, "[twentyseven] Retry logic. Try X times before continuing on\nls: cannot access /step27-idonotexist: No such file or directory\nls: cannot access /step27-idonotexist: No such file or directory\nls: cannot access /step27-idonotexist: No such file or directory") {
+			t.Logf("Expected Retry logic 3 times")
+			t.FailNow()
+		}
 	}
 }
 
