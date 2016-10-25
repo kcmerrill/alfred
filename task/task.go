@@ -55,6 +55,7 @@ type Task struct {
 	Exit      string
 	Skip      bool
 	Log       string
+	Retry     int
 }
 
 /* Is the task private? */

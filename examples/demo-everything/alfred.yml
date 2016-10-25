@@ -159,7 +159,12 @@ twentyfive:
     command: ls /shouldhopefullyfail
     skip: true
 
-
 twentysix*:
     summary: Notice the astrick? It means it's a "main" task. Useful for a long alfred file
     command: echo "See how it pops out from the rest?"
+
+twentyseven:
+    summary: Retry logic. Try X times before continuing on
+    retry: 3
+    command: |
+        ls /step27-idonotexist

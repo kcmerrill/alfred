@@ -276,6 +276,16 @@ func TestArgumentsFailure(t *testing.T) {
 	}
 }
 
+func TestRetryLogic(t *testing.T) {
+	sut, _ := run("alfred twentyseven", t)
+
+	/* Verfify our retry logic via error message */
+	if !strings.Contains(sut, "[twentyseven] Retry logic. Try X times before continuing on\nls: /step27-idonotexist: No such file or directory\nls: /step27-idonotexist: No such file or directory\nls: /step27-idonotexist: No such file or directory") {
+		t.Logf("Expected Retry logic 3 times")
+		t.FailNow()
+	}
+}
+
 func TestExample(t *testing.T) {
 	sut, _ := run("alfred", t)
 	if len(sut) >= 0 {

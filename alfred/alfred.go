@@ -163,15 +163,22 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			say(task, a.Tasks[task].Summary)
 		}
 
-		/* Lets execute the command if it has one */
-		if !a.Tasks[task].RunCommand(a.Tasks[task].Command, task, formatted) {
+		/* Lets execute the command if it has one, and add retry logic*/
+		for x := 0; x < a.Tasks[task].Retry || x == 0; x++ {
+			taskok = a.Tasks[task].RunCommand(a.Tasks[task].Command, task, formatted)
+			if taskok {
+				break
+			}
+		}
+
+		/* The task failed ... */
+		if !taskok {
 			/* Failed? Lets run the failed tasks */
 			for _, failed := range a.Tasks[task].FailedTasks() {
 				if !a.runTask(failed, args, formatted) {
 					break
 				}
 			}
-			taskok = false
 		}
 
 		/* Handle skips ... */

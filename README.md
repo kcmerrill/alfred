@@ -19,23 +19,23 @@ say.hello:
     # Describe how to use this task. Optional.
     usage: alfred say.hello
     # The command to perform
-    command: echo "Hello!"   
-    
+    command: echo "Hello!"
+
 say.howareyou:
     # Lets give it a quick summary. Optional.
     summary: I will ask how you are
     # Describe how to use this task. Optional.
     usage: alfred say.howareyou
     # The command to perform
-    command: | 
+    command: |
         echo "How"
         echo "Are"
         echo "You?"
-        
+
 speak:
     # You can call multiple tasks in an order
     tasks: say.hello say.howareyou
-    
+
 blurt:
     # You can run multiple tasks at the same time
     multitask: say.hello say.howareyou
@@ -348,10 +348,15 @@ twentyfive:
     command: ls /shouldhopefullyfail
     skip: true
 
-
 twentysix*:
     summary: Notice the astrick? It means it's a "main" task. Useful for a long alfred file
     command: echo "See how it pops out from the rest?"
+
+twentyseven:
+    summary: Retry logic. Try X times before continuing on
+    retry: 3
+    command: |
+        ls /step27-idonotexist
 ```
 
 ## Remote/Custom modules
