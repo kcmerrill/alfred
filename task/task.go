@@ -98,13 +98,20 @@ func (t *Task) MultiTask() []string {
 }
 
 /* Execute a task ... */
-func (t *Task) RunCommand(cmd, name string, formatted bool) bool {
-	if cmd != "" {
-		if t.Log == "" && formatted == false {
-			return t.CommandBasic(cmd)
-		} else {
-			return t.CommandComplex(cmd, name)
+func (t *Task) RunCommand(cmds, name string, formatted bool) bool {
+	if cmds != "" {
+		for _, cmd := range strings.Split(cmds, "\n") {
+			if t.Log == "" && formatted == false {
+				if !t.CommandBasic(cmd) {
+					return false
+				}
+			} else {
+				if !t.CommandComplex(cmd, name) {
+					return false
+				}
+			}
 		}
+		return true
 	}
 	/* If there was no command to run, then don't fail the task */
 	return true
