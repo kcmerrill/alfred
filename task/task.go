@@ -32,6 +32,7 @@ A brief explination:
  - Private: Some methods should only be called via other tasks and not as a standalone. If so, private accomplishes this
  - Exit: on failure, exit completely with given status code
  - Log: When set, will write to a file(assuming directory structure exists)
+ - Retry: When set, will attempt to retry the command X number of times
 */
 type Task struct {
 	Summary   string
