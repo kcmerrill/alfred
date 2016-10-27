@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"os/user"
 	"path"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -52,7 +52,7 @@ func New() {
 	a.dir, _ = os.Getwd()
 
 	/* Try to find alfred.yml remotely(easy, needs a /) or find it locally */
-	if a.findRemote() || a.findLocal() || a.findPrivate() {
+	if a.findRemote() || a.findLocal() {
 		err := yaml.Unmarshal([]byte(a.contents), &a)
 		if err == nil {
 			/* Setup our aliases/promote commands */
@@ -303,18 +303,28 @@ func (a *Alfred) findLocal() bool {
 	if err == nil {
 		/* Just keep going ... */
 		for {
-			/* Keep going up a directory */
-			if _, stat_err := os.Stat(dir + "/alfred.yml"); stat_err == nil {
-				if contents, read_err := ioutil.ReadFile(dir + "/alfred.yml"); read_err == nil {
-					/* Sweet. We found an alfred file. Lets save it off and return */
-					//a.contents = append(append(a.contents, []byte("\n")...), contents...)
-					a.contents = contents
-					a.location = dir + "/alfred.yml"
-					/* Be sure that we ar relative to where we found the config file */
-					a.dir = dir
+			/* Did we find a bunch of alfred files? */
+			patterns := []string{
+				dir + "/alfred.yml",
+				dir + "/.alfred/*alfred.yml",
+				dir + "/alfred/*alfred.yml"}
+			for _, pattern := range patterns {
+				if alfred_files, files_err := filepath.Glob(pattern); files_err == nil && len(alfred_files) > 0 {
+					for _, alfred_file := range alfred_files {
+						if contents, read_err := ioutil.ReadFile(alfred_file); read_err == nil {
+							/* Sweet. We found an alfred file. Lets save it off and return */
+							//a.contents = append(append(a.contents, []byte("\n")...), contents...)
+							a.contents = append(a.contents, []byte("\n\n")...)
+							a.contents = append(a.contents, contents...)
+							a.location = alfred_file
+							/* Be sure that we ar relative to where we found the config file */
+							a.dir = dir
+						}
+					}
 					return true
 				}
 			}
+
 			dir = path.Dir(dir)
 			if dir == "/" {
 				/* We've gone too far ... */
@@ -322,34 +332,6 @@ func (a *Alfred) findLocal() bool {
 			}
 		}
 	}
-	/* We didn't find anything. /cry */
-	return false
-}
-
-/* Look in the user's home directory for an alfred.yml file */
-func (a *Alfred) findPrivate() bool {
-	/* Grab the current directory */
-	dir, err := os.Getwd()
-	if err == nil {
-		/* Set the current directory if all is good */
-		a.dir = dir
-
-		usr, err := user.Current()
-		if err != nil {
-			return false
-		}
-
-		privateFile := usr.HomeDir + "/.alfred/alfred.yml"
-
-		if _, stat_err := os.Stat(privateFile); stat_err == nil {
-			if contents, read_err := ioutil.ReadFile(privateFile); read_err == nil {
-				a.contents = contents
-				a.location = dir + "/alfred.yml"
-				return true
-			}
-		}
-	}
-
 	/* We didn't find anything. /cry */
 	return false
 }
