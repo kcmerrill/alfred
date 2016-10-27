@@ -377,6 +377,9 @@ The folder in which you start serving your alfred files should contain a `module
 
 This is the `notify` module in action.
 
+## Alfred files getting too large?
+You can break up your alfred files in multiple ways. The following are glob patterns that can be used:`/alfred.yml`, `/.alfred/*alfred.yml`, `/alfred/*alfred.yml`. As an example, you can create a directory called `alfred` or `.alfred` or just create mutliple alfred files.
+
 ## Testing
 You might say I've cheated the testing route by only scraping the output. You'd be right.
 
