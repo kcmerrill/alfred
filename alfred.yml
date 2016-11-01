@@ -49,10 +49,3 @@ dockerize:
 docker.push:
     summary: Push kcmerrill/alfred to dockerhub
     command: docker push kcmerrill/alfred
-
-deploy:
-    summary: Deploy ubuntu version
-    command: |
-        mkdir -p bin/
-        cp $(which alfred) bin/.
-        cp bin/alfred /code/kcmerrill.com/downloads/alfred.ubuntu
