@@ -178,6 +178,11 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			}
 		}
 
+		/* Wait ... */
+		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
+			<-time.After(wait_duration)
+		}
+
 		/* The task failed ... */
 		if !taskok {
 			/* Failed? Lets run the failed tasks */
@@ -199,11 +204,6 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 				os.Exit(exitCode)
 			}
 			return false
-		}
-
-		/* Wait ... */
-		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
-			<-time.After(wait_duration)
 		}
 
 		var wg sync.WaitGroup
