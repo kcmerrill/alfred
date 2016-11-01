@@ -1,5 +1,6 @@
-FROM ubuntu
-RUN apt-get update && apt-get install -y wget
-COPY bin/alfred /usr/local/bin/alfred
-ENTRYPOINT ["alfred"]
-
+FROM golang:1.6
+MAINTAINER kc merrill <kcmerrill@gmail.com>
+RUN go get github.com/mitchellh/gox
+COPY . /code
+RUN go get github.com/kcmerrill/alfred
+ENTRYPOINT "alfred"

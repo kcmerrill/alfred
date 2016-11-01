@@ -33,6 +33,7 @@ A brief explination:
  - Exit: on failure, exit completely with given status code
  - Log: When set, will write to a file(assuming directory structure exists)
  - Retry: When set, will attempt to retry the command X number of times
+ - Setup: Similiar to tasks but these get run _before_ the command/task group gets called
 */
 type Task struct {
 	Summary   string
@@ -40,6 +41,7 @@ type Task struct {
 	Usage     string
 	Dir       string
 	Tasks     string
+	Setup     string
 	Multitask string
 	Every     string
 	Wait      string
@@ -97,6 +99,11 @@ func (t *Task) TaskGroup() []string {
 /* Return a list of multitasks to run */
 func (t *Task) MultiTask() []string {
 	return strings.Fields(t.Multitask)
+}
+
+/* Return a list of setup tasks to run */
+func (t *Task) SetupTasks() []string {
+	return strings.Fields(t.Setup)
 }
 
 /* Execute a task ... */

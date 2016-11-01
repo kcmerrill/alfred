@@ -146,6 +146,13 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			}
 		}
 
+		/* Run our setup tasks */
+		for _, s := range a.Tasks[task].SetupTasks() {
+			if !a.runTask(s, args, formatted) {
+				break
+			}
+		}
+
 		/* Go through each of the modules ...
 		- before command, docker stop for example
 		*/

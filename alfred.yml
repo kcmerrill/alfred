@@ -44,8 +44,6 @@ verification:
 dockerize:
     summary: Dockerize alfred
     command: |
-        mkdir -p bin/
-        cp $(which alfred) bin/.
         docker build -t kcmerrill/alfred .
 
 docker.push:
