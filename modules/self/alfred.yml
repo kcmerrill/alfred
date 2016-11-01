@@ -17,11 +17,26 @@ edit:
     command: |
         vim alfred.yml
 
+update:
+    summary: Update alfred
+    command: sw_vers
+    fail: update.linux
+    ok: update.mac
+
 update.linux:
     summary: Update alfred(linux). Sudo required
     dir: /tmp
     command: |
-        wget http://kcmerrill.com/downloads/alfred.ubuntu
-        chmod +x alfred.ubuntu
-        sudo mv alfred.ubuntu /usr/local/bin/alfred
+        wget http://go-dist.kcmerrill.com/kcmerrill/go-dist/linux/amd64
+        chmod +x amd64
+        echo "I need to move alfred to /usr/local/bin/alfred"
+        sudo mv amd64 /usr/local/bin/alfred
 
+update.mac:
+    summary: Update alfred(mac). Sudo required
+    dir: /tmp
+    command: |
+        wget http://go-dist.kcmerrill.com/kcmerrill/go-dist/mac/amd64
+        chmod +x amd64
+        echo "I need to move alfred to /usr/local/bin/alfred"
+        sudo mv amd64 /usr/local/bin/alfred
