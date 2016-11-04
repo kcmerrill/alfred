@@ -12,12 +12,11 @@ import (
 Config
 reads in the user's local yaml configuration file */
 func (a *Alfred) Config() {
+	a.config.Remote = make(map[string]string)
 	usr, err := user.Current()
 	if err != nil {
 		return
 	}
-
-	a.config.Remote = make(map[string]string)
 
 	configFile := usr.HomeDir + "/.alfred/config.yml"
 
