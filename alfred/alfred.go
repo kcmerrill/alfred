@@ -1,12 +1,14 @@
 package alfred
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -122,6 +124,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 	/* Infinite loop Used for the every command */
 	for {
 		taskok := true
+
 		/* change to the original directory */
 		err := os.Chdir(a.dir)
 		if err != nil {
@@ -150,6 +153,29 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		for _, s := range a.Tasks[task].SetupTasks() {
 			if !a.runTask(s, args, formatted) {
 				break
+			}
+		}
+
+		/* We watching for files? */
+		if a.Tasks[task].Watch != "" {
+			/* Regardless of what's going on, lets set every to 1s */
+			a.Tasks[task].Every = "1s"
+			for {
+				matched := filepath.Walk(".", func(path string, f os.FileInfo, err error) error {
+					if f.ModTime().After(time.Now().Add(-2 * time.Second)) {
+						m, _ := regexp.Match(a.Tasks[task].Watch, []byte(path))
+						if m {
+							/* If not a match ... */
+							return errors.New("")
+						}
+					}
+					return nil
+				})
+				if matched != nil {
+					break
+				} else {
+					<-time.After(1 * time.Second)
+				}
 			}
 		}
 

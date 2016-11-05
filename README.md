@@ -357,6 +357,11 @@ twentyseven:
     retry: 3
     command: |
         ls /step27-idonotexist
+
+twentyeight:
+    summary: You can watch for file changes too! Takes a regular expression
+    watch: '.*\.go$'
+    tasks: test
 ```
 
 ## Remote/Custom modules

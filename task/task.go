@@ -33,6 +33,7 @@ A brief explination:
  - Exit: on failure, exit completely with given status code
  - Log: When set, will write to a file(assuming directory structure exists)
  - Retry: When set, will attempt to retry the command X number of times
+ - Watch: A regular expression of changed files
  - Setup: Similiar to tasks but these get run _before_ the command/task group gets called
 */
 type Task struct {
@@ -59,6 +60,7 @@ type Task struct {
 	Skip      bool
 	Log       string
 	Retry     int
+	Watch     string
 }
 
 /* Is the task private? */
