@@ -104,30 +104,13 @@ every.option*: # can be named anything you want. An `*` denotes it's an "importa
 
 ![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
 
-## Features
-* Tasks can call other tasks
-* Tasks can be run every `time.Duration`
-* Tasks can pause or wait for an event to happen
-* Tasks can call other tasks depending on success/failure
-* Alfred uses go templates so you can inject variables making tasks reusable
-* Common tasks can be invoked inside using alfred
-* Common tasks will be stored in this repository for shared use(git, docker, mail, slack, etc ...) (Available ... more alwyas being added)
-* Optional private/public repositories so you can share private tasks with coworkers
-* No need to be in the same directory when running alfred if it's local, as long as it's in a parent directory
-* Fire off multiple tasks at once
-* Variables, regular text and command line evaluated
-* Watch for file edits via regex
-
-
-## Why
-I have a lot of tasks I do daily that I'd like a remote repository to use. Not only can I update them, but others can also use it too. I love make files, but wanted just a bit more functionality while keeping it simple. I also love ansible but it's a bit too heavy handed for what I need, so this is my attempt at KISS.
-
 ## Example uses
 * Monitor webistes with reusable tasks(see example)
 * Setup/Update/Deploy projects in your dev env
 * Start/Stop remote tasks
 * Simple Nagios, Jenkins, pingdom replacement
 * Monitor crons(alert on failures, update endpoints etc ... )
+* Watch for file modifications to run tests->builds
 
 ## Screencast
 A video(~35 minutes long) showing alfred and how to use it. Using contrivied examples, I believe it should get the point across.
