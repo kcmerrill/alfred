@@ -10,10 +10,10 @@ A simple go/yaml powered make file with a bit of a twist.
 
 ## TL;DR
 Create a file named: `alfred.yml`
-
 ```
+    
 # Create a task, name it whatever you'd like.
-say.hello:
+say.hello: 
     # Lets give it a quick summary. Optional.
     summary: I will say hello!
     # Describe how to use this task. Optional.
@@ -53,6 +53,46 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 `alfred speak` will perform both tasks in the specified order
 
 `alfred blurt` will perform both tasks at the same time
+
+# Every option
+### Note, you do not need to use them all, however, you can.
+
+Lets create a task that has _every_ option available in the -order- it's run in(note, you can put them in any order, but they will be executed in the following order)
+
+```
+alfred.vars:
+    var.one: somevar
+every.option*: # can be named anything you want. An `*` denotes it's an "important" task 
+    alias: every option # string separated list fof aliases for this task. 
+    dir: /tmp # defaults to where alfred.yml is found, else, uses this option. Dir is created if not exist
+    log: /tmp/log_output.txt # a log where all stdout/stdin of `command` is stored
+    setup: task.one task.two task.three # space separated list of task names. Run first
+    watch: '.*\.go' # a regular expression, that will watch for any files changed within the last second matching regex
+    modulenamehere: docker kill.remove containername # Anything that is not a valid key is a module(a task that is defined remotely)
+    summary: A quick description of this task. 
+    retry: 3 # How many times we should attempt to run the command option before giving up
+    command: | # run as bash -c "cmd here" 
+        echo "A simple command"
+        echo "That has multiple if you want"
+        echo "My github username is {{ index .Args 0 }}"
+        echo "The time this task ran is: {{ .Time }}"
+        echo "Every single argument on the command line you passed in: {{ .AllArgs }}
+        echo "The variable var.one is: {{ index .Vars "var.one" }}
+    wait: 10s # a golang duration to pause after each `retry` and/or `command`
+    fail: task.failed.one task.failed.two # a space separated list of tasks to execute when `command` has returned a non zero exit code
+    skip: true # Useful if you want to skip this task on failure(instead of exiting completely)
+    exit: 43 # if `command` fails, exit with this error code
+    multitask: task.one task.two # a string separated list off tasks that will be fired off at once. Waits for all tasks to complete.
+    tasks: task.one task.two task.three # space separated list of tasks to run if `command` is succesful(or empty)
+    ok: task.ok.one task.ok.two # space separated list of tasks to run if `command` is succesful(or empty)
+    every: 10s # a golang duration that will run this exact task every X golang duration. 
+    private: false # a bool indicating if this task can only be called from within alfred from another task.
+    usage: alfred every.option # a string indicating how you can use the task
+    defaults: # default args if you do not pass them in
+        - "kcmerrill" # see the third command `command` as this will be {{ index .Args 0 }} if no args are passed into alfred
+    
+
+```
 
 ## Installation
 ` $ go get github.com/kcmerrill/alfred`
