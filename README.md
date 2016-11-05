@@ -97,6 +97,14 @@ every.option*: # can be named anything you want. An `*` denotes it's an "importa
 ## Installation
 ` $ go get github.com/kcmerrill/alfred`
 
+## Update Alfred
+` $ go get -u github.com/kcmerrill/alfred`
+
+or 
+
+` $ alfred /self update` # [remote module in action!](https://github.com/kcmerrill/alfred/blob/master/modules/self/alfred.yml#L20-L24).
+
+
 ## Binaries
 ![Mac OSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64)
 
