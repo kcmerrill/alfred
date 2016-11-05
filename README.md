@@ -76,6 +76,7 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 * No need to be in the same directory when running alfred if it's local, as long as it's in a parent directory
 * Fire off multiple tasks at once
 * Variables, regular text and command line evaluated
+* Watch for file edits via regex
 
 
 ## Why
