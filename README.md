@@ -6,7 +6,7 @@ Because even Batman needs a little help.
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred.jpg "Alfred")
 
 ## What is it
-A simple go/yaml powered make file with a bit of a twist.
+A simple go/yaml powered make file/task runner with a bit of a twist. 
 
 ## TL;DR
 Create a file named: `alfred.yml`
