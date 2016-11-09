@@ -22,6 +22,6 @@ pull:
 clean:
     summary: Clean up docker volumes and unused images/containers
     command: |
-        sudo docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo docker rm
+        docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs docker rm
         docker volume ls -qf dangling=true | xargs -r docker volume rm
         
