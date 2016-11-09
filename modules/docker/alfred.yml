@@ -24,4 +24,5 @@ clean:
     command: |
         docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs docker rm
         docker volume ls -qf dangling=true | xargs -r docker volume rm
+        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /etc:/etc spotify/docker-gc
         
