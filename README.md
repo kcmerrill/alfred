@@ -104,14 +104,6 @@ or
 
 ` $ alfred /self update` # [remote module in action!](https://github.com/kcmerrill/alfred/blob/master/modules/self/alfred.yml#L20-L24).
 
-
-## Binaries
-![Mac OSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64)
-
-![Windows](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/windows_logo.png "Windows") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/windows/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/windows/amd64)
-
-![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux") [386](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/386) | [amd64](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
-
 ## Example uses
 * Monitor webistes with reusable tasks(see example)
 * Setup/Update/Deploy projects in your dev env
