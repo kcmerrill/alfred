@@ -1,7 +1,7 @@
 automagicproxy:
     summary: Start Automagicproxy
     command: >
-        docker exec -ti automagicproxy hostname ||
+        docker exec -ti automagicproxy hostname || docker start automagicproxy || 
         docker
         run
         -d
