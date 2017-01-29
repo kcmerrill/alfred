@@ -1,0 +1,10 @@
+hash: 774f376f1778ca01a8a6644adb5b4111fd7dadbe83be58842c9b7f84fd91ea73
+updated: 2017-01-29T12:17:03.814060146-07:00
+imports:
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/mux
+  version: 392c28fe23e1c45ddba891b0320b3b5df220beea
+- name: gopkg.in/yaml.v2
+  version: 4c78c975fe7c825c6d1466c42be594d1d6f3aba6
+testImports: []

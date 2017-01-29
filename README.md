@@ -6,14 +6,14 @@ Because even Batman needs a little help.
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred.jpg "Alfred")
 
 ## What is it
-A simple go/yaml powered make file/task runner with a bit of a twist. 
+A simple go/yaml powered make file/task runner with a bit of a twist.
 
 ## TL;DR
 Create a file named: `alfred.yml`
 ```
-    
+
 # Create a task, name it whatever you'd like.
-say.hello: 
+say.hello:
     # Lets give it a quick summary. Optional.
     summary: I will say hello!
     # Describe how to use this task. Optional.
@@ -62,16 +62,16 @@ Lets create a task that has _every_ option available in the -order- it's run in(
 ```
 alfred.vars:
     var.one: somevar
-every.option*: # can be named anything you want. An `*` denotes it's an "important" task 
-    alias: every option # string separated list fof aliases for this task. 
+every.option*: # can be named anything you want. An `*` denotes it's an "important" task
+    setup: task.one task.two task.three # space separated list of task names. Run first before anything else
+    alias: every option # string separated list fof aliases for this task.
     dir: /tmp # defaults to where alfred.yml is found, else, uses this option. Dir is created if not exist
     log: /tmp/log_output.txt # a log where all stdout/stdin of `command` is stored
-    setup: task.one task.two task.three # space separated list of task names. Run first
     watch: '.*\.go' # a regular expression, that will watch for any files changed within the last second matching regex
     modulenamehere: docker kill.remove containername # Anything that is not a valid key is a module(a task that is defined remotely)
-    summary: A quick description of this task. 
+    summary: A quick description of this task.
     retry: 3 # How many times we should attempt to run the command option before giving up
-    command: | # run as bash -c "cmd here" 
+    command: | # run as bash -c "cmd here"
         echo "A simple command"
         echo "That has multiple if you want"
         echo "My github username is {{ index .Args 0 }}"
@@ -85,12 +85,12 @@ every.option*: # can be named anything you want. An `*` denotes it's an "importa
     multitask: task.one task.two # a string separated list off tasks that will be fired off at once. Waits for all tasks to complete.
     tasks: task.one task.two task.three # space separated list of tasks to run if `command` is succesful(or empty)
     ok: task.ok.one task.ok.two # space separated list of tasks to run if `command` is succesful(or empty)
-    every: 10s # a golang duration that will run this exact task every X golang duration. 
+    every: 10s # a golang duration that will run this exact task every X golang duration.
     private: false # a bool indicating if this task can only be called from within alfred from another task.
     usage: alfred every.option # a string indicating how you can use the task
     defaults: # default args if you do not pass them in
         - "kcmerrill" # see the third command `command` as this will be {{ index .Args 0 }} if no args are passed into alfred
-    
+
 
 ```
 
@@ -100,7 +100,7 @@ every.option*: # can be named anything you want. An `*` denotes it's an "importa
 ## Update Alfred
 ` $ go get -u github.com/kcmerrill/alfred`
 
-or 
+or
 
 ` $ alfred /self update` # [remote module in action!](https://github.com/kcmerrill/alfred/blob/master/modules/self/alfred.yml#L20-L24).
 

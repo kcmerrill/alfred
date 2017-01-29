@@ -123,6 +123,14 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 	/* Infinite loop Used for the every command */
 	for {
+
+		/* Run our setup tasks */
+		for _, s := range a.Tasks[task].SetupTasks() {
+			if !a.runTask(s, args, formatted) {
+				break
+			}
+		}
+
 		taskok := true
 
 		/* change to the original directory */
@@ -146,13 +154,6 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 				} else {
 					os.Chdir(a.Tasks[task].Dir)
 				}
-			}
-		}
-
-		/* Run our setup tasks */
-		for _, s := range a.Tasks[task].SetupTasks() {
-			if !a.runTask(s, args, formatted) {
-				break
 			}
 		}
 
