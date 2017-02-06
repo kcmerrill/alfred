@@ -173,3 +173,9 @@ twentyeight:
     summary: You can watch for file changes too! Takes a regular expression
     watch: '.*\.go$'
     tasks: test
+
+twentynine:
+    summary: Commands is multiple command separated by newlines
+    commands: |
+        ls /doesnotexist
+        touch /tmp/commands.txt

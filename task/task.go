@@ -15,6 +15,7 @@ import (
 A brief explination:
  - Summary: text showing what the command is about
  - Command: the shell command to run
+ - Commands: the shell command to run(except each line is it's own separate command)
  - Usage: explains how to use the command
  - Dir: Change to this directory for this particular command
  - Tasks: a space seperated list of strings that represent tasks to run
@@ -39,6 +40,7 @@ A brief explination:
 type Task struct {
 	Summary   string
 	Command   string
+	Commands  string
 	Usage     string
 	Dir       string
 	Tasks     string
