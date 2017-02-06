@@ -18,13 +18,13 @@ build:
 push:
     summary: Push alfred
     command: git status
-    tasks: verification build test dockerize docker.push commit
+    tasks: verification build test pause dockerize docker.push commit
 
 test:
     summary: Testing ...
     command: |
         go test -v
-    fail: pause
+    exit: 1
 
 commit:
     summary: Commit changes

@@ -36,7 +36,7 @@ func run(cmd string, t *testing.T) (string, error) {
 
 func TestCurrentDirectory(t *testing.T) {
 	if cur, err := os.Getwd(); err == nil {
-		if !strings.HasSuffix(cur, "examples/demo-everything") {
+		if !strings.Contains(cur, "examples/demo-everything") {
 			t.Logf("Unable to properly switch to examples/demo-everything")
 			t.Fail()
 		}
@@ -108,7 +108,7 @@ func TestSimpleCommand(t *testing.T) {
 func TestDirKey(t *testing.T) {
 	sut, _ := run("alfred three", t)
 
-	if !strings.HasSuffix(sut, "/tmp") {
+	if !strings.Contains(sut, "/tmp") {
 		t.Logf("The directory should have changed to /tmp")
 		t.FailNow()
 	}
