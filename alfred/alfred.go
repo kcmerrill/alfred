@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/kcmerrill/alfred/remote"
 	"github.com/kcmerrill/alfred/task"
 	"gopkg.in/yaml.v2"
@@ -212,12 +213,20 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		/* The task failed ... */
 		if !taskok {
+			red := color.New(color.FgRed).SprintFunc()
+			fmt.Println("\n---")
+			fmt.Println(red("✘"), task)
+
 			/* Failed? Lets run the failed tasks */
 			for _, failed := range a.Tasks[task].FailedTasks() {
 				if !a.runTask(failed, args, formatted) {
 					break
 				}
 			}
+		} else {
+			green := color.New(color.FgGreen).SprintFunc()
+			fmt.Println("\n---")
+			fmt.Println(green("✔"), task)
 		}
 
 		/* Handle skips ... */

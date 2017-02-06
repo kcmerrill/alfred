@@ -23,7 +23,7 @@ push:
 test:
     summary: Testing ...
     command: |
-        go test
+        go test -v
     fail: pause
 
 commit:
