@@ -19,7 +19,7 @@ edit:
 
 update:
     summary: Update alfred
-    command: sw_vers
+    test: sw_vers
     fail: update.linux
     ok: update.mac
 
