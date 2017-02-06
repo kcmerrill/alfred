@@ -14,6 +14,7 @@ import (
 /* Contains our task information
 A brief explination:
  - Summary: text showing what the command is about
+ - Test: the shell command to run before continuing ..
  - Command: the shell command to run
  - Commands: the shell command to run(except each line is it's own separate command)
  - Usage: explains how to use the command
@@ -39,6 +40,7 @@ A brief explination:
 */
 type Task struct {
 	Summary   string
+	Test      string
 	Command   string
 	Commands  string
 	Usage     string
@@ -211,6 +213,28 @@ func (t *Task) CommandBasic(cmd string) bool {
 		}
 	}
 	/* If there was no command to run, then don't fail the task */
+	return true
+}
+
+/* Test
+   Currently lets just run a command, BUT, in the future I'd love to see:
+   file.exists "filename"
+   dir.exists "dirname"
+   dir.age 15m
+   file.age 15m
+   etc etc ..
+*/
+func (t *Task) TestF(tst string) bool {
+	if tst != "" {
+		cmd := exec.Command("bash", "-c", tst)
+		if cmd.Run() == nil {
+			/* Was it succesful? */
+			return true
+		} else {
+			return false
+		}
+	}
+	/* If there was no command to run, then don't fail the test */
 	return true
 }
 

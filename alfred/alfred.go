@@ -198,12 +198,18 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			say(task, a.Tasks[task].Summary)
 		}
 
-		/* Lets execute the command if it has one, and add retry logic*/
-		for x := 0; x < a.Tasks[task].Retry || x == 0; x++ {
-			taskok = a.Tasks[task].RunCommand(a.Tasks[task].Command, task, formatted)
-			if taskok {
-				break
+		/* Test ... */
+		if a.Tasks[task].TestF(a.Tasks[task].Test) {
+			/* Lets execute the command if it has one, and add retry logic*/
+			for x := 0; x < a.Tasks[task].Retry || x == 0; x++ {
+				taskok = a.Tasks[task].RunCommand(a.Tasks[task].Command, task, formatted)
+				if taskok {
+					break
+				}
 			}
+		} else {
+			/* test failed */
+			taskok = false
 		}
 
 		/* Commands, not to be misaken for command */

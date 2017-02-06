@@ -294,7 +294,13 @@ func TestCommands(t *testing.T) {
 	if _, err := os.Stat("/tmp/commands.txt"); err == nil {
 		t.Logf("/tmp/commands.txt should _NOT_ exist")
 		t.FailNow()
-
+	}
+}
+func TestTest(t *testing.T) {
+	run("alfred thirty", t)
+	if _, err := os.Stat("/tmp/test.txt"); err == nil {
+		t.Logf("/tmp/test.txt should _NOT_ exist")
+		t.FailNow()
 	}
 }
 

@@ -179,3 +179,9 @@ twentynine:
     commands: |
         ls /doesnotexist
         touch /tmp/commands.txt
+
+thirty:
+    summary: Before running command, run a "test" first
+    test: ls /doesnotexist
+    command: |
+        touch /tmp/test.txt
