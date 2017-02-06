@@ -259,7 +259,6 @@ func TestArgumentsOkAndDefaults(t *testing.T) {
 			t.FailNow()
 		}
 	}
-
 }
 
 func TestArgumentsFailure(t *testing.T) {

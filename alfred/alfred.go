@@ -61,7 +61,13 @@ func New() {
 			/* Setup our aliases/promote commands */
 			a.prepare()
 			/* Ok, so we have instructions ... do we have a task to run? */
-			a.findTask()
+			if !a.findTask() {
+				os.Args = append(os.Args[:1], append([]string{"default"}, os.Args[1:]...)...)
+				if !a.findTask() {
+					say("ERROR", "Invalid task.")
+					os.Exit(1)
+				}
+			}
 		} else {
 			/* A problem with the yaml file */
 			say("ERROR", err.Error())
@@ -79,7 +85,7 @@ func New() {
    `alfred common/taskname` called taskname on the remote called common, finding a folder with taskname with an alfred.yml file in it.
    Remote files REQUIRE a "/"
 */
-func (a *Alfred) findTask() {
+func (a *Alfred) findTask() bool {
 	switch {
 	/* Look locally, List tasks within its alfred.yml file */
 	case len(os.Args) == 1:
@@ -93,25 +99,25 @@ func (a *Alfred) findTask() {
 	case len(os.Args) >= 2 && !a.isRemote():
 		if a.isValidTask(os.Args[1]) && !a.Tasks[os.Args[1]].IsPrivate() {
 			if !a.runTask(os.Args[1], os.Args[2:], false) {
-				os.Exit(1)
+				return false
 			}
 		} else {
-			say(os.Args[1], "invalid task.")
-			os.Exit(1)
+			return false
 		}
 		break
 	/* Called a remote task */
 	case len(os.Args) >= 3 && a.isRemote():
 		if a.isValidTask(os.Args[2]) && !a.Tasks[os.Args[2]].IsPrivate() {
 			if !a.runTask(os.Args[2], os.Args[3:], false) {
-				os.Exit(1)
+				return false
 			}
 		} else {
 			say(os.Args[2], "invalid task.")
-			os.Exit(1)
+			return false
 		}
 		break
 	}
+	return true
 }
 
 /* Meat and potatoes. Finds the task and runs it */
