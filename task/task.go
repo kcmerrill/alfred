@@ -245,6 +245,13 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		}
 	}
 
+	/* Any null values? If so, bail ... */
+	for _, value := range t.Args {
+		if value == "" {
+			return false
+		}
+	}
+
 	t.Time = new(time.Time)
 
 	/* All of the modules */
