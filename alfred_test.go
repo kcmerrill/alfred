@@ -162,6 +162,7 @@ func TestTaskFail(t *testing.T) {
 	sut, err := run("alfred nine", t)
 
 	if err != nil {
+		fmt.Println("FAIL---", err)
 		t.Logf("While the task failed, alfred should report 0 exit code")
 		t.FailNow()
 	}
@@ -285,6 +286,15 @@ func TestRetryLogic(t *testing.T) {
 			t.Logf("Expected Retry logic 3 times")
 			t.FailNow()
 		}
+	}
+}
+
+func TestCommands(t *testing.T) {
+	run("alfred twentynine", t)
+	if _, err := os.Stat("/tmp/commands.txt"); err == nil {
+		t.Logf("/tmp/commands.txt should _NOT_ exist")
+		t.FailNow()
+
 	}
 }
 

@@ -206,6 +206,17 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			}
 		}
 
+		/* Commands, not to be misaken for command */
+		if taskok {
+			cmds := strings.Split(a.Tasks[task].Commands, "\n")
+			for _, c := range cmds {
+				taskok = a.Tasks[task].RunCommand(c, task, formatted)
+				if !taskok {
+					break
+				}
+			}
+		}
+
 		/* Wait ... */
 		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
 			<-time.After(wait_duration)
