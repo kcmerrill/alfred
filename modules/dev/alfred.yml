@@ -41,3 +41,8 @@ phpinfo:
         echo "<?php phpinfo();" > index.php
         alfred /docker kill.remove phpinfo
         docker run -d -P -v $PWD/phpinfo:/var/www/html --name phpinfo kcmerrill/base
+        
+jenkins:
+    summary: Start a jenkins env
+    command: |
+         docker start jenkins || docker run -d  -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) --name=jenkins -p 8080:8080 -p 50000:50000 --user root jenkins
