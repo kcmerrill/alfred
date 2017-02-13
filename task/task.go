@@ -306,6 +306,12 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		return false
 	}
 
+	if cmd_ok, cmd_translated := t.template(t.Commands); cmd_ok {
+		t.Commands = cmd_translated
+	} else {
+		return false
+	}
+
 	if dir_ok, dir_translated := t.template(t.Dir); dir_ok {
 		t.Dir = dir_translated
 	} else {
