@@ -30,7 +30,6 @@ fetch-proxy:
         --restart=always
         --name fetch-proxy
         kcmerrill/fetch-proxy
-        --dockerized
         --containerized
         {{ index .Args 0 }}
     defaults:
