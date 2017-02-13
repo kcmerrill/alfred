@@ -2,7 +2,7 @@ github:
     summary: Install a github repo
     usage: alfred /project setup user/repo
     git: clone {{ index .Args 0 }}
-    tasks: setup
+    tasks: install
     exit: 1
 
 github-revision:
@@ -16,9 +16,7 @@ setup:
     summary: Run alfred setup
     command: |
         cd $(ls -td -- */ | head -n 1)
-        alfred setup
-        alfred up
-        alfred test
+        alfred install
 
 setup-revision:
     summary: Checkout a specific revision
@@ -30,4 +28,3 @@ setup-revision:
         alfred test
     defaults:
         - master
-
