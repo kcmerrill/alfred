@@ -1,7 +1,8 @@
 automagicproxy:
-    summary: Start Automagicproxy
+    alias: fetch-proxy
+    summary: Start Proxy
     command: >
-        docker exec -ti automagicproxy hostname || docker start automagicproxy || 
+        docker exec -ti fetch-proxy hostname || docker start fetch-proxy || 
         docker
         run
         -d
@@ -9,8 +10,8 @@ automagicproxy:
         -p 443:443
         -v /var/run/docker.sock:/var/run/docker.sock
         --restart=always
-        --name automagicproxy
-        kcmerrill/automagicproxy
+        --name fetch-proxy
+        kcmerrill/fetch-proxy
         --dockerized
         --containerized
         {{ index .Args 0 }}
@@ -20,14 +21,14 @@ automagicproxy:
 
 staticwebserver:
     summary: Start a static webserver
-    tasks: automagicproxy
+    tasks: fetch-proxy
     command: |
         alfred /docker kill.remove ${PWD##*/}
         docker run -d -P -v $PWD:/var/www/html --name ${PWD##*/} kcmerrill/base
 
 webserver:
     summary: Start a webserver(requires html directory)
-    tasks: automagicproxy
+    tasks: fetch-proxy
     command: |
         alfred /docker kill.remove ${PWD##*/}
         docker run -d -P -v $PWD:/var/www --name ${PWD##*/} kcmerrill/base
@@ -35,7 +36,7 @@ webserver:
 
 phpinfo:
     summary: PHPInfo for kcmerrill/base
-    tasks: automagicproxy
+    tasks: fetch-proxy
     dir: phpinfo
     command: |
         echo "<?php phpinfo();" > index.php
