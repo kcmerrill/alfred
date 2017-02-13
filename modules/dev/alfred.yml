@@ -1,6 +1,24 @@
 automagicproxy:
-    alias: fetch-proxy
     summary: Start Proxy
+    command: >
+        docker exec -ti automagicproxy hostname || docker start automagicproxy || 
+        docker
+        run
+        -d
+        -p 80:80
+        -p 443:443
+        -v /var/run/docker.sock:/var/run/docker.sock
+        --restart=always
+        --name automagicproxy
+        kcmerrill/automagicproxy
+        --dockerized
+        --containerized
+        {{ index .Args 0 }}
+    defaults:
+        - ""
+
+fetch-proxy:
+    summary: Start Fetch Proxy
     command: >
         docker exec -ti fetch-proxy hostname || docker start fetch-proxy || 
         docker
@@ -17,7 +35,6 @@ automagicproxy:
         {{ index .Args 0 }}
     defaults:
         - ""
-
 
 staticwebserver:
     summary: Start a static webserver
