@@ -15,8 +15,7 @@ github-revision:
 setup:
     summary: Run alfred setup
     command: |
-        cd $(ls -td -- */ | head -n 1)
-        alfred install
+        cd $(ls -td -- */ | head -n 1) && alfred install
 
 setup-revision:
     summary: Checkout a specific revision
