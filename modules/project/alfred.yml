@@ -2,7 +2,7 @@ github:
     summary: Install a github repo
     usage: alfred /project setup user/repo
     git: clone {{ index .Args 0 }}
-    tasks: install
+    tasks: setup
     exit: 1
 
 github-revision:
