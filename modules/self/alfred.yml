@@ -12,13 +12,8 @@ private:
     command: |
         vim $HOME/.alfred/alfred.yml
 
-edit:
-    summary: Edit the currently used alfred file
-    command: |
-        vim alfred.yml
-
 update:
-    summary: Update alfred
+    summary: update alfred
     test: sw_vers
     fail: update.linux
     ok: update.mac
@@ -26,17 +21,22 @@ update:
 update.linux:
     summary: Update alfred(linux). Sudo required
     dir: /tmp
-    command: |
-        wget http://go-dist.kcmerrill.com/kcmerrill/go-dist/linux/amd64
-        chmod +x amd64
+    commands: |
+        wget http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64 -o alfred
+        chmod +x alfred
         echo "I need to move alfred to /usr/local/bin/alfred"
-        sudo mv amd64 /usr/local/bin/alfred
+        sudo mv alfred /usr/local/bin/alfred
+    private: true
 
 update.mac:
     summary: Update alfred(mac). Sudo required
     dir: /tmp
-    command: |
-        wget http://go-dist.kcmerrill.com/kcmerrill/go-dist/mac/amd64
-        chmod +x amd64
+    commands: |
+        wget http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64 -o alfred
+        chmod +x alfred
         echo "I need to move alfred to /usr/local/bin/alfred"
-        sudo mv amd64 /usr/local/bin/alfred
+        sudo mv alfred /usr/local/bin/alfred
+    private: true
+
+
+
