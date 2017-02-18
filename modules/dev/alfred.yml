@@ -15,7 +15,7 @@ automagicproxy:
         --containerized
         {{ index .Args 0 }}
     defaults:
-        - ""
+        - " "
 
 fetch-proxy:
     summary: Start Fetch Proxy
@@ -33,7 +33,7 @@ fetch-proxy:
         --containerized
         {{ index .Args 0 }}
     defaults:
-        - ""
+        - " "
 
 staticwebserver:
     summary: Start a static webserver
