@@ -185,3 +185,11 @@ thirty:
     test: ls /doesnotexist
     command: |
         touch /tmp/test.txt
+
+thirtyone:
+    summary: Lets cleanup some arguments!
+    command: |
+        echo {{ index .CleanArgs 0 }}
+    defaults:
+        - bingo.was.-!hisnameo
+

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 	"text/template"
 	"time"
@@ -26,6 +27,7 @@ A brief explination:
  - Fail: Similiar to Tasks, except only when the task fails
  - AllArgs: Contains all of the arguments passed into alfred(that are not alfred specific)
  - Args: Used for templates to pass in arguments
+ - CleanArgs: Only alphanumeric cleaned up arguments
  - Vars: Used for templates to pass in variables
  - Time: Used primarily for templates inside alfred.yml files
  - Modules: Used for private/public repos and resuseable tasks
@@ -54,6 +56,7 @@ type Task struct {
 	Fail      string
 	AllArgs   string
 	Args      []string
+	CleanArgs []string
 	Vars      map[string]string
 	Time      *time.Time
 	Modules   map[string]string `yaml:",inline"`
@@ -274,6 +277,12 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		if value == "" {
 			return false
 		}
+	}
+
+	// Cleanup our values
+	reg, _ := regexp.Compile("[^A-Za-z0-9]+")
+	for _, value := range t.Args {
+		t.CleanArgs = append(t.CleanArgs, reg.ReplaceAllString(value, ""))
 	}
 
 	t.Time = new(time.Time)

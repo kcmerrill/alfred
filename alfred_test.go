@@ -302,6 +302,13 @@ func TestTest(t *testing.T) {
 		t.FailNow()
 	}
 }
+func TestCleanedArgs(t *testing.T) {
+	sut, _ := run("alfred thirtyone", t)
+	if !strings.Contains(sut, "bingowashisnameo") {
+		t.Logf("Expecting bingowashisnameo as a cleanedarg!")
+		t.FailNow()
+	}
+}
 
 func TestExample(t *testing.T) {
 	sut, _ := run("alfred", t)
