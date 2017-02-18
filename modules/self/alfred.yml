@@ -22,20 +22,20 @@ update.linux:
     summary: Update alfred(linux). Sudo required
     dir: /tmp
     commands: |
-        wget http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64 -o alfred
-        chmod +x alfred
+        wget http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64
+        chmod +x amd64
         echo "I need to move alfred to /usr/local/bin/alfred"
-        sudo mv alfred /usr/local/bin/alfred
+        sudo mv amd64 /usr/local/bin/alfred
     private: true
 
 update.mac:
     summary: Update alfred(mac). Sudo required
     dir: /tmp
     commands: |
-        wget http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64 -o alfred
-        chmod +x alfred
+        wget http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64
+        chmod +x amd64
         echo "I need to move alfred to /usr/local/bin/alfred"
-        sudo mv alfred /usr/local/bin/alfred
+        sudo mv amd64 /usr/local/bin/alfred
     private: true
 
 
