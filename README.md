@@ -57,24 +57,6 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 # Quick Walkthrough
 [![asciicast](https://asciinema.org/a/103711.png)](https://asciinema.org/a/103711)
 
-# Every option
-### Note, you do not need to use them all, however, you can.
-
-Lets create a task that has _every_ option available in the -order- it's run in(note, you can put them in any order, but they will be executed in the following order)
-
-```
-alfred.vars:
-    var.one: somevar
-every.option*: # can be named anything you want. An `*` denotes it's an "important" task
-    setup: task.one task.two task.three # space separated list of task names. Run first before anything else
-    alias: every option # string separated list fof aliases for this task.
-    dir: /tmp # defaults to where alfred.yml is found, else, uses this option. Dir is created if not exist
-    log: /tmp/log_output.txt # a log where all stdout/stdin of `command` is stored
-    watch: '.*\.go' # a regular expression, that will watch for any files changed within the last second matching regex
-    modulenamehere: docker kill.remove containername # Anything that is not a valid key is a module(a task that is defined remotely)
-    summary: A quick description of this task.
-    retry: 3 # How many times we should attempt to run the command option before giving up
-```
 
 ## Example uses
 * Monitor webistes with reusable tasks(see example)
