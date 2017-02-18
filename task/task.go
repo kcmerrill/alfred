@@ -42,36 +42,38 @@ A brief explination:
  - Retry: When set, will attempt to retry the command X number of times
  - Watch: A regular expression of changed files
  - Setup: Similiar to tasks but these get run _before_ the command/task group gets called
+ - TaskNumber: What task number is this?
 */
 type Task struct {
-	Summary   string
-	Test      string
-	Command   string
-	Commands  string
-	Usage     string
-	Dir       string
-	Tasks     string
-	Setup     string
-	Multitask string
-	Every     string
-	Wait      string
-	Ok        string
-	Fail      string
-	AllArgs   string
-	Args      []string
-	CleanArgs []string
-	UUID      string
-	Vars      map[string]string
-	Time      time.Time
-	Modules   map[string]string `yaml:",inline"`
-	Defaults  []string
-	Alias     string
-	Private   bool
-	Exit      string
-	Skip      bool
-	Log       string
-	Retry     int
-	Watch     string
+	Summary    string
+	Test       string
+	Command    string
+	Commands   string
+	Usage      string
+	Dir        string
+	Tasks      string
+	Setup      string
+	Multitask  string
+	Every      string
+	Wait       string
+	Ok         string
+	Fail       string
+	AllArgs    string
+	Args       []string
+	CleanArgs  []string
+	UUID       string
+	Vars       map[string]string
+	Time       time.Time
+	Modules    map[string]string `yaml:",inline"`
+	Defaults   []string
+	Alias      string
+	Private    bool
+	Exit       string
+	Skip       bool
+	Log        string
+	Retry      int
+	Watch      string
+	TaskNumber int
 }
 
 /* Is the task private? */
@@ -254,8 +256,9 @@ func (t *Task) Eval(cmd string) string {
 	return string(out)
 }
 
-/* Setup a bunch of things, including templates and argument defeaults */
-func (t *Task) Prepare(args []string, vars map[string]string) bool {
+// Prepare will setup a bunch of things, including templates and argument defeaults
+func (t *Task) Prepare(args []string, vars map[string]string, taskNumber int) bool {
+	t.TaskNumber = taskNumber
 	t.Args = t.Defaults
 
 	if t.Vars == nil {

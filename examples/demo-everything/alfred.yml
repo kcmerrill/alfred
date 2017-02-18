@@ -201,3 +201,8 @@ thirtythree:
     summary: Time.time usage
     command:
         echo {{ .Time.Unix }}
+
+thirtyfive:
+    alias: thirtysix
+    summary: Look at the task number
+    command:  echo TaskNumber - {{ index .TaskNumber }}
