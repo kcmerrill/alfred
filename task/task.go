@@ -10,6 +10,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/satori/go.uuid"
 )
 
 /* Contains our task information
@@ -28,6 +30,7 @@ A brief explination:
  - AllArgs: Contains all of the arguments passed into alfred(that are not alfred specific)
  - Args: Used for templates to pass in arguments
  - CleanArgs: Only alphanumeric cleaned up arguments
+ - UUID: A random UUID string
  - Vars: Used for templates to pass in variables
  - Time: Used primarily for templates inside alfred.yml files
  - Modules: Used for private/public repos and resuseable tasks
@@ -57,8 +60,9 @@ type Task struct {
 	AllArgs   string
 	Args      []string
 	CleanArgs []string
+	UUID      string
 	Vars      map[string]string
-	Time      *time.Time
+	Time      time.Time
 	Modules   map[string]string `yaml:",inline"`
 	Defaults  []string
 	Alias     string
@@ -285,7 +289,11 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		t.CleanArgs = append(t.CleanArgs, reg.ReplaceAllString(value, ""))
 	}
 
-	t.Time = new(time.Time)
+	// Setup a UUID
+	t.UUID = uuid.NewV4().String()
+
+	// Setup time
+	t.Time = time.Now()
 
 	/* All of the modules */
 	for key, value := range t.Modules {

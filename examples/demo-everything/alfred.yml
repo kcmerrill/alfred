@@ -193,3 +193,11 @@ thirtyone:
     defaults:
         - bingo.was.-!hisnameo
 
+thirtytwo:
+    summary: Grab a UUID/Random string
+    command: echo {{ .UUID }}
+
+thirtythree:
+    summary: Time.time usage
+    command:
+        echo {{ .Time.Unix }}

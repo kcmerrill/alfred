@@ -1,20 +1,25 @@
-hash: 34c69f3c76ea0a2f9ad0ea150b8d613e5c9dd86d8a14e1a5418a889096c414e4
-updated: 2017-02-05T17:02:14.283057537-07:00
+hash: 2463732fe2ab475629587c5a144a802e5bbfb9880a4d04794278c8dbd7f764cb
+updated: 2017-02-18T10:24:26.640488067-07:00
 imports:
 - name: github.com/fatih/color
-  version: 42c364ba490082e4815b5222728711b3440603eb
+  version: 7824417a424b65227be8ac9b14d545a7f3e6c3f0
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
   version: 392c28fe23e1c45ddba891b0320b3b5df220beea
 - name: github.com/mattn/go-colorable
-  version: d228849504861217f796da67fae4f6e347643f15
+  version: 5411d3eea5978e6cdc258b30de592b60df6aba96
+  repo: https://github.com/mattn/go-colorable
 - name: github.com/mattn/go-isatty
-  version: 30a891c33c7cde7b02a981314b4228ec99380cca
+  version: dda3de49cbfcec471bd7a70e6cc01fcc3ff90109
+  repo: https://github.com/mattn/go-isatty
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: golang.org/x/sys
-  version: 7a6e5648d140666db5d920909e082ca00a87ba2c
+  version: e24f485414aeafb646f6fca458b0bf869c0880a1
+  repo: https://go.googlesource.com/sys
   subpackages:
   - unix
 - name: gopkg.in/yaml.v2
-  version: 4c78c975fe7c825c6d1466c42be594d1d6f3aba6
+  version: a3f3340b5840cee44f372bddb5880fcbc419b46a
 testImports: []
