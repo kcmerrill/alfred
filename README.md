@@ -8,7 +8,7 @@ Because even Batman needs a little help.
 ## What is it
 A simple go/yaml powered make file/task runner with a bit of a twist.
 
-## TL;DR
+## Usage
 Create a file named: `alfred.yml`
 ```
 
@@ -73,7 +73,7 @@ every.option*: # can be named anything you want. An `*` denotes it's an "importa
     watch: '.*\.go' # a regular expression, that will watch for any files changed within the last second matching regex
     modulenamehere: docker kill.remove containername # Anything that is not a valid key is a module(a task that is defined remotely)
     summary: A quick description of this task.
-    retry: 3 # How many times we should attempt to run the command option before giving up
+    retry: 3 # How many times we should attempt to run the command option before giving up```
 
 
 ## Example uses
