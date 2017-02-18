@@ -73,8 +73,8 @@ every.option*: # can be named anything you want. An `*` denotes it's an "importa
     watch: '.*\.go' # a regular expression, that will watch for any files changed within the last second matching regex
     modulenamehere: docker kill.remove containername # Anything that is not a valid key is a module(a task that is defined remotely)
     summary: A quick description of this task.
-    retry: 3 # How many times we should attempt to run the command option before giving up```
-
+    retry: 3 # How many times we should attempt to run the command option before giving up
+```
 
 ## Example uses
 * Monitor webistes with reusable tasks(see example)
@@ -87,7 +87,7 @@ every.option*: # can be named anything you want. An `*` denotes it's an "importa
 ## Common modules
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_slack.png "Alfred")
 
-This is the `notify` module in action.
+This is the `notify` module in action. `alfred /notify slack ...`
 
 ## Alfred files getting too large?
 You can break up your alfred files in multiple ways. The following are glob patterns that can be used:`/alfred.yml`, `/.alfred/*alfred.yml`, `/alfred/*alfred.yml`. As an example, you can create a directory called `alfred` or `.alfred` or just create mutliple alfred files.
