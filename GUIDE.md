@@ -31,7 +31,10 @@ User Guide
       * [Exit](#exit)
       * [OK](#ok)
       * [Every](#every)
-
+   * [Arguments, Variables and Templates Oh My!](#arguments-variables-and-templates-oh-my)
+      * [TaskNumber](#tasknumber)
+      * [Date/Time](#datetime)
+      * [UUID](#uuid)
 
 # What is Alfred?
 [Alfred](/ "Alfred") is a simple yaml based task runner. It helps automate tedious tasks among many things. I built it primarily as a replacement to `docker-compose` as an evolution to [Yoda](http://github.com/kcmerrill/yoda "Yoda") however it's grown into something a bit bigger. It's been used for all kinds of automated tasks, and has become part of my daily workflow automating tedious tasks I was previously doing by hand. Another reason it's been great is the automation of dev workflows. Setting up configuration files, creating symlinks, running all sorts of commands in the proper order in order to get dev boxes up and running as quickly as possible. Get
@@ -50,7 +53,7 @@ User Guide
 I've used alfred for many things, and as I build commonly run tasks I try to share them via remote modules. Some examples.
 
 ## Docker-Compose replacement
-I like docker and docker-compose, but it was lacking for some of my needs. The inability to pull/build images in parallel was frustrating. Especially in larger build systems. On top of that, docker-compose does one thing and it does it really well. The problem with docker comes to dev box orchestration. Setting up symlinks, moving configs here and there. Starting up microservices in just the right order, putting code exactly in differnet spots and coordinating multiple git repos became a nightmare. This is a pretty common example of using alfred to setup a dev env. By pulling, building and running multiple microservices(20+) we were able to take build times and cut them literally in half. This was used for new hire onboarding and it was a smashing success.
+I like docker and docker-compose, but it was lacking for some of my needs. The inability to pull/build images in parallel was frustrating. Especially in larger build systems. On top of that, docker-compose does one thing and it does it really well. The problem with docker is when it comes to dev box orchestration in my opinion. Setting up symlinks, moving configs here and there. Starting up microservices in just the right order, putting code exactly in differnet spots and coordinating multiple git repos became a nightmare. This is a pretty common example of using alfred to setup a dev env. By pulling, building and running multiple microservices(20+) we were able to take build times and cut them literally in half.
 
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_benchmark.png "Alfred")
 
@@ -570,4 +573,51 @@ A few things to note:
 say.hello:
     summary: Saying hello every second!
     every: 1s
+```
+
+# Arguments, Variables and Templates Oh My!
+Alfred allows the use of variables and arguments to be passed in. This allows tasks to be reusable bits of code.  Using `alfred task.name zero one two three etc` as our example, the argument immediately following the task.name start at index zero. Knowing this, you can then inject this into a wide variety of task components. By using the `defaults` task component, you can set the defaults too.
+
+```
+do.you.know:
+    summary: Do you know?
+    command: |
+        echo "Do you know {{ index .Args 0 }}
+    defaults:
+        - The muffin man
+```
+
+```
+$ alfred do.you.know
+// Do you know The muffin man
+```
+
+If you do not specify defaults, alfred will exit due to insufficient arguments passed in.
+
+## TaskNumber
+The tasknumber variable is the task count that's run. You can use it by using `{{ .TaskNumber }} `
+```
+task.name:
+    summary: My task!
+    command: |
+        echo "This was the {{ .TaskNumber }} to run ..."
+```
+
+## Date/Time
+Every task is injected with the time that the particular task started. You can use it in your task by using `{{ .Time }}`
+```
+task.name:
+    summary: Another task!
+    command: |
+        echo "The date/time object you can play with can be found here: {{ .Time }}"
+        echo "The epoch time is: {{ .Time.Unix }}
+```
+
+## UUID
+Every task is injected with a UUID4 string. You can use it in your task by using `{{ .UUID }}`
+```
+another.task:
+    summary: Woot! Another task
+    command: |
+        echo The UUID is {{ .UUID }}
 ```
