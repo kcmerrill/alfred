@@ -441,7 +441,7 @@ Example use cases:
  - A continuation of a build process if tests passed. Deploy for example.
  - HTTP/Service check. If ok, send metrics indicating so. Same thing with fail.
 
- A few things to note:
+A few things to note:
   - Tasks continue on to the next task in the list unless the exit is provoked at which point the process stops
 
 ```
