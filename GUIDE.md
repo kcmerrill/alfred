@@ -2,7 +2,7 @@
 Here you'll find additional documentation regarding [alfred](/ "alfred") and it's features and additional use cases.
 
 ## Tasks
-Tasks are made up of a series of components. They can do do whatever you wish them to and they can be as complex or as simple as required. You might have a task whose whole purpose is to call other tasks, or perhaps just to simplly echo messages, or read input from the user. It's up to you!
+Tasks are made up of a series of components. They can do do whatever you wish them to and they can be as complex or as simple as required. You might have a task whose only purpose is to call other tasks, or perhaps just to simply echo messages, or read input from the user. It's up to you!
 
 The naming convention of tasks is completly up to you as well. So long as it doesn't violate yaml marshalling. 
 
