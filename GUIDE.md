@@ -77,13 +77,15 @@ mytask:
 ```
 
 #### Dir
-If set to a non empty string, will create the directory if not exist. 
+The default starting location for this particular task. If set to a non empty string, will create the directory if not exist. 
 
 
 A few things to note:
  - Relative paths are relative to the `alfred.yml` file. 
  - Directories that do not exist will attempt to be created. If unable, the task will fail. 
- - Be careful when used in multitask. Setup your tasks accordingly.
+ - Be careful when used in multitask(not guarenteed the dir due to other tasks). Setup your tasks accordingly.
+ - Every task starts by default to the location of the alfred, including tasks run after `dir` is set. 
+ - `dir` is for this task only, and not for any downstream tasks.
 ```
 example.task:
     summary: Will change this task to the specified directory
