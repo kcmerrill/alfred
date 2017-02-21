@@ -1,8 +1,11 @@
-Table of Contents
+User Guide
 =================
 
-   * [Guide](#guide)
+      * [What is Alfred?](#what-is-alfred)
+      * [Features](#features)
       * [Tasks](#tasks)
+         * [Naming tasks](#naming-tasks)
+         * [Important tasks](#important-tasks)
       * [Task components](#task-components)
          * [Alias](#alias)
          * [Setup](#setup)
@@ -26,23 +29,35 @@ Table of Contents
          * [OK](#ok-1)
          * [Every](#every)
 
-# Guide
-Here you'll find additional documentation regarding [alfred](/ "alfred") and it's features and additional use cases.
+## What is Alfred?
+[Alfred](/ "Alfred") is a simple yaml based task runner. It helps automate tedious tasks among many things. I built it primarily as a replacement to `docker-compose` as an evolution to [Yoda](http://github.com/kcmerrill/yoda "Yoda") however it's grown into something a bit bigger. It's been used for all kinds of automated tasks, and has become part of my daily workflow automating tedious tasks I was previously doing by hand. Another reason it's been great is the automation of dev workflows. Setting up configuration files, creating symlinks, running all sorts of commands in the proper order in order to get dev boxes up and running as quickly as possible. Get
+
+## Features
+- Extendable. Common tasks(Private too)
+- Watch files for modifications
+- Retry/Rerun tasks based on failures before giving up 
+- Logging
+- Success/Failure decision tree
+- Run tasks asynchronously or synchronously 
+- Autocomplete task names
+- Many more! 
 
 ## Tasks
-Tasks are made up of a series of components. They can do do whatever you wish them to and they can be as complex or as simple as required. You might have a task whose only purpose is to call other tasks, or perhaps just to simply echo messages, or read input from the user. It's up to you!
+The way I think of tasks are like reusable functions but for shell scripts. They are built using components(just YAML key/value combinations). Your tasks can be anything you need/want them to be, and there isn't any required components. The only requirement is you use at least one. If not at least one, then there isn't a point to a task!
 
-The naming convention of tasks is completly up to you as well. So long as it doesn't violate yaml marshalling. 
+### Naming tasks
+Name the task whatever you'd like. Having built quite a few projects I'd recommend you come up with a naming convention.
 
 While formally, there is no such thing as task groups, using a `.` in the name is a great way of identifying groups of tasks. By "grouping" tasks together using a good naming convention will make it easier for those using your task file to know what's going on. `what.action` is a typical approach. 
 
 Examples:
-    * `servicea.build`
-    * `servicea.destroy`
-    * `docker.run.web`
-    * `docker.run.db`
+  - `servicea.build`
+  - `servicea.destroy`
+  - `docker.run.web`
+  - `docker.run.db`
 
-Task names with an `*` at the end of it's name denotes it's an "important" task. Important tasks are useful when your `alfred.yml` file gets rather large and you have a bunch of tasks, tasks that can be run from the command line and are not private, but perhaps not as useful as others. These tasks are showed at the bottom of the list output when running `alfred`. 
+### Important tasks
+Task names with an `*` at the end of it's name denotes it's an "important" task. Important tasks are useful when your `alfred.yml` file gets rather large and you have a bunch of tasks, tasks that can be run from the command line and are not private, but perhaps not as useful as others. These tasks are showed at the bottom of the list output when running `alfred` and tend to stick out more than a normal task.
 
 ```
 a.basic.task:
