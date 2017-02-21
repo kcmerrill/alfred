@@ -12,8 +12,11 @@ code.laptop:
 
 build:
     summary: Build alfred
-    command: go install && alfred
-    fail: pause
+    commands: |
+        rm -rf /code/go/bin/alfred
+        go build -ldflags "-X main.Commit=`git rev-parse HEAD` -X main.Version=0.1.`git rev-list --count HEAD`" -o /code/go/bin/alfred
+        alfred --version
+    exit: 1
 
 push:
     summary: Push alfred
