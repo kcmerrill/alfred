@@ -11,35 +11,24 @@ A simple go/yaml powered make file/task runner with a bit of a twist.
 ## Usage
 Create a file named: `alfred.yml`
 ```
-
-# Create a task, name it whatever you'd like.
 say.hello:
-    # Lets give it a quick summary. Optional.
     summary: I will say hello!
-    # Describe how to use this task. Optional.
     usage: alfred say.hello
-    # The command to perform
     command: echo "Hello!"
 
 say.howareyou:
-    # Lets give it a quick summary. Optional.
     summary: I will ask how you are
-    # Describe how to use this task. Optional.
     usage: alfred say.howareyou
-    # The command to perform
     command: |
         echo "How"
         echo "Are"
         echo "You?"
 
 speak:
-    # You can call multiple tasks in an order
     tasks: say.hello say.howareyou
 
 blurt:
-    # You can run multiple tasks at the same time
     multitask: say.hello say.howareyou
-
 ```
 
 Then, anywhere in the top-level or child directories to the `alfred.yml` file:
@@ -57,6 +46,7 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 # Quick Walkthrough
 [![asciicast](https://asciinema.org/a/103711.png)](https://asciinema.org/a/103711)
 
+[For additional documentation, please refer to the GUIDE](GUIDE.md "additional documentation")
 
 ## Example uses
 * Monitor webistes with reusable tasks(see example)
