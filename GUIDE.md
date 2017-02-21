@@ -1,8 +1,7 @@
 
-Table of Contents
+User Guide
 =================
 
-   * [Table of Contents](#table-of-contents)
    * [What is Alfred?](#what-is-alfred)
    * [Features](#features)
    * [Tasks](#tasks)
