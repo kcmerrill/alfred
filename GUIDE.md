@@ -35,6 +35,8 @@ User Guide
       * [TaskNumber](#tasknumber)
       * [Date/Time](#datetime)
       * [UUID](#uuid)
+   * [Alfred files getting too large?](#alfred-files-getting-too-large)
+   * [Tab completion](#tab-completion)
 
 # What is Alfred?
 [Alfred](/ "Alfred") is a simple yaml based task runner. It helps automate tedious tasks among many things. I built it primarily as a replacement to `docker-compose` as an evolution to [Yoda](http://github.com/kcmerrill/yoda "Yoda") however it's grown into something a bit bigger. It's been used for all kinds of automated tasks, and has become part of my daily workflow automating tedious tasks I was previously doing by hand. Another reason it's been great is the automation of dev workflows. Setting up configuration files, creating symlinks, running all sorts of commands in the proper order in order to get dev boxes up and running as quickly as possible. Get
