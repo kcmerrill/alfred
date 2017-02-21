@@ -8,6 +8,16 @@ Because even Batman needs a little help.
 ## What is it
 A simple go/yaml powered make file/task runner with a bit of a twist.
 
+## Features
+- Extendable. Common tasks(Private too)
+- Watch files for modifications
+- Retry/Rerun tasks based on failures before giving up 
+- Logging
+- Success/Failure decision tree
+- Run tasks asynchronously or synchronously 
+- Autocomplete task names
+- Many more! 
+
 ## Usage
 Create a file named: `alfred.yml`
 ```
@@ -56,10 +66,6 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 * Monitor crons(alert on failures, update endpoints etc ... )
 * Watch for file modifications to run tests->builds
 
-## Common modules
-![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_slack.png "Alfred")
-
-This is the `notify` module in action. `alfred /notify slack ...`
 
 ## Alfred files getting too large?
 You can break up your alfred files in multiple ways. The following are glob patterns that can be used:`/alfred.yml`, `/.alfred/*alfred.yml`, `/alfred/*alfred.yml`. As an example, you can create a directory called `alfred` or `.alfred` or just create mutliple alfred files.
