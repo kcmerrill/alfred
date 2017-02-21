@@ -390,13 +390,14 @@ checkout.repos:
 If not an empty string, will be the port number in which to serve a static webserver.
 
 Example use cases:
-    - JS programming
-    - Get a dev/api sandbox up and running quickly(just serve json endpoints)
+  - JS programming
+  - Get a dev/api sandbox up and running quickly(just serve json endpoints)
 
 A few things to note:
-    - When alfred exits, the server will exit
-    - If you need a long running server _without_ running other tasks use `wait` and a long duration
-    - No need to multitask, simply serve and continue on ...
+  - When alfred exits, the server will exit
+  - If you need a long running server _without_ running other tasks use `wait` and a long duration
+  - No need to multitask, simply serve and continue on ...
+  - By default, serve's documentroot will be relative to the `alfred.yml` file unless the `dir` component is set
 
 ```
 static.webserver:
