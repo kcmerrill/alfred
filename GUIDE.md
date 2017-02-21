@@ -1,37 +1,39 @@
+
 Table of Contents
 =================
 
-      * [What is Alfred?](#what-is-alfred)
-      * [Features](#features)
-      * [Tasks](#tasks)
-         * [Naming tasks](#naming-tasks)
-         * [Important tasks](#important-tasks)
-      * [Task components](#task-components)
-         * [Alias](#alias)
-         * [Setup](#setup)
-         * [Log](#log)
-         * [Dir](#dir)
-         * [Watch](#watch)
-         * [Tasks](#tasks-1)
-         * [Modules](#modules)
-         * [Summary](#summary)
-         * [Test](#test)
-         * [Retry](#retry)
-         * [Command](#command)
-         * [Commands](#commands)
-         * [Serve](#serve)
-         * [Wait](#wait)
-         * [Fail](#fail)
-         * [Private](#private)
-         * [Skip](#skip)
-         * [Exit](#exit)
-         * [OK](#ok)
-         * [Every](#every)
+   * [Table of Contents](#table-of-contents)
+   * [What is Alfred?](#what-is-alfred)
+   * [Features](#features)
+   * [Tasks](#tasks)
+      * [Naming tasks](#naming-tasks)
+      * [Important tasks](#important-tasks)
+   * [Task components](#task-components)
+      * [Alias](#alias)
+      * [Setup](#setup)
+      * [Log](#log)
+      * [Dir](#dir)
+      * [Watch](#watch)
+      * [Tasks](#tasks-1)
+      * [Modules](#modules)
+      * [Summary](#summary)
+      * [Test](#test)
+      * [Retry](#retry)
+      * [Command](#command)
+      * [Commands](#commands)
+      * [Serve](#serve)
+      * [Wait](#wait)
+      * [Fail](#fail)
+      * [Private](#private)
+      * [Skip](#skip)
+      * [Exit](#exit)
+      * [OK](#ok)
+      * [Every](#every)
 
 # What is Alfred?
 [Alfred](/ "Alfred") is a simple yaml based task runner. It helps automate tedious tasks among many things. I built it primarily as a replacement to `docker-compose` as an evolution to [Yoda](http://github.com/kcmerrill/yoda "Yoda") however it's grown into something a bit bigger. It's been used for all kinds of automated tasks, and has become part of my daily workflow automating tedious tasks I was previously doing by hand. Another reason it's been great is the automation of dev workflows. Setting up configuration files, creating symlinks, running all sorts of commands in the proper order in order to get dev boxes up and running as quickly as possible. Get
 
-## Features
+# Features
 - Extendable. Common tasks(Private too)
 - Watch files for modifications
 - Retry/Rerun tasks based on failures before giving up
@@ -41,10 +43,10 @@ Table of Contents
 - Autocomplete task names
 - Many more!
 
-## Tasks
+# Tasks
 The way I think of tasks are like reusable functions but for shell scripts. They are built using components(just YAML key/value combinations). Your tasks can be anything you need/want them to be, and there isn't any required components. The only requirement is you use at least one. If not at least one, then there isn't a point to a task!
 
-### Naming tasks
+## Naming tasks
 Name the task whatever you'd like. Having built quite a few projects I'd recommend you come up with a naming convention.
 
 While formally, there is no such thing as task groups, using a `.` in the name is a great way of identifying groups of tasks. By "grouping" tasks together using a good naming convention will make it easier for those using your task file to know what's going on. `what.action` is a typical approach.
@@ -55,7 +57,7 @@ Examples:
   - `docker.run.web`
   - `docker.run.db`
 
-### Important tasks
+## Important tasks
 Task names with an `*` at the end of it's name denotes it's an "important" task. Important tasks are useful when your `alfred.yml` file gets rather large and you have a bunch of tasks, tasks that can be run from the command line and are not private, but perhaps not as useful as others. These tasks are showed at the bottom of the list output when running `alfred` and tend to stick out more than a normal task.
 
 ```
@@ -69,10 +71,10 @@ important.task*:
         echo "I am important I say!"
 ```
 
-## Task components
+# Task components
 Alfred comes with multiple components built in. A task can be as simple or as complex as you want to make it. It's really up to you. A task can have one or many components. Lets go over what's available to you, and more importantly, it's order that it's run within the task. By default, all alfred commands are run at the root level where `alfred.yml` exists.
 
-### Alias
+## Alias
 An alias maps back to the task name. Sometimes it helps to name a task multiple things, without copying the contents of the task. When set it's a space separated string of names
 
 A few things to note:
@@ -87,7 +89,7 @@ my.task:
         world"
 ```
 
-### Setup
+## Setup
 This component is the first to be called. It's a string of space seperated task names. Useful if you need tasks to run before this task is run.
 ```
 run.first:
@@ -99,7 +101,7 @@ main.task
     command: echo "the task run.first would be run before this task"
 ```
 
-### Log
+## Log
 If set and not an empty string, represents a filename in which stdout will be sent to.
 
 A few things to note:
@@ -118,7 +120,7 @@ mytask:
         echo "hello world!"
 ```
 
-### Dir
+## Dir
 The default starting location for this particular task. If set to a non empty string, will create the directory if not exist.
 
 
@@ -136,7 +138,7 @@ example.task:
         echo "The current working directory is now /tmp regardless of alfred file!"
 ```
 
-### Watch
+## Watch
 If set to a non empty string, will watch for file modifications times to change. The string given should be a regular expression of file patterns to match against.
 
 
@@ -160,7 +162,7 @@ tdd:
    tasks: test
 ```
 
-### Tasks
+## Tasks
 A string separated list of tasks to be run *in order* provided. Each task is run in order as if it were it's own standalone task. If no exits, will return accordingly.  Can be used instead of `setup` if no `setup` tasks are required.
 
 
@@ -179,7 +181,7 @@ task.three:
     command: echo "task three!"
 ```
 
-### Modules
+## Modules
 Alfred's way of extending it's functionality, modules are key value yaml pairs that repesent a github `username/project: task`. The project should contain a valid `alfred.yml` file or configuration at it's root level. So lets say you have a github project with an alfred file, you can interact with that alfred file without actually having it on your machine.
 
 Example use cases:
@@ -213,7 +215,7 @@ start.container:
         docker run -P -d mycontainer
 ```
 
-### Summary
+## Summary
 A brief text descrption to let the end user know what the general idea of the task is. Visible when listing out the tasks
 
 ```
@@ -221,7 +223,7 @@ my.simple.task:
     summary: I will echo out everytime I'm run!
 ```
 
-### Test
+## Test
 A shell command that should return a proper exit code before continuing. Should it fail, the task will fail and will continue on to the `fail` tasks, then to `exit` or `skip` depending on whatever was set.
 
 Example use cases:
@@ -242,7 +244,7 @@ A few things to note:
  ```
 
 
-### Retry
+## Retry
 An integer value, if set to a non zero value will retry the `command` component X number of times before giving up.
 
 ```
@@ -253,7 +255,7 @@ pesky.task:
    retry: 10
 ```
 
-### Command
+## Command
 A string that gets sent to `bash -c`. Based upon it's error code, will determine if the task is succesful or fails.
 
 A few things to note:
@@ -286,7 +288,7 @@ command: >
     username/image:tag
 ```
 
-### Commands
+## Commands
 Nearly identical to `command` however, each line is evaluated independantly based upon it's success/failure. Meaning each line and each command is interpreted as if it were it's own `command` and alfred will respond accordingly.
 
 A few things to note:
@@ -304,7 +306,7 @@ checkout.repos:
         # We can only make it here if all the commands, or each line representing a command exited properly.
 ```
 
-### Serve
+## Serve
 If not an empty string, will be the port number in which to serve a static webserver.
 
 Example use cases:
@@ -322,7 +324,7 @@ static.webserver:
     serve: 8000
 ```
 
-### Wait
+## Wait
 If not an empty string, `wait` takes a golang string time duration. So `1h`, `1s` etc ...  See golang time duration documentation for more information.
 
 Example use cases:
@@ -341,7 +343,7 @@ A few things to note:
         echo "Hello $USER!"
 ```
 
-### Fail
+## Fail
 A string which is a space separated list of tasks to run if the task has failed up to this point. Identical to `ok`.
 
 Example use cases:
@@ -375,7 +377,7 @@ down.metric:
     private: true
 ```
 
-### Private
+## Private
 A boolean, which if set to `true` will be omitted from the listing of tasks. Private tasks can only be run from other tasks from within alfred, and _cannot_ be run from the command line.
 
 Example use cases:
@@ -400,7 +402,7 @@ next.task
     private: true
 ```
 
-### Skip
+## Skip
 Haults the entire task. If you're running `ok`, or `fail` tasks, the only way to stop continuation is to exit. If you do not wish to exit, this will continue onto the next task.
 
 A few things to note:
@@ -423,7 +425,7 @@ on.failure:
    skip: true
 ```
 
-### Exit
+## Exit
 A number, which if is not 0, haults the entire process if the task should fail. A bad `command`, `commands` etc ... exiting with the value given
 
 Example use cases:
@@ -441,7 +443,7 @@ bad.task:
     exit: 10
 ```
 
-### OK
+## OK
 A string which is space separated list of tasks to be run if the task was succesful to this point.
 
 Example use cases:
@@ -475,7 +477,7 @@ down.metric:
     private: true
 ```
 
-### Every
+## Every
 A golang string duration representing how often this task should run. A task with `every: 10s` will run every ten seconds.
 
 Example use cases:

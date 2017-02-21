@@ -1,0 +1,32 @@
+
+Table of Contents
+=================
+
+   * [Table of Contents](#table-of-contents)
+   * [What is Alfred?](#what-is-alfred)
+   * [Features](#features)
+   * [Tasks](#tasks)
+      * [Naming tasks](#naming-tasks)
+      * [Important tasks](#important-tasks)
+   * [Task components](#task-components)
+      * [Alias](#alias)
+      * [Setup](#setup)
+      * [Log](#log)
+      * [Dir](#dir)
+      * [Watch](#watch)
+      * [Tasks](#tasks-1)
+      * [Modules](#modules)
+      * [Summary](#summary)
+      * [Test](#test)
+      * [Retry](#retry)
+      * [Command](#command)
+      * [Commands](#commands)
+      * [Serve](#serve)
+      * [Wait](#wait)
+      * [Fail](#fail)
+      * [Private](#private)
+      * [Skip](#skip)
+      * [Exit](#exit)
+      * [OK](#ok)
+      * [Every](#every)
+
