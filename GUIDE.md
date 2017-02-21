@@ -471,13 +471,13 @@ down.metric:
 A golang string duration representing how often this task should run. A task with `every: 10s` will run every ten seconds.
 
 Example use cases:
-    - HTTP checks
-    - File System checks
-    - Monitoring
+  - HTTP checks
+  - File System checks
+  - Monitoring
 
 A few things to note:
-    - `skip` and `exit` will invalidate `every`.
-    - When `every` is set, it's an infinite loop and will need to be cancelled manually, or through `exit` or `skip`
+  - `skip` and `exit` will invalidate `every`.
+  - When `every` is set, it's an infinite loop and will need to be cancelled manually, or through `exit` or `skip`
 
 ```
 say.hello:
