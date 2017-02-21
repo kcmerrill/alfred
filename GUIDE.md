@@ -447,8 +447,8 @@ on.failure:
 A number, which if is not 0, haults the entire process if the task should fail. A bad `command`, `commands` etc ... exiting with the value given
 
 Example use cases:
-    - If tests fail within a build, exit the application with a non zero exit code haulting deployment.
-    - Processes should stop if certain things are done incorrectly, or if applications are not installed. 
+ - If tests fail within a build, exit the application with a non zero exit code haulting deployment.
+ - Processes should stop if certain things are done incorrectly, or if applications are not installed. 
 
 A few things to note:
  - This haults the entire application. No further action is taken. 
