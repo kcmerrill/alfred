@@ -199,26 +199,27 @@ A few things to note:
         wget http://www.google.com
  ```
  
- ### Retry
- An integer value, if set to a non zero value will retry the `command` component X number of times before giving up.
  
- ```
- pesky.task:
-    summary: This task may/may not run on the first time. Try at least 10 times before all hope is lost
-    command: |
-        python pesky.script.py
-    retry: 10
- ```
+### Retry
+An integer value, if set to a non zero value will retry the `command` component X number of times before giving up.
 
- ### Command
- A string that gets sent to `bash -c`. Based upon it's error code, will determine if the task is succesful or fails.
+```
+pesky.task:
+   summary: This task may/may not run on the first time. Try at least 10 times before all hope is lost
+   command: |
+       python pesky.script.py
+   retry: 10
+```
 
- A few things to note:
-  - By using the `|` in yaml, you can have multiple commands, however, the success/failure is only the last command run.
-  - By using the `>` in yaml, you can have a multiline command. Yaml converts newlines to spaces. Useful for a really long command without needing to use `\`.
-  - Without exit codes, Checking out muliple git repos.
-  - You can call alfred from here need be. 
-  - Omitting `command` or by supplying an empty string will always be skipped and marked as succesful, continuing the task.
+### Command
+A string that gets sent to `bash -c`. Based upon it's error code, will determine if the task is succesful or fails.
+
+A few things to note:
+ - By using the `|` in yaml, you can have multiple commands, however, the success/failure is only the last command run.
+ - By using the `>` in yaml, you can have a multiline command. Yaml converts newlines to spaces. Useful for a really long command without needing to use `\`.
+ - Without exit codes, Checking out muliple git repos.
+ - You can call alfred from here need be. 
+ - Omitting `command` or by supplying an empty string will always be skipped and marked as succesful, continuing the task.
 
 ```
 dont.care.about.exit.codes:
