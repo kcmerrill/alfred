@@ -16,6 +16,7 @@ A simple go/yaml powered make file/task runner with a bit of a twist.
 - Success/Failure decision tree
 - Run tasks asynchronously or synchronously 
 - Autocomplete task names
+- Static webserver
 - Many more! 
 
 ## Usage
@@ -59,9 +60,8 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 [For additional documentation, please refer to the GUIDE](GUIDE.md "additional documentation")
 
 ## Example uses
-* Monitor webistes with reusable tasks(see example)
+* Monitor websites
 * Setup/Update/Deploy projects in your dev env
-* Start/Stop remote tasks
 * Simple Nagios, Jenkins, pingdom replacement
 * Monitor crons(alert on failures, update endpoints etc ... )
 * Watch for file modifications to run tests->builds
