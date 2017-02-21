@@ -43,6 +43,7 @@ A brief explination:
  - Watch: A regular expression of changed files
  - Setup: Similiar to tasks but these get run _before_ the command/task group gets called
  - TaskNumber: What task number is this?
+ - Serve: A string, denoting port number to serve a static webserver
 */
 type Task struct {
 	Summary    string
@@ -74,6 +75,7 @@ type Task struct {
 	Retry      int
 	Watch      string
 	TaskNumber int
+	Serve      string
 }
 
 /* Is the task private? */

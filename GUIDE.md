@@ -248,7 +248,7 @@ command: >
 Nearly identical to `command` however, each line is evaluated independantly based upon it's success/failure. Meaning each line and each command is interpreted as if it were it's own `command` and alfred will respond accordingly.
 
 A few things to note:
-  - Omitting `command` or by supplying an empty string will always be skipped and marked as succesful, continuing the task.
+  - Omitting `commands` or by supplying an empty string will always be skipped and marked as succesful, continuing the task.
 
 ```
 checkout.repos:
@@ -296,8 +296,26 @@ down.metric:
     private: true
 ```
 
+### Serve
+If not an empty string, will be the port number in which to serve a static webserver. 
+
+Example use cases:
+    - JS programming
+    - Get a dev/api sandbox up and running quickly(just serve json endpoints)
+
+A few things to note:
+    - When alfred exits, the server will exit 
+    - If you need a long running server _without_ running other tasks use `wait` and a long duration
+    - No need to multitask, simply serve and continue on ...
+
+```
+static.webserver:
+    summary: Start a static webserver on port 8000
+    serve: 8000
+```
+
 ### Wait
-If is not an empty string, `wait` takes a golang string time duration. So `1h`, `1s` etc ...  See golang time duration documentation for more information.
+If not an empty string, `wait` takes a golang string time duration. So `1h`, `1s` etc ...  See golang time duration documentation for more information.
 
 Example use cases:
  - Check service every few seconds to make sure it comes online before running the next task.

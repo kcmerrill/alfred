@@ -239,6 +239,11 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			}
 		}
 
+		// Handle Serve ...
+		if taskok && a.Tasks[task].Serve != "" {
+			go Serve(".", a.Tasks[task].Serve)
+		}
+
 		// Wait ...
 		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
 			<-time.After(wait_duration)

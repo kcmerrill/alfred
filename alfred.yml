@@ -28,7 +28,7 @@ test:
 
 commit:
     summary: Commit changes
-    command: |
+    commands: |
         git status
         git add .
         git commit

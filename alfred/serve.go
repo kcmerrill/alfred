@@ -1,14 +1,15 @@
 package alfred
 
 import (
-	"github.com/gorilla/mux"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func Serve(dir, port string) {
 	r := mux.NewRouter()
-	r.PathPrefix("/shares/").Handler(http.StripPrefix("/shares/", http.FileServer(http.Dir(dir))))
+	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 
 	srv := &http.Server{
 		Handler:      r,
