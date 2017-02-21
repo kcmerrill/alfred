@@ -1,4 +1,4 @@
-User Guide
+Table of Contents
 =================
 
       * [What is Alfred?](#what-is-alfred)
@@ -19,28 +19,28 @@ User Guide
          * [Retry](#retry)
          * [Command](#command)
          * [Commands](#commands)
-         * [OK](#ok)
          * [Serve](#serve)
          * [Wait](#wait)
          * [Fail](#fail)
          * [Private](#private)
          * [Skip](#skip)
          * [Exit](#exit)
-         * [OK](#ok-1)
+         * [OK](#ok)
          * [Every](#every)
 
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 ## What is Alfred?
 [Alfred](/ "Alfred") is a simple yaml based task runner. It helps automate tedious tasks among many things. I built it primarily as a replacement to `docker-compose` as an evolution to [Yoda](http://github.com/kcmerrill/yoda "Yoda") however it's grown into something a bit bigger. It's been used for all kinds of automated tasks, and has become part of my daily workflow automating tedious tasks I was previously doing by hand. Another reason it's been great is the automation of dev workflows. Setting up configuration files, creating symlinks, running all sorts of commands in the proper order in order to get dev boxes up and running as quickly as possible. Get
 
 ## Features
 - Extendable. Common tasks(Private too)
 - Watch files for modifications
-- Retry/Rerun tasks based on failures before giving up 
+- Retry/Rerun tasks based on failures before giving up
 - Logging
 - Success/Failure decision tree
-- Run tasks asynchronously or synchronously 
+- Run tasks asynchronously or synchronously
 - Autocomplete task names
-- Many more! 
+- Many more!
 
 ## Tasks
 The way I think of tasks are like reusable functions but for shell scripts. They are built using components(just YAML key/value combinations). Your tasks can be anything you need/want them to be, and there isn't any required components. The only requirement is you use at least one. If not at least one, then there isn't a point to a task!
@@ -48,7 +48,7 @@ The way I think of tasks are like reusable functions but for shell scripts. They
 ### Naming tasks
 Name the task whatever you'd like. Having built quite a few projects I'd recommend you come up with a naming convention.
 
-While formally, there is no such thing as task groups, using a `.` in the name is a great way of identifying groups of tasks. By "grouping" tasks together using a good naming convention will make it easier for those using your task file to know what's going on. `what.action` is a typical approach. 
+While formally, there is no such thing as task groups, using a `.` in the name is a great way of identifying groups of tasks. By "grouping" tasks together using a good naming convention will make it easier for those using your task file to know what's going on. `what.action` is a typical approach.
 
 Examples:
   - `servicea.build`
@@ -71,13 +71,13 @@ important.task*:
 ```
 
 ## Task components
-Alfred comes with multiple components built in. A task can be as simple or as complex as you want to make it. It's really up to you. A task can have one or many components. Lets go over what's available to you, and more importantly, it's order that it's run within the task. By default, all alfred commands are run at the root level where `alfred.yml` exists. 
+Alfred comes with multiple components built in. A task can be as simple or as complex as you want to make it. It's really up to you. A task can have one or many components. Lets go over what's available to you, and more importantly, it's order that it's run within the task. By default, all alfred commands are run at the root level where `alfred.yml` exists.
 
 ### Alias
 An alias maps back to the task name. Sometimes it helps to name a task multiple things, without copying the contents of the task. When set it's a space separated string of names
 
 A few things to note:
- - Be careful not to have an alias that matches another task name. 
+ - Be careful not to have an alias that matches another task name.
 
 ```
 my.task:
@@ -89,10 +89,10 @@ my.task:
 ```
 
 ### Setup
-This component is the first to be called. It's a string of space seperated task names. Useful if you need tasks to run before this task is run.   
+This component is the first to be called. It's a string of space seperated task names. Useful if you need tasks to run before this task is run.
 ```
 run.first:
-    summary: A task to be run before the main task 
+    summary: A task to be run before the main task
 
 main.task
     summary: The main task
@@ -120,14 +120,14 @@ mytask:
 ```
 
 ### Dir
-The default starting location for this particular task. If set to a non empty string, will create the directory if not exist. 
+The default starting location for this particular task. If set to a non empty string, will create the directory if not exist.
 
 
 A few things to note:
- - Relative paths are relative to the `alfred.yml` file. 
- - Directories that do not exist will attempt to be created. If unable, the task will fail. 
+ - Relative paths are relative to the `alfred.yml` file.
+ - Directories that do not exist will attempt to be created. If unable, the task will fail.
  - Be careful when used in multitask(not guarenteed the dir due to other tasks). Setup your tasks accordingly.
- - Every task starts by default to the location of the alfred, including tasks run after `dir` is set. 
+ - Every task starts by default to the location of the alfred, including tasks run after `dir` is set.
  - `dir` is for this task only, and not for any downstream tasks.
 ```
 example.task:
@@ -138,7 +138,7 @@ example.task:
 ```
 
 ### Watch
-If set to a non empty string, will watch for file modifications times to change. The string given should be a regular expression of file patterns to match against. 
+If set to a non empty string, will watch for file modifications times to change. The string given should be a regular expression of file patterns to match against.
 
 
 Example use cases:
@@ -146,7 +146,7 @@ Example use cases:
  - Minify, lint or format code changes upon file changes
 
 A few things to note:
- - This will override the `every` component to `1s`, and will check file changes with a `1s` pause. 
+ - This will override the `every` component to `1s`, and will check file changes with a `1s` pause.
  - `watch` halts execution of the task, and when a file modification is found, continues on.
  - Is relative to the `dir` component. If `dir` is not set, relative to `alfred.yml` file.
 ```
@@ -154,11 +154,11 @@ test:
    summary: Testing ...
    command: |
        go test -v
-   
+
 tdd:
    summary: Watch for code changes and run tests when .go files are modified
    watch: "*.go$"
-   tasks: test 
+   tasks: test
 ```
 
 ### Tasks
@@ -192,7 +192,7 @@ Example use cases:
 A few things to note:
  - You can add additional repositories, not just github. See `remote module section` below.
  - Alfred comes with a built in webserver to serve up your own remote modules.
- - The convention is `username/project`, by default alfred points to itself(on github). `github.com/kcmerrill/alfred/tree/master/modules`. 
+ - The convention is `username/project`, by default alfred points to itself(on github). `github.com/kcmerrill/alfred/tree/master/modules`.
  - *This _does_ execute remote code so be careful and be sure to trust the source!*
  - Remote modules are _not_ cached, which has it's pros and cons. With great power comes great responsibility.
 
@@ -204,15 +204,15 @@ This is the `notify` module in action. `alfred /notify slack ...`
  # Used to self update itself. See the `self` folder in modules for additional information
  $ alfred /self update
  # Used to install a github repo and run `alfred install` inside
- $ alfred kcmerrill/yoda 
+ $ alfred kcmerrill/yoda
  ```
 
-``` 
+```
 start.container:
     docker: kill.remove mycontainer
     command: |
         docker run -P -d mycontainer
-``` 
+```
 
 ### Summary
 A brief text descrption to let the end user know what the general idea of the task is. Visible when listing out the tasks
@@ -227,10 +227,10 @@ A shell command that should return a proper exit code before continuing. Should 
 
 Example use cases:
  - Before running a task that interacts with a file, check it's existance first without needing to create another task.
- - Test to see if certain things are installed. Using `wget`? `unzip`? Verify it's insalled first. 
+ - Test to see if certain things are installed. Using `wget`? `unzip`? Verify it's insalled first.
 
 A few things to note:
- - It's currently a shell command. It's exit code determines if the task fails or not. 
+ - It's currently a shell command. It's exit code determines if the task fails or not.
  - It's silent, meaning it's output is not shown to the end user. This can make initial debugging harder but it keeps the `alfred.yml` file tidy.
 
  ```
@@ -241,8 +241,8 @@ A few things to note:
     command: |
         wget http://www.google.com
  ```
- 
- 
+
+
 ### Retry
 An integer value, if set to a non zero value will retry the `command` component X number of times before giving up.
 
@@ -261,7 +261,7 @@ A few things to note:
  - By using the `|` in yaml, you can have multiple commands, however, the success/failure is only the last command run.
  - By using the `>` in yaml, you can have a multiline command. Yaml converts newlines to spaces. Useful for a really long command without needing to use `\`.
  - Without exit codes, Checking out muliple git repos.
- - You can call alfred from here need be. 
+ - You can call alfred from here need be.
  - Omitting `command` or by supplying an empty string will always be skipped and marked as succesful, continuing the task.
 
 ```
@@ -281,10 +281,10 @@ a.really.long.cmd:
 summary: This is a really long command, lets say a long docker run command.
 command: >
     docker run
-    -d 
-    -P 
+    -d
+    -P
     --name mycontainer
-    username/image:tag      
+    username/image:tag
 ```
 
 ### Commands
@@ -305,49 +305,15 @@ checkout.repos:
         # We can only make it here if all the commands, or each line representing a command exited properly.
 ```
 
-### OK
-A string which is space separated list of tasks to be run if the task was succesful to this point.
-
-Example use cases:
- - When a `command` completes succesfully, perform other actions such as cleanup, monitoring etc ...
- - A continuation of a build process if tests passed. Deploy for example.
- - HTTP/Service check. If ok, send metrics indicating so. Same thing with fail.
-
- A few things to note:
-  - Tasks continue on to the next task in the list unless the exit is provoked at which point the process stops
-
-```
-http.check
-    summary: HTTP check -> Data dog
-    test: which wget
-    command: |
-        wget echo -n "custom_metric:60|g|#shell" >/dev/udp/localhost/8125
-    every: 1h
-    ok: up.metric
-    fail: down.metric
-
-up.metric:
-    summary: Sending in an up metric! Woot!
-    command: |
-        echo -n "http.check.up:60|g|#shell" >/dev/udp/localhost/8125
-    private: true
-
-down.metric:
-    summary: Sending a down metric! #sadpanda
-    command: |
-        echo -n "http.check.down:60|g|#shell" >/dev/udp/localhost/8125
-    private: true
-```
-
 ### Serve
-If not an empty string, will be the port number in which to serve a static webserver. 
+If not an empty string, will be the port number in which to serve a static webserver.
 
 Example use cases:
     - JS programming
     - Get a dev/api sandbox up and running quickly(just serve json endpoints)
 
 A few things to note:
-    - When alfred exits, the server will exit 
+    - When alfred exits, the server will exit
     - If you need a long running server _without_ running other tasks use `wait` and a long duration
     - No need to multitask, simply serve and continue on ...
 
@@ -364,7 +330,7 @@ Example use cases:
  - Check service every few seconds to make sure it comes online before running the next task.
 
 A few things to note:
- - If duration is not able to be parsed properly, it will be skipped as if it were not set. 
+ - If duration is not able to be parsed properly, it will be skipped as if it were not set.
  - If `watch` is enabled, this will be overwritten with `1s`
 
  ```
@@ -382,7 +348,7 @@ A string which is a space separated list of tasks to run if the task has failed 
 Example use cases:
  - When a `command` completes with an error, perform other actions such as cleanup, monitoring etc ...
  - Halt the build process, or cleanup running processes for the task's next run.
- - HTTP/Service check. If failure, send metrics indicating so. 
+ - HTTP/Service check. If failure, send metrics indicating so.
 
  A few things to note:
   - Tasks continue on to the next task in the list unless the exit is provoked at which point the process stops
@@ -411,15 +377,15 @@ down.metric:
 ```
 
 ### Private
-A boolean, which if set to `true` will be omitted from the listing of tasks. Private tasks can only be run from other tasks from within alfred, and _cannot_ be run from the command line.  
+A boolean, which if set to `true` will be omitted from the listing of tasks. Private tasks can only be run from other tasks from within alfred, and _cannot_ be run from the command line.
 
 Example use cases:
-    - Some tasks are dependant on other tasks to be setup, etc ... make sure they cannot be run 
+    - Some tasks are dependant on other tasks to be setup, etc ... make sure they cannot be run
     - Hide tasks from the list of tasks
 
 A few things to note:
     - tasks cannot be run from the command line.  They can only be called from other tasks within alfred.
-    - tasks will not be shown when `alfred` is called in list mode. 
+    - tasks will not be shown when `alfred` is called in list mode.
 
 ```
 example.task:
@@ -427,7 +393,7 @@ example.task:
     command: |
         # do a bunch of stuff, that _must_ be done before the next task can be run.
     ok: next.task
-    
+
 next.task
     summary: I cannot be run without example.task to be run ...
     command: |
@@ -440,7 +406,7 @@ Haults the entire task. If you're running `ok`, or `fail` tasks, the only way to
 
 A few things to note:
     - Identical to `exit`, without actually exiting. Just continues on to the next task.
-    
+
 ```
 task.one:
     summary: Task one!
@@ -449,8 +415,8 @@ task.two:
     summary: Task two!
 
 task.three:
-    summary: 
-    
+    summary:
+
 on.failure:
    summary: Stop processing this task, but continue on!
    command: |
@@ -463,10 +429,10 @@ A number, which if is not 0, haults the entire process if the task should fail. 
 
 Example use cases:
  - If tests fail within a build, exit the application with a non zero exit code haulting deployment.
- - Processes should stop if certain things are done incorrectly, or if applications are not installed. 
+ - Processes should stop if certain things are done incorrectly, or if applications are not installed.
 
 A few things to note:
- - This haults the entire application. No further action is taken. 
+ - This haults the entire application. No further action is taken.
 
 ```
 bad.task:
