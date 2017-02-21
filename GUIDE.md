@@ -1,3 +1,31 @@
+Table of Contents
+=================
+
+   * [Guide](#guide)
+      * [Tasks](#tasks)
+      * [Task components](#task-components)
+         * [Alias](#alias)
+         * [Setup](#setup)
+         * [Log](#log)
+         * [Dir](#dir)
+         * [Watch](#watch)
+         * [Tasks](#tasks-1)
+         * [Modules](#modules)
+         * [Summary](#summary)
+         * [Test](#test)
+         * [Retry](#retry)
+         * [Command](#command)
+         * [Commands](#commands)
+         * [OK](#ok)
+         * [Serve](#serve)
+         * [Wait](#wait)
+         * [Fail](#fail)
+         * [Private](#private)
+         * [Skip](#skip)
+         * [Exit](#exit)
+         * [OK](#ok-1)
+         * [Every](#every)
+
 # Guide
 Here you'll find additional documentation regarding [alfred](/ "alfred") and it's features and additional use cases.
 
