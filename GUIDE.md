@@ -153,6 +153,10 @@ A few things to note:
  - *This _does_ execute remote code so be careful and be sure to trust the source!*
  - Remote modules are _not_ cached, which has it's pros and cons. With great power comes great responsibility.
 
+![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_slack.png "Alfred")
+
+This is the `notify` module in action. `alfred /notify slack ...`
+
  ```
  # Used to self update itself. See the `self` folder in modules for additional information
  $ alfred /self update
@@ -193,6 +197,17 @@ A few things to note:
     fail: install.wget
     command: |
         wget http://www.google.com
+ ```
+ 
+ #### Retry
+ An integer value, if set to a non zero value will retry the `command` component X number of times before giving up.
+ 
+ ```
+ pesky.task:
+    summary: This task may/may not run on the first time. Try at least 10 times before all hope is lost
+    command: |
+        python pesky.script.py
+    retry: 10
  ```
 
  #### Command
