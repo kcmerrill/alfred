@@ -1,9 +1,12 @@
-
 User Guide
 =================
 
    * [What is Alfred?](#what-is-alfred)
    * [Features](#features)
+   * [Example Use Cases](#example-use-cases)
+      * [Docker-Compose replacement](#docker-compose-replacement)
+      * [Cron Job monitor](#cron-job-monitor)
+      * [HTTP Check](#http-check)
    * [Tasks](#tasks)
       * [Naming tasks](#naming-tasks)
       * [Important tasks](#important-tasks)
@@ -29,6 +32,7 @@ User Guide
       * [OK](#ok)
       * [Every](#every)
 
+
 # What is Alfred?
 [Alfred](/ "Alfred") is a simple yaml based task runner. It helps automate tedious tasks among many things. I built it primarily as a replacement to `docker-compose` as an evolution to [Yoda](http://github.com/kcmerrill/yoda "Yoda") however it's grown into something a bit bigger. It's been used for all kinds of automated tasks, and has become part of my daily workflow automating tedious tasks I was previously doing by hand. Another reason it's been great is the automation of dev workflows. Setting up configuration files, creating symlinks, running all sorts of commands in the proper order in order to get dev boxes up and running as quickly as possible. Get
 
@@ -41,6 +45,80 @@ User Guide
 - Run tasks asynchronously or synchronously
 - Autocomplete task names
 - Many more!
+
+# Example Use Cases
+I've used alfred for many things, and as I build commonly run tasks I try to share them via remote modules. Some examples.
+
+## Docker-Compose replacement
+I like docker and docker-compose, but it was lacking for some of my needs. The inability to pull/build images in parallel was frustrating. Especially in larger build systems. On top of that, docker-compose does one thing and it does it really well. The problem with docker comes to dev box orchestration. Setting up symlinks, moving configs here and there. Starting up microservices in just the right order, putting code exactly in differnet spots and coordinating multiple git repos became a nightmare. This is a pretty common example of using alfred to setup a dev env. By pulling, building and running multiple microservices(20+) we were able to take build times and cut them literally in half. This was used for new hire onboarding and it was a smashing success.
+
+![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_benchmark.png "Alfred")
+
+## Cron Job monitor
+By posting metrics on success or failure and setting up alerting we were able to use `alfred` as a cron job monitor. Here is an example file:
+```
+* * 1 * * alfred monitor python somescript.py
+```
+
+```
+monitor:
+    summary: Monitor a specific cron job
+    command: {{ .AllArgs }}
+    ok: success
+    fail: failed
+
+ok:
+    summary: Send ok data point to datadog agent
+    command: |
+        echo "cron.{{ index .Args 1 }}.ok:1|c|#cron" | nc -w 1 -u 0.0.0.0 8125
+    private: true
+
+failed:
+    summary: Send failure data point to datadog agent
+    command: |
+        echo "cron.{{ index .Args 1 }}.failed:1|c|#cron" | nc -w 1 -u 0.0.0.0 8125
+    private: true
+```
+
+## HTTP Check
+By leveraging the common modules, in this case slack, alfred will post into a slack channel letting you know that your website is down.
+
+```
+`alfred /http.slack "kcmerrill.com" "supersecretslackkey"`
+```
+
+```
+http.slack:
+    summary: HTTP Check
+    usage: alfred /http.slack "website" "supersecretkey"
+    dir: /tmp/http/{{ index .Args 0 }}
+    command: wget {{ index .Args 0 }}
+    ok: cleanup
+    fail: send.notification
+    every: 10s
+
+send.notification:
+    dir: /tmp/http/{{ index .Args 0 }}
+    command: test ! -f last_notified || test $(find -amin +{{ index .Args 2 }} | wc -l) -ge "2"
+    private: true
+    ok: notify
+    defaults:
+        - ""
+        - ""
+        - "10"
+
+notify:
+    dir: /tmp/http/{{ index .Args 0 }}
+    summary: Send slack notification
+    notify: slack "{{ index .Args 1 }}" "{{ index .Args 0 }} is down"
+    command: touch last_notified
+
+cleanup:
+    dir: /tmp/http/{{ index .Args 0 }}
+    command: |
+        rm -rf last_notified
+        rm -rf index.html*
+```
 
 # Tasks
 The way I think of tasks are like reusable functions but for shell scripts. They are built using components(just YAML key/value combinations). Your tasks can be anything you need/want them to be, and there isn't any required components. The only requirement is you use at least one. If not at least one, then there isn't a point to a task!
