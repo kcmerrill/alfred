@@ -20,6 +20,7 @@ via go:
 `$ go get -u github.com/kcmerrill/alfred`
 
 via docker:
+
 `$ docker run -v $PWD:$PWD -w $PWD kcmerrill/alfred`
 
 ## Features
