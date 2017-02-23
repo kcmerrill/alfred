@@ -8,7 +8,7 @@ Because even Batman needs a little help.
 ## What is it
 A simple go/yaml powered make file/task runner with a bit of a twist.
 
-## Installation
+## Binaries/Installation
 [![MacOSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX")] (http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd6) [![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux")] (http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
 
 via go:
