@@ -387,8 +387,8 @@ func (a *Alfred) findLocal() bool {
 			// Did we find a bunch of alfred files?
 			patterns := []string{
 				dir + "/alfred.yml",
-				dir + "/.alfred//alfred.yml",
-				dir + "/alfred//alfred.yml"}
+				dir + "/.alfred/*alfred.yml",
+				dir + "/alfred/*alfred.yml"}
 			for _, pattern := range patterns {
 				if alfred_files, files_err := filepath.Glob(pattern); files_err == nil && len(alfred_files) > 0 {
 					for _, alfred_file := range alfred_files {
@@ -403,6 +403,8 @@ func (a *Alfred) findLocal() bool {
 						}
 					}
 					return true
+				} else {
+					fmt.Println("Error")
 				}
 			}
 
