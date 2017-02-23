@@ -340,6 +340,12 @@ func (t *Task) Prepare(args []string, vars map[string]string, taskNumber int) bo
 		return false
 	}
 
+	if tst_ok, tst_translated := t.template(t.Test); tst_ok {
+		t.Test = tst_translated
+	} else {
+		return false
+	}
+
 	/* if we made it here, then we are good to go */
 	return true
 }
