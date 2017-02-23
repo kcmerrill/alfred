@@ -403,8 +403,6 @@ func (a *Alfred) findLocal() bool {
 						}
 					}
 					return true
-				} else {
-					fmt.Println("Error")
 				}
 			}
 
