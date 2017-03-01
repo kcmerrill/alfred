@@ -297,8 +297,6 @@ start.container:
         docker run -P -d mycontainer
 ```
 
-
-### Private Remote Modules
 If a remote isn't found, alfred will default to github as described above. If you have alfred files that you'd like to keep private, but you'd like to share with your team, you can simply start a static webserver(alfred comes built in with one). `alfred --serve --dir . --port 80` Where directory is the files to serve, and port is the posrt to listen on. 
 
 To allow alfred to access these files, you'll need to create a configuration file located here: `$HOME/.alfred/config.yml`. Contained within this config file, is a key `repos` which will container a key value pair. The key will be something you define. So walk through an example. We will pretend your using these private repos for work, and you work for `companyxyz`. 
