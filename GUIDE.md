@@ -264,7 +264,7 @@ task.three:
 ```
 
 ## Modules
-Alfred's way of extending it's functionality, modules are key value yaml pairs that repesent a github `username/project: task`. The project should contain a valid `alfred.yml` file or configuration at it's root level. So lets say you have a github project with an alfred file, you can interact with that alfred file without actually having it on your machine.
+Alfred's way of extending it's functionality, modules, are key value yaml pairs that repesent a github `username/project: task`. The project should contain a valid `alfred.yml` file or configuration at it's root level. So lets say you have a github project with an alfred file, you can interact with that alfred file without actually having it on your machine. Simply put, remote modules are remote alfred.yml files. 
 
 Example use cases:
  - Create a number of reusable components that you can make private or shared.
@@ -273,7 +273,7 @@ Example use cases:
  - Create common tasks with your team with one centralized location
 
 A few things to note:
- - You can add additional repositories, not just github. See `remote module section` below.
+ - You can add additional repositories, not just github. See below.
  - Alfred comes with a built in webserver to serve up your own remote modules.
  - The convention is `username/project`, by default alfred points to itself(on github). `github.com/kcmerrill/alfred/tree/master/modules`.
  - *This _does_ execute remote code so be careful and be sure to trust the source!*
@@ -296,6 +296,48 @@ start.container:
     command: |
         docker run -P -d mycontainer
 ```
+
+If a remote isn't found, alfred will default to github as described above. If you have alfred files that you'd like to keep private, but you'd like to share with your team, you can simply start a static webserver(alfred comes built in with one). `alfred --serve --dir . --port 80` Where directory is the files to serve, and port is the posrt to listen on. 
+
+To allow alfred to access these files, you'll need to create a configuration file located here: `$HOME/.alfred/config.yml`. Contained within this config file, is a key `repos` which will container a key value pair. The key will be something you define. So walk through an example. We will pretend your using these private repos for work, and you work for `companyxyz`. 
+
+```
+$ cd /tmp
+$ mkdir companyxyzalfredfiles
+# start a static webserver here.
+$ alfred --serve --port 8080
+# lets create a few folders to organize our alfred files(this is required).
+$ mkdir projectX
+$ touch projectX/alfred.yml
+# inside projectX/alfred.yml, is your standard alfred file with tasks in it.
+$ mkdir projectY
+$ touch projectY/alfred.yml, is your standard alfred file with tasks in it.
+```
+
+Ok, now that you have a location of private alfred files with a static webserver running on port `8080`, lets add it to the repos section to your `$HOME/.alfred/config.yml`
+
+```
+repos:
+    companyxyz: http://localhost:8080/
+```
+
+Now, `companyxyz` is the key ... and we know we have `projectX` and `projectY` located at `http://localhost:8080`.
+
+To use the remote module you'd simply do:
+`alfred companyxyz/projectX <taskname>`
+
+or to list out the tasks located under `projectX` simply do:
+`alfred companyxyz/projectX`
+
+Of course, you can use whatever else is situated there as well, so you can also do something like this:
+`alfred companyxyz/projectY`
+
+etc etc ...
+
+In order to ensure these are _really_ private, make sure `http://localhost:8080` can only be accessible by those whom you are ok reading in the `.alfred` files and it's tasks. 
+
+I was using `localhost` as an example, but note that you can replace `localhost` with whatever url the static webserver is located.
+
 
 ## Summary
 A brief text descrption to let the end user know what the general idea of the task is. Visible when listing out the tasks
@@ -630,4 +672,3 @@ You can break up your alfred files in multiple ways. The following are glob patt
 
 # Tab completion
 Copy the included `alfred.completion.sh` to `/etc/bash_completion.d/`, or source it in your `~/.profile` file.
-
