@@ -38,5 +38,10 @@ update.mac:
         sudo mv amd64 /usr/local/bin/alfred
     private: true
 
-
-
+tab.completion:
+    summary: Install tab completion
+    test: wget
+    dir: /etc/bash_completion.d/
+    commands: |
+        rm -rf alfred.completion.sh
+        wget https://raw.githubusercontent.com/kcmerrill/alfred/master/alfred.completion.sh
