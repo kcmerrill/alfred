@@ -41,7 +41,8 @@ update.mac:
 tab.completion:
     summary: Install tab completion
     test: wget
-    dir: /etc/bash_completion.d/
     commands: |
+        mkdir -p /etc/bash_completion.d/
+        cd /etc/bash_completion.d/
         rm -rf alfred.completion.sh
         wget https://raw.githubusercontent.com/kcmerrill/alfred/master/alfred.completion.sh
