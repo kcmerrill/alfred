@@ -40,7 +40,7 @@ update.mac:
 
 tab.completion:
     summary: Install tab completion
-    test: wget
+    test: which wget
     commands: |
         mkdir -p /etc/bash_completion.d/
         cd /etc/bash_completion.d/
