@@ -209,6 +209,13 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			say(task, copyOfTask.Summary)
 		}
 
+		// Register task output
+		if copyOfTask.Register != "" && copyOfTask.Command != "" {
+			a.Vars[copyOfTask.Register] = copyOfTask.Exec(copyOfTask.Command)
+			// No need to continue on ... return
+			return true
+		}
+
 		// Test ...
 		if copyOfTask.TestF(copyOfTask.Test) {
 			// Lets execute the command if it has one, and add retry logic

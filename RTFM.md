@@ -19,6 +19,7 @@ User Guide
       * [Tasks](#tasks-1)
       * [Modules](#modules)
       * [Summary](#summary)
+      * [Register](#register)
       * [Test](#test)
       * [Retry](#retry)
       * [Command](#command)
@@ -346,6 +347,31 @@ A brief text descrption to let the end user know what the general idea of the ta
 my.simple.task:
     summary: I will echo out everytime I'm run!
 ```
+
+## Register
+A string representation of a string variable to be stored for later use by other tasks.  The variable that is stored is the stderr/stdout from `command` component.
+
+```yaml
+fourty.one:
+    summary: Register a variable
+    register: my.new.var
+    command: |
+        echo "5678"
+
+fourty.two:
+    setup: fourty.one
+    summary: Retrieve a registered variable
+    command: |
+        echo The variable is {{ index .Vars "my.new.var"}}
+```
+
+Example use cases:
+ - Use to store changing information per alfred run, but needed throughout all tasks
+
+A few things to note:
+ - Either stderr or stdout will be saved
+ - If you define `alfred.vars`, be careful the names you choose, as you _can_ overwrite a previously defined variable.
+
 
 ## Test
 A shell command that should return a proper exit code before continuing. Should it fail, the task will fail and will continue on to the `fail` tasks, then to `exit` or `skip` depending on whatever was set.

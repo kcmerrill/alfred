@@ -328,6 +328,15 @@ func TestTaskMultiArguments(t *testing.T) {
 	}
 }
 
+func TestRegisteringVariables(t *testing.T) {
+	sut, _ := run("alfred fourty.two", t)
+
+	if !strings.Contains(sut, "The variable is 5678") {
+		t.Logf("Expecting 5678 to be returned")
+		t.FailNow()
+	}
+}
+
 func TestExample(t *testing.T) {
 	sut, _ := run("alfred", t)
 	if len(sut) <= 0 {

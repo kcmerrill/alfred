@@ -43,6 +43,7 @@ A brief explination:
  - Watch: A regular expression of changed files
  - Setup: Similiar to tasks but these get run _before_ the command/task group gets called
  - Serve: A string, denoting port number to serve a static webserver
+ - Register: A string, runs "command" component and stores it in a string
 */
 
 // Task contains a task definition and all of it's components
@@ -76,6 +77,7 @@ type Task struct {
 	Retry     int
 	Watch     string
 	Serve     string
+	Register  string
 }
 
 // TaskDefinition defines the name and params of a task when originally in string format
@@ -268,9 +270,18 @@ func (t *Task) TestF(tst string) bool {
 
 // Eval runs a string to see if it's a command or not(depending on it's exit code)
 func (t *Task) Eval(cmd string) string {
-	out, err := exec.Command(cmd).Output()
+	out, err := exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
 		return cmd
+	}
+	return string(out)
+}
+
+// Exec runs the command, and sends the output back, either stdin or stdout
+func (t *Task) Exec(cmd string) string {
+	out, err := exec.Command("bash", "-c", cmd).Output()
+	if err != nil {
+		return string(err.Error())
 	}
 	return string(out)
 }
