@@ -33,7 +33,6 @@ User Guide
       * [OK](#ok)
       * [Every](#every)
    * [Arguments, Variables and Templates Oh My!](#arguments-variables-and-templates-oh-my)
-      * [TaskNumber](#tasknumber)
       * [Date/Time](#datetime)
       * [UUID](#uuid)
    * [Alfred files getting too large?](#alfred-files-getting-too-large)
@@ -664,15 +663,6 @@ $ alfred do.you.know
 ```
 
 If you do not specify defaults, alfred will exit due to insufficient arguments passed in.
-
-## TaskNumber
-The tasknumber variable is the task count that's run. You can use it by using `{{ .TaskNumber }} `
-```
-task.name:
-    summary: My task!
-    command: |
-        echo "This was the {{ .TaskNumber }} to run ..."
-```
 
 ## Date/Time
 Every task is injected with the time that the particular task started. You can use it in your task by using `{{ .Time }}`
