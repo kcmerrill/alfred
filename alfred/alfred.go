@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/kcmerrill/alfred/remote"
 	"gopkg.in/yaml.v2"
 )
 
@@ -33,7 +32,7 @@ type Alfred struct {
 	// All of the tasks parsed from the yaml file
 	Tasks map[string]Task `yaml:",inline"`
 	// Alfred remotes(private/public repos)
-	remote *remote.Remote
+	remote *Remote
 	// Originating directory
 	dir string
 	// Alfred configuration
@@ -50,7 +49,7 @@ func New(args []string) {
 	a.Config()
 
 	// Setup our remotes
-	a.remote = remote.New(a.config.Remote)
+	a.remote = NewRemote(a.config.Remote)
 
 	// Grab the current directory and save if off
 	a.dir, _ = os.Getwd()
