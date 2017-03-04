@@ -32,6 +32,7 @@ func run(cmd string, t *testing.T) (string, error) {
 	} else {
 		return strings.Trim(string(out), "\n"), err
 	}
+
 }
 
 func TestCurrentDirectory(t *testing.T) {
@@ -124,8 +125,8 @@ func TestAlias(t *testing.T) {
 	}
 
 	/* Make sure the ls command ran */
-	if !strings.Contains(sut, "alfred.yml") {
-		t.Logf("ls should contain alfred.yml")
+	if !strings.Contains(sut, "emptydir") {
+		t.Logf("ls should contain emptydir")
 		t.FailNow()
 	}
 
@@ -254,7 +255,7 @@ func TestArgumentsOkAndDefaults(t *testing.T) {
 			t.FailNow()
 		}
 		/* Verfify our command had run succesfully */
-		if !strings.Contains(sut, "alfred.yml") {
+		if !strings.Contains(sut, "emptydir") {
 			t.Logf("Listing of the current directory should show an alfred.yml file")
 			t.FailNow()
 		}
@@ -280,11 +281,9 @@ func TestRetryLogic(t *testing.T) {
 	sut, _ := run("alfred twentyseven", t)
 
 	/* Verfify our retry logic via error message */
-	if !strings.Contains(sut, "[twentyseven] Retry logic. Try X times before continuing on\nls: /step27-idonotexist: No such file or directory\nls: /step27-idonotexist: No such file or directory\nls: /step27-idonotexist: No such file or directory") {
-		if !strings.Contains(sut, "[twentyseven] Retry logic. Try X times before continuing on\nls: cannot access /step27-idonotexist: No such file or directory\nls: cannot access /step27-idonotexist: No such file or directory\nls: cannot access /step27-idonotexist: No such file or directory") {
-			t.Logf("Expected Retry logic 3 times")
-			t.FailNow()
-		}
+	if strings.Count(sut, "/step27-idonotexist") != 3 {
+		t.Logf("Expected Retry logic 3 times")
+		t.FailNow()
 	}
 }
 
@@ -310,13 +309,29 @@ func TestCleanedArgs(t *testing.T) {
 	}
 }
 
-func TestExample(t *testing.T) {
-	sut, _ := run("alfred", t)
-	if len(sut) >= 0 {
+func TestTaskMultiArguments(t *testing.T) {
+	sut, _ := run("alfred thirty.eight", t)
 
+	if !strings.Contains(sut, "-kc-merrill-") {
+		t.Logf("Expecting -kc-merrill- in command output")
+		t.FailNow()
 	}
 
-	if len(sut) >= 0 {
+	if !strings.Contains(sut, "-bruce-wayne-") {
+		t.Logf("Expecting -bruce-wayne- in command output")
+		t.FailNow()
+	}
 
+	if !strings.Contains(sut, "-clark-kent-") {
+		t.Logf("Expecting -clark-kent- in command output")
+		t.FailNow()
+	}
+}
+
+func TestExample(t *testing.T) {
+	sut, _ := run("alfred", t)
+	if len(sut) <= 0 {
+		t.Logf("Test example failed ... meaning no data :(")
+		t.FailNow()
 	}
 }

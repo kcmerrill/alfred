@@ -42,7 +42,9 @@ tab.completion:
     summary: Install tab completion
     test: which wget
     commands: |
-        mkdir -p /etc/bash_completion.d/
+        echo "Need to request sudo access to run:"
+        echo "mkdir -p /etc/bash_completion.d"
+        sudo mkdir -p /etc/bash_completion.d/
         cd /etc/bash_completion.d/
         rm -rf alfred.completion.sh
         wget https://raw.githubusercontent.com/kcmerrill/alfred/master/alfred.completion.sh

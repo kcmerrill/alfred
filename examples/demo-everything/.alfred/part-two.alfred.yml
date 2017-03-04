@@ -1,0 +1,7 @@
+thirty.eight:
+    tasks: fourty(kc, merrill) fourty(clark, kent ) fourty( bruce , wayne )
+
+fourty:
+    summary: Takes two args, tests the () functionality
+    command: |
+        echo -{{ index .Args 0 }}-{{ index .Args 1 }}-

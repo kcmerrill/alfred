@@ -17,7 +17,6 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/kcmerrill/alfred/remote"
-	"github.com/kcmerrill/alfred/task"
 	"gopkg.in/yaml.v2"
 )
 
@@ -32,7 +31,7 @@ type Alfred struct {
 	// Variables
 	Vars map[string]string `yaml:"alfred.vars"`
 	// All of the tasks parsed from the yaml file
-	Tasks map[string]*task.Task `yaml:",inline"`
+	Tasks map[string]Task `yaml:",inline"`
 	// Alfred remotes(private/public repos)
 	remote *remote.Remote
 	// Originating directory
@@ -102,7 +101,8 @@ func (a *Alfred) findTask() bool {
 		break
 	// Called a local task
 	case len(a.args) >= 2 && !a.isRemote():
-		if a.isValidTask(a.args[1]) && !a.Tasks[a.args[1]].IsPrivate() {
+		task := a.Tasks[a.args[1]]
+		if a.isValidTask(a.args[1]) && !task.IsPrivate() {
 			if !a.runTask(a.args[1], a.args[2:], false) {
 				return false
 			}
@@ -112,12 +112,13 @@ func (a *Alfred) findTask() bool {
 		break
 	// Called a remote task
 	case len(a.args) >= 3 && a.isRemote():
-		if a.isValidTask(a.args[2]) && !a.Tasks[a.args[2]].IsPrivate() {
+		task := a.Tasks[a.args[2]]
+		if a.isValidTask(a.args[2]) && !task.IsPrivate() {
 			if !a.runTask(a.args[2], a.args[3:], false) {
 				return false
 			}
 		} else {
-			say(a.args[2], "invalid task.")
+			say(a.args[2], "Invalid task")
 			return false
 		}
 		break
@@ -133,11 +134,13 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		return false
 	}
 
+	copyOfTask := a.Tasks[task]
+
 	// Infinite loop Used for the every command
 	for {
 		// Run our setup tasks
-		for _, s := range a.Tasks[task].SetupTasks() {
-			if !a.runTask(s, args, formatted) {
+		for _, taskDefinition := range copyOfTask.TaskGroup(copyOfTask.Setup, args) {
+			if !a.runTask(taskDefinition.Name, taskDefinition.Params, formatted) {
 				break
 			}
 		}
@@ -151,33 +154,34 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		}
 
 		// Lets prep it, and if it's bunk, lets see if we can pump out it's usage
-		if !a.Tasks[task].Prepare(args, a.Vars) {
+		if !copyOfTask.Prepare(args, a.Vars) {
 			say(task+":error", "Missing argument(s).")
-			return false
+			// No need in going on, programmer error
+			os.Exit(1)
 		}
 
 		// Lets change the directory if set
-		if a.Tasks[task].Dir != "" {
-			if err := os.Chdir(a.Tasks[task].Dir); err != nil {
-				if err := os.MkdirAll(a.Tasks[task].Dir, 0755); err != nil {
+		if copyOfTask.Dir != "" {
+			if err := os.Chdir(copyOfTask.Dir); err != nil {
+				if err := os.MkdirAll(copyOfTask.Dir, 0755); err != nil {
 					say(task+":dir", "Invalid directory")
 					return false
 				}
-				os.Chdir(a.Tasks[task].Dir)
+				os.Chdir(copyOfTask.Dir)
 			}
 		}
 
 		// We watching for files?
-		if a.Tasks[task].Watch != "" {
+		if copyOfTask.Watch != "" {
 			// Regardless of what's going on, lets set every to 1s
-			a.Tasks[task].Every = "1s"
+			copyOfTask.Every = "1s"
 			for {
 				matched := filepath.Walk(".", func(path string, f os.FileInfo, err error) error {
 					if f.ModTime().After(time.Now().Add(-2 * time.Second)) {
-						m, _ := regexp.Match(a.Tasks[task].Watch, []byte(path))
+						m, _ := regexp.Match(copyOfTask.Watch, []byte(path))
 						if m {
 							// If not a match ...
-							return errors.New("")
+							return errors.New("no matches")
 						}
 					}
 					return nil
@@ -192,8 +196,8 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		// Go through each of the modules ...
 		// before command, docker stop for example
-		for module, cmd := range a.Tasks[task].Modules {
-			if !a.Tasks[task].RunCommand(args[0]+" "+a.remote.ModulePath(module)+" "+cmd, task, formatted) {
+		for module, cmd := range copyOfTask.Modules {
+			if !copyOfTask.RunCommand(args[0]+" "+a.remote.ModulePath(module)+" "+cmd, task, formatted) {
 				// It failed :(
 				taskok = false
 				break
@@ -201,16 +205,16 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		}
 
 		// First, lets show the summary
-		if a.Tasks[task].Summary != "" {
+		if copyOfTask.Summary != "" {
 			fmt.Println("")
-			say(task, a.Tasks[task].Summary)
+			say(task, copyOfTask.Summary)
 		}
 
 		// Test ...
-		if a.Tasks[task].TestF(a.Tasks[task].Test) {
+		if copyOfTask.TestF(copyOfTask.Test) {
 			// Lets execute the command if it has one, and add retry logic
-			for x := 0; x < a.Tasks[task].Retry || x == 0; x++ {
-				taskok = a.Tasks[task].RunCommand(a.Tasks[task].Command, task, formatted)
+			for x := 0; x < copyOfTask.Retry || x == 0; x++ {
+				taskok = copyOfTask.RunCommand(copyOfTask.Command, task, formatted)
 				if taskok {
 					break
 				}
@@ -222,9 +226,9 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		// Commands, not to be misaken for command
 		if taskok {
-			cmds := strings.Split(a.Tasks[task].Commands, "\n")
+			cmds := strings.Split(copyOfTask.Commands, "\n")
 			for _, c := range cmds {
-				taskok = a.Tasks[task].RunCommand(c, task, formatted)
+				taskok = copyOfTask.RunCommand(c, task, formatted)
 				if !taskok {
 					break
 				}
@@ -232,12 +236,12 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		}
 
 		// Handle Serve ...
-		if taskok && a.Tasks[task].Serve != "" {
-			go Serve(".", a.Tasks[task].Serve)
+		if taskok && copyOfTask.Serve != "" {
+			go Serve(".", copyOfTask.Serve)
 		}
 
 		// Wait ...
-		if waitDuration, waitError := time.ParseDuration(a.Tasks[task].Wait); waitError == nil {
+		if waitDuration, waitError := time.ParseDuration(copyOfTask.Wait); waitError == nil {
 			<-time.After(waitDuration)
 		}
 
@@ -248,8 +252,8 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			fmt.Println(red("✘"), task)
 
 			// Failed? Lets run the failed tasks
-			for _, failed := range a.Tasks[task].FailedTasks() {
-				if !a.runTask(failed, args, formatted) {
+			for _, taskDefinition := range copyOfTask.TaskGroup(copyOfTask.Fail, args) {
+				if !a.runTask(taskDefinition.Name, taskDefinition.Params, formatted) {
 					break
 				}
 			}
@@ -260,13 +264,13 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		}
 
 		// Handle skips ...
-		if !taskok && a.Tasks[task].Skip {
+		if !taskok && copyOfTask.Skip {
 			return false
 		}
 
 		// Handle exits ...
-		if !taskok && a.Tasks[task].Exit != "" {
-			if exitCode, err := strconv.Atoi(a.Tasks[task].Exit); err == nil {
+		if !taskok && copyOfTask.Exit != "" {
+			if exitCode, err := strconv.Atoi(copyOfTask.Exit); err == nil {
 				os.Exit(exitCode)
 			}
 			return false
@@ -274,26 +278,26 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		var wg sync.WaitGroup
 		// Do we have any tasks we need to run in parallel?
-		for _, t := range a.Tasks[task].MultiTask() {
+		for _, taskDefinition := range copyOfTask.TaskGroup(copyOfTask.Multitask, args) {
 			wg.Add(1)
 			go func(t string, args []string) {
 				defer wg.Done()
 				a.runTask(t, args, true)
-			}(t, args)
+			}(taskDefinition.Name, taskDefinition.Params)
 		}
 		wg.Wait()
 
 		// Ok, we made it here ... Is this task a task group?
-		for _, t := range a.Tasks[task].TaskGroup() {
-			if !a.runTask(t, args, formatted) {
+		for _, taskDefinition := range copyOfTask.TaskGroup(copyOfTask.Tasks, args) {
+			if !a.runTask(taskDefinition.Name, taskDefinition.Params, formatted) {
 				break
 			}
 		}
 
 		// Woot! Lets run the ok tasks
 		if taskok {
-			for _, okTasks := range a.Tasks[task].OkTasks() {
-				if !a.runTask(okTasks, args, formatted) {
+			for _, taskDefinition := range copyOfTask.TaskGroup(copyOfTask.Ok, args) {
+				if !a.runTask(taskDefinition.Name, taskDefinition.Params, formatted) {
 					break
 				}
 			}
@@ -301,8 +305,8 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		}
 
 		// Do we need to break or should we keep going?
-		if a.Tasks[task].Every != "" {
-			if everyDuration, everyErr := time.ParseDuration(a.Tasks[task].Every); everyErr == nil {
+		if copyOfTask.Every != "" {
+			if everyDuration, everyErr := time.ParseDuration(copyOfTask.Every); everyErr == nil {
 				<-time.After(everyDuration)
 			} else {
 				break

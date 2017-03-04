@@ -1,4 +1,4 @@
-package task
+package alfred
 
 import (
 	"bufio"
@@ -44,6 +44,8 @@ A brief explination:
  - Setup: Similiar to tasks but these get run _before_ the command/task group gets called
  - Serve: A string, denoting port number to serve a static webserver
 */
+
+// Task contains a task definition and all of it's components
 type Task struct {
 	Summary   string
 	Test      string
@@ -76,6 +78,12 @@ type Task struct {
 	Serve     string
 }
 
+// TaskDefinition defines the name and params of a task when originally in string format
+type TaskDefinition struct {
+	Name   string
+	Params []string
+}
+
 // IsPrivate returns true/false if the task is private(not executable individually)
 func (t *Task) IsPrivate() bool {
 	return t.Private
@@ -96,24 +104,49 @@ func (t *Task) Aliases() []string {
 	return strings.Fields(t.Alias)
 }
 
-func (t *Task) FailedTasks() []string {
-	return strings.Fields(t.Fail)
-}
+//TaskGroup takes in a string(bleh(1234) whatever(bleh, woot)) and returns the values and args
+func (t *Task) TaskGroup(tasks string, args []string) []TaskDefinition {
+	results := make([]TaskDefinition, 0)
+	if tasks == "" {
+		// If there is nothing, then there is nothing to report
+		return results
+	}
+	if strings.Index(tasks, "(") == -1 {
+		// This means we have a regular space delimited list
+		tasks := strings.Split(tasks, " ")
+		for _, task := range tasks {
+			results = append(results, TaskDefinition{Name: task, Params: args})
+		}
+	} else {
+		// This means we have a group of tasks()
+		// Not going to do a ton of error checking.
+		// Don't be a sad panda and forget to add () to _EVERY_ task!
+		definitions := strings.Split(tasks, ")")
+		for _, task := range definitions {
+			// Clean up the task in case
+			task = strings.TrimSpace(task)
+			if task == "" {
+				// Empty task? Continue ...
+				continue
+			}
+			// Now, lets separate the task from the params
+			if len(strings.Split(task, "(")) == 1 {
+				// No args
+				results = append(results, TaskDefinition{Name: strings.TrimSpace(strings.Split(task, "(")[0]), Params: args})
+			} else {
+				taskName := strings.TrimSpace(strings.Split(task, "(")[0])
+				p := strings.TrimSpace(strings.Split(task, "(")[1])
+				params := strings.Split(p, ",")
+				for idx, param := range params {
+					// lets clean up our params
+					params[idx] = strings.TrimSpace(param)
+				}
+				results = append(results, TaskDefinition{Name: taskName, Params: params})
+			}
+		}
+	}
 
-func (t *Task) OkTasks() []string {
-	return strings.Fields(t.Ok)
-}
-
-func (t *Task) TaskGroup() []string {
-	return strings.Fields(t.Tasks)
-}
-
-func (t *Task) MultiTask() []string {
-	return strings.Fields(t.Multitask)
-}
-
-func (t *Task) SetupTasks() []string {
-	return strings.Fields(t.Setup)
+	return results
 }
 
 // RunCommand runs a command, also determining if it needs to be formated(multitasks for example)
@@ -134,18 +167,18 @@ func (t *Task) RunCommand(cmd, name string, formatted bool) bool {
 	return true
 }
 
-//CommandComplex takes in a command and will write it to a file, or special formatting(multitask for example)
+// CommandComplex takes in a command and will write it to a file, or special formatting(multitask for example)
 func (t *Task) CommandComplex(cmd, name string) bool {
 	if cmd != "" {
 
 		var l *os.File
 		var err error
 
-		/* If log is set ... lets use it */
+		// If log is set ... lets use it
 		if t.Log != "" {
 			l, err = os.OpenFile(t.Log, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755)
 			if err != nil {
-				/* Don't quit ... but don't log either */
+				// Don't quit ... but don't log either
 				t.Log = ""
 			}
 			defer l.Close()
@@ -198,11 +231,11 @@ func (t *Task) CommandComplex(cmd, name string) bool {
 			return false
 		}
 	}
-	/* If there was no command to run, then don't fail the task */
+	// If there was no command to run, then don't fail the task
 	return true
 }
 
-/* Execute a task ... */
+// CommandBasic runs a basic command, no frills
 func (t *Task) CommandBasic(cmd string) bool {
 	if cmd != "" {
 		cmd := exec.Command("bash", "-c", cmd)
@@ -210,39 +243,30 @@ func (t *Task) CommandBasic(cmd string) bool {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		if cmd.Run() == nil {
-			/* Was it succesful? */
+			// Was it succesful?
 			return true
-		} else {
-			return false
 		}
+		return false
 	}
-	/* If there was no command to run, then don't fail the task */
+	// If there was no command to run, then don't fail the task
 	return true
 }
 
-/* Test
-   Currently lets just run a command, BUT, in the future I'd love to see:
-   file.exists "filename"
-   dir.exists "dirname"
-   dir.age 15m
-   file.age 15m
-   etc etc ..
-*/
+// TestF runs a command with _NO_ output!
 func (t *Task) TestF(tst string) bool {
 	if tst != "" {
 		cmd := exec.Command("bash", "-c", tst)
 		if cmd.Run() == nil {
 			/* Was it succesful? */
 			return true
-		} else {
-			return false
 		}
+		return false
 	}
 	/* If there was no command to run, then don't fail the test */
 	return true
 }
 
-/* Evaluate */
+// Eval runs a string to see if it's a command or not(depending on it's exit code)
 func (t *Task) Eval(cmd string) string {
 	out, err := exec.Command(cmd).Output()
 	if err != nil {
@@ -259,12 +283,12 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		t.Vars = make(map[string]string, 0)
 	}
 
-	/* override variable defaults with actual vars */
+	// override variable defaults with actual vars
 	for key, value := range vars {
 		t.Vars[key] = t.Eval(value)
 	}
 
-	/* override defaults with the args */
+	// override defaults with the args
 	for index, value := range args {
 		if len(t.Args) > index {
 			t.Args[index] = value
@@ -273,7 +297,7 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		}
 	}
 
-	/* Any null values? If so, bail ... */
+	// Any null values? If so, bail ...
 	for _, value := range t.Args {
 		if value == "" {
 			return false
@@ -292,65 +316,63 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 	// Setup time
 	t.Time = time.Now()
 
-	/* All of the modules */
+	// All of the modules
 	for key, value := range t.Modules {
-		if module_ok, module_translated := t.template(value); module_ok {
-			t.Modules[key] = module_translated
+		if moduleOk, moduleTranslated := t.template(value); moduleOk {
+			t.Modules[key] = moduleTranslated
 		} else {
 			return false
 		}
 	}
 
-	/* get to translating */
-	if every_ok, every_translated := t.template(t.Every); every_ok {
-		t.Every = every_translated
+	// get to translating
+	if everyOk, everyTranslated := t.template(t.Every); everyOk {
+		t.Every = everyTranslated
 	} else {
 		return false
 	}
 
-	if allargs_ok, allargs_translated := t.template(strings.Join(args, " ")); allargs_ok {
-		t.AllArgs = allargs_translated
+	if allargsOk, allargsTranslated := t.template(strings.Join(args, " ")); allargsOk {
+		t.AllArgs = allargsTranslated
 	} else {
 		return false
 	}
 
-	if cmd_ok, cmd_translated := t.template(t.Command); cmd_ok {
-		t.Command = cmd_translated
+	if cmdOk, cmdTranslated := t.template(t.Command); cmdOk {
+		t.Command = cmdTranslated
 	} else {
 		return false
 	}
 
-	if cmd_ok, cmd_translated := t.template(t.Commands); cmd_ok {
-		t.Commands = cmd_translated
+	if cmdOk, cmdTranslated := t.template(t.Commands); cmdOk {
+		t.Commands = cmdTranslated
 	} else {
 		return false
 	}
 
-	if dir_ok, dir_translated := t.template(t.Dir); dir_ok {
-		t.Dir = dir_translated
+	if dirOk, dirTranslated := t.template(t.Dir); dirOk {
+		t.Dir = dirTranslated
 	} else {
 		return false
 	}
 
-	if tst_ok, tst_translated := t.template(t.Test); tst_ok {
-		t.Test = tst_translated
+	if tstOk, tstTranslated := t.template(t.Test); tstOk {
+		t.Test = tstTranslated
 	} else {
 		return false
 	}
 
-	/* if we made it here, then we are good to go */
+	// if we made it here, then we are good to go
 	return true
 }
 
-/* Translate a string to a template */
+// template a helper function to translate a string to a template
 func (t *Task) template(translate string) (bool, string) {
 	template := template.Must(template.New("translate").Parse(translate))
 	b := new(bytes.Buffer)
 	err := template.Execute(b, t)
 	if err == nil {
 		return true, b.String()
-	} else {
-		return false, translate
 	}
-	return true, translate
+	return false, translate
 }

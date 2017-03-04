@@ -1,4 +1,5 @@
 # alfred
+
 Because even Batman needs a little help.
 
 [![Build Status](https://travis-ci.org/kcmerrill/alfred.svg?branch=master)](https://travis-ci.org/kcmerrill/alfred) [![Join the chat at https://gitter.im/kcmerrill/alfred](https://badges.gitter.im/kcmerrill/alfred.svg)](https://gitter.im/kcmerrill/alfred?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -6,9 +7,11 @@ Because even Batman needs a little help.
 ![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred.jpg "Alfred")
 
 ## What is it
+
 A simple go/yaml powered make file/task runner with a bit of a twist.
 
 ## Binaries || Installation
+
 [![MacOSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX")] (http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64) [![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux")] (http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
 
 via go:
@@ -20,19 +23,22 @@ via docker:
 `$ docker run -v $PWD:$PWD -w $PWD kcmerrill/alfred`
 
 ## Features
+
 - Extendable. Common tasks(Private too)
 - Watch files for modifications
-- Retry/Rerun tasks based on failures before giving up 
+- Retry/Rerun tasks based on failures before giving up
 - Logging
 - Success/Failure decision tree
-- Run tasks asynchronously or synchronously 
+- Run tasks asynchronously or synchronously
 - Autocomplete task names
 - Static webserver
-- Many more! 
+- Many more!
 
 ## Usage
+
 Create a file named: `alfred.yml`
-```
+
+```yaml
 say.hello:
     summary: I will say hello!
     usage: alfred say.hello
@@ -65,24 +71,30 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 
 `alfred blurt` will perform both tasks at the same time
 
-# Quick Walkthrough
+## Quick Walkthrough
+
+To see a comprehensive list of features and functionality please [RTFM](RTFM.md "additional documentation")
+
 [![asciicast](https://asciinema.org/a/103711.png)](https://asciinema.org/a/103711)
 
-[For additional documentation, please refer to the GUIDE](GUIDE.md "additional documentation")
-
 ## Example uses
-* Monitor websites
-* Setup/Update/Deploy projects in your dev env
-* Simple Nagios, Jenkins, pingdom replacement
-* Monitor crons(alert on failures, update endpoints etc ... )
-* Watch for file modifications to run tests->builds
 
+- Monitor websites
+- Setup/Update/Deploy projects in your dev env
+- Simple Nagios, Jenkins, pingdom replacement
+- Monitor crons(alert on failures, update endpoints etc ... )
+- Watch for file modifications to run tests->builds
 
 ## Tab completion
 
-Copy the included `alfred.completion.sh` to `/etc/bash_completion.d/`, or source it in your `~/.profile` file.
+Copy the included `alfred.completion.sh` to `/etc/bash_completion.d/`.
+
+Or source it in your `~/.profile` file.
+
+Or `alfred /self tab.completion`
 
 ## Testing
+
 You might say I've cheated the testing route by only scraping the output. You'd be right.
 
 "I live with a wizard. I cheat" ~ Mouse
