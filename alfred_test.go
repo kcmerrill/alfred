@@ -32,6 +32,7 @@ func run(cmd string, t *testing.T) (string, error) {
 	} else {
 		return strings.Trim(string(out), "\n"), err
 	}
+
 }
 
 func TestCurrentDirectory(t *testing.T) {
@@ -254,7 +255,7 @@ func TestArgumentsOkAndDefaults(t *testing.T) {
 			t.FailNow()
 		}
 		/* Verfify our command had run succesfully */
-		if !strings.Contains(sut, "alfred.yml") {
+		if !strings.Contains(sut, ".alfred") {
 			t.Logf("Listing of the current directory should show an alfred.yml file")
 			t.FailNow()
 		}

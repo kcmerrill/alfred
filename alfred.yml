@@ -26,6 +26,7 @@ tdd:
 test:
     summary: Testing ...
     command: |
+        go install
         go test -v
 
 commit:

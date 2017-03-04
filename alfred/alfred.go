@@ -17,7 +17,6 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/kcmerrill/alfred/remote"
-	"github.com/kcmerrill/alfred/task"
 	"gopkg.in/yaml.v2"
 )
 
@@ -32,7 +31,7 @@ type Alfred struct {
 	// Variables
 	Vars map[string]string `yaml:"alfred.vars"`
 	// All of the tasks parsed from the yaml file
-	Tasks map[string]*task.Task `yaml:",inline"`
+	Tasks map[string]*Task `yaml:",inline"`
 	// Alfred remotes(private/public repos)
 	remote *remote.Remote
 	// Originating directory
@@ -56,6 +55,8 @@ func New(args []string) {
 	// Grab the current directory and save if off
 	a.dir, _ = os.Getwd()
 
+	fmt.Println(args)
+
 	// Set our Arguments
 	a.args = args
 
@@ -69,7 +70,7 @@ func New(args []string) {
 			if !a.findTask() {
 				a.args = append(a.args[:1], append([]string{"default"}, a.args[1:]...)...)
 				if !a.findTask() {
-					say("ERROR", "Invalid task.")
+					say("ERROR", "Invalid taskkkkkkk.")
 					os.Exit(1)
 				}
 			}
@@ -117,7 +118,7 @@ func (a *Alfred) findTask() bool {
 				return false
 			}
 		} else {
-			say(a.args[2], "invalid task.")
+			say(a.args[2], "Invalid taskk.")
 			return false
 		}
 		break
@@ -129,15 +130,15 @@ func (a *Alfred) findTask() bool {
 func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 	// Verify again it's a valid task
 	if !a.isValidTask(task) {
-		say(task, "Invalid task.")
+		say(task, "Invalid task."+task+"--")
 		return false
 	}
 
 	// Infinite loop Used for the every command
 	for {
 		// Run our setup tasks
-		for _, s := range a.Tasks[task].SetupTasks() {
-			if !a.runTask(s, args, formatted) {
+		for _, taskDefinition := range a.Tasks[task].TaskGroup(a.Tasks[task].Setup, args) {
+			if !a.runTask(taskDefinition.Name, taskDefinition.Params, formatted) {
 				break
 			}
 		}
@@ -177,7 +178,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 						m, _ := regexp.Match(a.Tasks[task].Watch, []byte(path))
 						if m {
 							// If not a match ...
-							return errors.New("")
+							return errors.New("no matches")
 						}
 					}
 					return nil
@@ -248,8 +249,8 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			fmt.Println(red("✘"), task)
 
 			// Failed? Lets run the failed tasks
-			for _, failed := range a.Tasks[task].FailedTasks() {
-				if !a.runTask(failed, args, formatted) {
+			for _, taskDefinition := range a.Tasks[task].TaskGroup(a.Tasks[task].Fail, args) {
+				if !a.runTask(taskDefinition.Name, taskDefinition.Params, formatted) {
 					break
 				}
 			}
@@ -274,26 +275,26 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		var wg sync.WaitGroup
 		// Do we have any tasks we need to run in parallel?
-		for _, t := range a.Tasks[task].MultiTask() {
+		for _, taskDefinition := range a.Tasks[task].TaskGroup(a.Tasks[task].Multitask, args) {
 			wg.Add(1)
 			go func(t string, args []string) {
 				defer wg.Done()
 				a.runTask(t, args, true)
-			}(t, args)
+			}(taskDefinition.Name, taskDefinition.Params)
 		}
 		wg.Wait()
 
 		// Ok, we made it here ... Is this task a task group?
-		for _, t := range a.Tasks[task].TaskGroup() {
-			if !a.runTask(t, args, formatted) {
+		for _, taskDefinition := range a.Tasks[task].TaskGroup(a.Tasks[task].Tasks, args) {
+			if !a.runTask(taskDefinition.Name, taskDefinition.Params, formatted) {
 				break
 			}
 		}
 
 		// Woot! Lets run the ok tasks
 		if taskok {
-			for _, okTasks := range a.Tasks[task].OkTasks() {
-				if !a.runTask(okTasks, args, formatted) {
+			for _, taskDefinition := range a.Tasks[task].TaskGroup(a.Tasks[task].Ok, args) {
+				if !a.runTask(taskDefinition.Name, taskDefinition.Params, formatted) {
 					break
 				}
 			}
