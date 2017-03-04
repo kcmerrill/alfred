@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/kcmerrill/alfred/alfred"
 )
@@ -36,5 +37,5 @@ func main() {
 		return
 	}
 
-	alfred.New()
+	alfred.New(os.Args)
 }

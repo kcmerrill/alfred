@@ -23,6 +23,8 @@ import (
 
 // Alfred is our main object that holds the yaml file, tasks etc
 type Alfred struct {
+	// Arguments passed in
+	args []string
 	// The contents of the yaml file
 	contents []byte
 	// Where the alfred.yml file was found
@@ -39,14 +41,10 @@ type Alfred struct {
 	config struct {
 		Remote map[string]string
 	}
-	// Task/Step Number
-	taskNumber int
-	// Mutex
-	lock *sync.Mutex
 }
 
 // New creates and sets up our alfred struct
-func New() {
+func New(args []string) {
 	a := new(Alfred)
 
 	// Grab our configuration
@@ -58,8 +56,8 @@ func New() {
 	// Grab the current directory and save if off
 	a.dir, _ = os.Getwd()
 
-	// Setup our mutex
-	a.lock = &sync.Mutex{}
+	// Set our Arguments
+	a.args = args
 
 	// Try to find alfred.yml remotely(easy, needs a /) or find it locally
 	if a.findRemote() || a.findLocal() {
@@ -69,7 +67,7 @@ func New() {
 			a.prepare()
 			// Ok, so we have instructions ... do we have a task to run?
 			if !a.findTask() {
-				os.Args = append(os.Args[:1], append([]string{"default"}, os.Args[1:]...)...)
+				a.args = append(a.args[:1], append([]string{"default"}, a.args[1:]...)...)
 				if !a.findTask() {
 					say("ERROR", "Invalid task.")
 					os.Exit(1)
@@ -95,17 +93,17 @@ func New() {
 func (a *Alfred) findTask() bool {
 	switch {
 	// Look locally, List tasks within its alfred.yml file
-	case len(os.Args) == 1:
+	case len(a.args) == 1:
 		a.List()
 		break
 	// Look remotely and list the tasks within it's alfred.yml file
-	case len(os.Args) == 2 && a.isRemote():
+	case len(a.args) == 2 && a.isRemote():
 		a.List()
 		break
 	// Called a local task
-	case len(os.Args) >= 2 && !a.isRemote():
-		if a.isValidTask(os.Args[1]) && !a.Tasks[os.Args[1]].IsPrivate() {
-			if !a.runTask(os.Args[1], os.Args[2:], false) {
+	case len(a.args) >= 2 && !a.isRemote():
+		if a.isValidTask(a.args[1]) && !a.Tasks[a.args[1]].IsPrivate() {
+			if !a.runTask(a.args[1], a.args[2:], false) {
 				return false
 			}
 		} else {
@@ -113,13 +111,13 @@ func (a *Alfred) findTask() bool {
 		}
 		break
 	// Called a remote task
-	case len(os.Args) >= 3 && a.isRemote():
-		if a.isValidTask(os.Args[2]) && !a.Tasks[os.Args[2]].IsPrivate() {
-			if !a.runTask(os.Args[2], os.Args[3:], false) {
+	case len(a.args) >= 3 && a.isRemote():
+		if a.isValidTask(a.args[2]) && !a.Tasks[a.args[2]].IsPrivate() {
+			if !a.runTask(a.args[2], a.args[3:], false) {
 				return false
 			}
 		} else {
-			say(os.Args[2], "invalid task.")
+			say(a.args[2], "invalid task.")
 			return false
 		}
 		break
@@ -137,11 +135,6 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 	// Infinite loop Used for the every command
 	for {
-		// Increment the taskNumber
-		a.lock.Lock()
-		a.taskNumber = a.taskNumber + 1
-		a.lock.Unlock()
-
 		// Run our setup tasks
 		for _, s := range a.Tasks[task].SetupTasks() {
 			if !a.runTask(s, args, formatted) {
@@ -158,7 +151,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		}
 
 		// Lets prep it, and if it's bunk, lets see if we can pump out it's usage
-		if !a.Tasks[task].Prepare(args, a.Vars, a.taskNumber) {
+		if !a.Tasks[task].Prepare(args, a.Vars) {
 			say(task+":error", "Missing argument(s).")
 			return false
 		}
@@ -169,9 +162,8 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 				if err := os.MkdirAll(a.Tasks[task].Dir, 0755); err != nil {
 					say(task+":dir", "Invalid directory")
 					return false
-				} else {
-					os.Chdir(a.Tasks[task].Dir)
 				}
+				os.Chdir(a.Tasks[task].Dir)
 			}
 		}
 
@@ -201,7 +193,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		// Go through each of the modules ...
 		// before command, docker stop for example
 		for module, cmd := range a.Tasks[task].Modules {
-			if !a.Tasks[task].RunCommand(os.Args[0]+" "+a.remote.ModulePath(module)+" "+cmd, task, formatted) {
+			if !a.Tasks[task].RunCommand(args[0]+" "+a.remote.ModulePath(module)+" "+cmd, task, formatted) {
 				// It failed :(
 				taskok = false
 				break
@@ -245,8 +237,8 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		}
 
 		// Wait ...
-		if wait_duration, wait_err := time.ParseDuration(a.Tasks[task].Wait); wait_err == nil {
-			<-time.After(wait_duration)
+		if waitDuration, waitError := time.ParseDuration(a.Tasks[task].Wait); waitError == nil {
+			<-time.After(waitDuration)
 		}
 
 		// The task failed ...
@@ -300,8 +292,8 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		// Woot! Lets run the ok tasks
 		if taskok {
-			for _, ok_tasks := range a.Tasks[task].OkTasks() {
-				if !a.runTask(ok_tasks, args, formatted) {
+			for _, okTasks := range a.Tasks[task].OkTasks() {
+				if !a.runTask(okTasks, args, formatted) {
 					break
 				}
 			}
@@ -310,8 +302,8 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		// Do we need to break or should we keep going?
 		if a.Tasks[task].Every != "" {
-			if every_duration, every_err := time.ParseDuration(a.Tasks[task].Every); every_err == nil {
-				<-time.After(every_duration)
+			if everyDuration, everyErr := time.ParseDuration(a.Tasks[task].Every); everyErr == nil {
+				<-time.After(everyDuration)
 			} else {
 				break
 			}
@@ -332,7 +324,7 @@ func (a *Alfred) isValidTask(task string) bool {
 
 // The first argument MUST contain a "/" to be considered remote
 func (a *Alfred) isRemote() bool {
-	if len(os.Args) >= 2 && strings.Contains(os.Args[1], "/") {
+	if len(a.args) >= 2 && strings.Contains(a.args[1], "/") {
 		return true
 	}
 	return false
@@ -342,10 +334,10 @@ func (a *Alfred) isRemote() bool {
 func (a *Alfred) findRemote() bool {
 	// Make sure remote is a valid possibility
 	if a.isRemote() {
-		remote, module := a.remote.Parse(os.Args[1])
+		remote, module := a.remote.Parse(a.args[1])
 
 		// default to plain jane github
-		url := "https://raw.githubusercontent.com/" + os.Args[1] + "/master/alfred.yml"
+		url := "https://raw.githubusercontent.com/" + a.args[1] + "/master/alfred.yml"
 
 		// Does a remote exist? If so, we should use the remote syntax
 		if a.remote.Exists(remote) {
@@ -355,7 +347,7 @@ func (a *Alfred) findRemote() bool {
 		// try to fetch the alfred file
 		resp, err := http.Get(url)
 		if err != nil || resp.StatusCode != 200 {
-			say("error", "Unknown module "+os.Args[1])
+			say("error", "Unknown module "+a.args[1])
 			say("url", url)
 			return true
 		}
@@ -390,14 +382,14 @@ func (a *Alfred) findLocal() bool {
 				dir + "/.alfred/*alfred.yml",
 				dir + "/alfred/*alfred.yml"}
 			for _, pattern := range patterns {
-				if alfred_files, files_err := filepath.Glob(pattern); files_err == nil && len(alfred_files) > 0 {
-					for _, alfred_file := range alfred_files {
-						if contents, read_err := ioutil.ReadFile(alfred_file); read_err == nil {
+				if alfredFiles, filesErr := filepath.Glob(pattern); filesErr == nil && len(alfredFiles) > 0 {
+					for _, alfredFile := range alfredFiles {
+						if contents, readErr := ioutil.ReadFile(alfredFile); readErr == nil {
 							// Sweet. We found an alfred file. Lets save it off and return
 							//a.contents = append(append(a.contents, []byte("\n")...), contents...)
 							a.contents = append(a.contents, []byte("\n\n")...)
 							a.contents = append(a.contents, contents...)
-							a.location = alfred_file
+							a.location = alfredFile
 							// Be sure that we ar relative to where we found the config file
 							a.dir = dir
 						}
@@ -421,7 +413,7 @@ func (a *Alfred) findLocal() bool {
 func (a *Alfred) List() {
 	// Get/Sort list of tasks ...
 	t := []string{}
-	for task, _ := range a.Tasks {
+	for task := range a.Tasks {
 		t = append(t, task)
 	}
 	sort.Strings(t)

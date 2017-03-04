@@ -5,11 +5,6 @@ setup:
         go build
         alfred
 
-code.laptop:
-    summary: Open Vim -> Build -> Test -> Repeat
-    command: vim alfred/alfred.go
-    tasks: build test pause code.laptop
-
 build:
     summary: Build alfred
     commands: |
@@ -23,11 +18,15 @@ push:
     command: git status
     tasks: verification commit build test dockerize docker.push
 
+tdd:
+    summary: TDD alfred style!
+    watch: ".*?go$"
+    tasks: test
+    
 test:
     summary: Testing ...
     command: |
         go test -v
-    exit: 1
 
 commit:
     summary: Commit changes

@@ -42,48 +42,46 @@ A brief explination:
  - Retry: When set, will attempt to retry the command X number of times
  - Watch: A regular expression of changed files
  - Setup: Similiar to tasks but these get run _before_ the command/task group gets called
- - TaskNumber: What task number is this?
  - Serve: A string, denoting port number to serve a static webserver
 */
 type Task struct {
-	Summary    string
-	Test       string
-	Command    string
-	Commands   string
-	Usage      string
-	Dir        string
-	Tasks      string
-	Setup      string
-	Multitask  string
-	Every      string
-	Wait       string
-	Ok         string
-	Fail       string
-	AllArgs    string
-	Args       []string
-	CleanArgs  []string
-	UUID       string
-	Vars       map[string]string
-	Time       time.Time
-	Modules    map[string]string `yaml:",inline"`
-	Defaults   []string
-	Alias      string
-	Private    bool
-	Exit       string
-	Skip       bool
-	Log        string
-	Retry      int
-	Watch      string
-	TaskNumber int
-	Serve      string
+	Summary   string
+	Test      string
+	Command   string
+	Commands  string
+	Usage     string
+	Dir       string
+	Tasks     string
+	Setup     string
+	Multitask string
+	Every     string
+	Wait      string
+	Ok        string
+	Fail      string
+	AllArgs   string
+	Args      []string
+	CleanArgs []string
+	UUID      string
+	Vars      map[string]string
+	Time      time.Time
+	Modules   map[string]string `yaml:",inline"`
+	Defaults  []string
+	Alias     string
+	Private   bool
+	Exit      string
+	Skip      bool
+	Log       string
+	Retry     int
+	Watch     string
+	Serve     string
 }
 
-/* Is the task private? */
+// IsPrivate returns true/false if the task is private(not executable individually)
 func (t *Task) IsPrivate() bool {
 	return t.Private
 }
 
-/* Is this task an alias? */
+// IsAlias returns true/false if the task is an alias of an original task or not
 func (t *Task) IsAlias(name string) bool {
 	for _, alias := range t.Aliases() {
 		if name == alias {
@@ -93,37 +91,32 @@ func (t *Task) IsAlias(name string) bool {
 	return false
 }
 
-/* Grab a list of aliases */
+// Aliases returns an array of strings containing the task's aliases
 func (t *Task) Aliases() []string {
 	return strings.Fields(t.Alias)
 }
 
-/* Grab a list of failed tasks */
 func (t *Task) FailedTasks() []string {
 	return strings.Fields(t.Fail)
 }
 
-/* Grab a list of tasks to run when succesful */
 func (t *Task) OkTasks() []string {
 	return strings.Fields(t.Ok)
 }
 
-/* Return a list of tasks to run */
 func (t *Task) TaskGroup() []string {
 	return strings.Fields(t.Tasks)
 }
 
-/* Return a list of multitasks to run */
 func (t *Task) MultiTask() []string {
 	return strings.Fields(t.Multitask)
 }
 
-/* Return a list of setup tasks to run */
 func (t *Task) SetupTasks() []string {
 	return strings.Fields(t.Setup)
 }
 
-/* Execute a task ... */
+// RunCommand runs a command, also determining if it needs to be formated(multitasks for example)
 func (t *Task) RunCommand(cmd, name string, formatted bool) bool {
 	if cmd != "" {
 		if t.Log == "" && formatted == false {
@@ -141,7 +134,7 @@ func (t *Task) RunCommand(cmd, name string, formatted bool) bool {
 	return true
 }
 
-/* Execute a complex command(we need to either log, and/or format output ) */
+//CommandComplex takes in a command and will write it to a file, or special formatting(multitask for example)
 func (t *Task) CommandComplex(cmd, name string) bool {
 	if cmd != "" {
 
@@ -259,8 +252,7 @@ func (t *Task) Eval(cmd string) string {
 }
 
 // Prepare will setup a bunch of things, including templates and argument defeaults
-func (t *Task) Prepare(args []string, vars map[string]string, taskNumber int) bool {
-	t.TaskNumber = taskNumber
+func (t *Task) Prepare(args []string, vars map[string]string) bool {
 	t.Args = t.Defaults
 
 	if t.Vars == nil {
