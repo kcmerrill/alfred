@@ -196,7 +196,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		// Go through each of the modules ...
 		// before command, docker stop for example
 		for module, cmd := range copyOfTask.Modules {
-			if !copyOfTask.RunCommand(args[0]+" "+a.remote.ModulePath(module)+" "+cmd, task, formatted) {
+			if !copyOfTask.RunCommand(a.args[0]+" "+a.remote.ModulePath(module)+" "+cmd, task, formatted) {
 				// It failed :(
 				taskok = false
 				break
