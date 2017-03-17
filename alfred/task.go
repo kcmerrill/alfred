@@ -108,6 +108,7 @@ func (t *Task) Aliases() []string {
 
 //TaskGroup takes in a string(bleh(1234) whatever(bleh, woot)) and returns the values and args
 func (t *Task) TaskGroup(tasks string, args []string) []TaskDefinition {
+	tasks = strings.TrimSpace(tasks)
 	results := make([]TaskDefinition, 0)
 	if tasks == "" {
 		// If there is nothing, then there is nothing to report
