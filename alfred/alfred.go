@@ -324,6 +324,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 	return true
 }
 
+// Pretty print a task name with it's args (if any)
 func taskWithArgs(task string, args []string) string {
 	if len(args) < 1 {
 		return task
