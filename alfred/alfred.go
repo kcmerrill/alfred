@@ -206,7 +206,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		// First, lets show the summary
 		if copyOfTask.Summary != "" {
 			fmt.Println("")
-			say(task, copyOfTask.Summary)
+			say(task, fmt.Sprintf("%s (Args: %v)", copyOfTask.Summary, copyOfTask.Args))
 		}
 
 		// Register task output
@@ -255,7 +255,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		if !taskok {
 			red := color.New(color.FgRed).SprintFunc()
 			fmt.Println("\n---")
-			fmt.Println(red("✘"), task)
+			fmt.Println(red("✘"), fmt.Sprintf("%s FAILED", taskWithArgs(task, copyOfTask.Args)))
 
 			// Failed? Lets run the failed tasks
 			for _, taskDefinition := range copyOfTask.TaskGroup(copyOfTask.Fail, args) {
@@ -266,7 +266,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		} else {
 			green := color.New(color.FgGreen).SprintFunc()
 			fmt.Println("\n---")
-			fmt.Println(green("✔"), task)
+			fmt.Println(green("✔"), fmt.Sprintf("%s DONE", taskWithArgs(task, copyOfTask.Args)))
 		}
 
 		// Handle skips ...
@@ -322,6 +322,15 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		}
 	}
 	return true
+}
+
+// Pretty print a task name with it's args (if any)
+func taskWithArgs(task string, args []string) string {
+	if len(args) < 1 {
+		return task
+	} else {
+		return fmt.Sprintf("%s (%s)", task, strings.Join(args, ", "))
+	}
 }
 
 // Ensure that the task exists
