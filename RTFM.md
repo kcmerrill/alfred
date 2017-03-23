@@ -317,7 +317,7 @@ $ touch projectY/alfred.yml, is your standard alfred file with tasks in it.
 Ok, now that you have a location of private alfred files with a static webserver running on port `8080`, lets add it to the repos section to your `$HOME/.alfred/config.yml`
 
 ```
-repos:
+remote:
     companyxyz: http://localhost:8080/
 ```
 
