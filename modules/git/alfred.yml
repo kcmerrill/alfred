@@ -10,8 +10,8 @@ checkout:
     summary: Checkout commit
     command: >
         git reset HEAD --hard &&
+        git fetch --all && 
         git checkout {{ index .Args 0 }} &&
-        git fetch --all
         git pull
 
 submodule-update-init:
