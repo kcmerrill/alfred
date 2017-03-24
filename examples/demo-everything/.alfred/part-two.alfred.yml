@@ -11,9 +11,9 @@ fourty.one:
     register: my.new.var
     command: |
         echo "5678"
+    ok: fourty.two
 
 fourty.two:
-    setup: fourty.one
     summary: Retrieve a registered variable
     command: |
         echo The variable is {{ index .Vars "my.new.var"}}

@@ -212,8 +212,6 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		// Register task output
 		if copyOfTask.Register != "" && copyOfTask.Command != "" {
 			a.Vars[copyOfTask.Register] = copyOfTask.Exec(copyOfTask.Command)
-			// No need to continue on ... return
-			return true
 		}
 
 		// Test ...
