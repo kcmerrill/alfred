@@ -17,3 +17,11 @@ fourty.two:
     summary: Retrieve a registered variable
     command: |
         echo The variable is {{ index .Vars "my.new.var"}}
+
+fourty.three:
+    summary: Lets call a task with params
+    tasks: fourty.four(a, {{ index .Args 0 }}) fourty.four(b, {{ index .Args 0}})
+
+fourty.four:
+    summary: A task with two params
+    command: echo {{ index .Args 0 }} {{ index .Args 1 }}
