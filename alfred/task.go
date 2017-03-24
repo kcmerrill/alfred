@@ -370,6 +370,24 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		return false
 	}
 
+	if tasksOk, tasksOkTranslated := t.template(t.Ok); tasksOk {
+		t.Ok = tasksOkTranslated
+	} else {
+		return false
+	}
+
+	if tasksFail, tasksFailTranslated := t.template(t.Fail); tasksFail {
+		t.Fail = tasksFailTranslated
+	} else {
+		return false
+	}
+
+	if multiFail, multiTranslated := t.template(t.Multitask); multiFail {
+		t.Multitask = multiTranslated
+	} else {
+		return false
+	}
+
 	if dirOk, dirTranslated := t.template(t.Dir); dirOk {
 		t.Dir = dirTranslated
 	} else {
