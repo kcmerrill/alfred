@@ -1,4 +1,4 @@
-User Guide
+The Manual 
 =================
 
    * [What is Alfred?](#what-is-alfred)
