@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -361,17 +362,54 @@ func (a *Alfred) findRemote() bool {
 			url = a.remote.URL(remote, module)
 		}
 
+		// Setup for offline mode
+		homeDir := os.Getenv("HOME")
+		if runtime.GOOS == "windows" {
+			homeDir = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+		}
+		alfredDir := ""
+		alfredFile := ""
+		if homeDir == "" {
+			say("ERROR", "home dir not set")
+		} else {
+			alfredDir = homeDir +
+				string(os.PathSeparator) + ".alfred" +
+				string(os.PathSeparator) + "offline" +
+				string(os.PathSeparator) + remote +
+				string(os.PathSeparator) + module
+			alfredFile = alfredDir + string(os.PathSeparator) + "alfred.yml"
+		}
+
 		// try to fetch the alfred file
 		resp, err := http.Get(url)
 		if err != nil || resp.StatusCode != 200 {
-			say("error", "Unknown module "+a.args[1])
-			say("url", url)
+			if homeDir != "" {
+				body, err := ioutil.ReadFile(alfredFile)
+				if err != nil {
+					say("ERROR", "Unknown module "+a.args[1])
+					say("url", url)
+				} else {
+					a.contents = body
+					a.location = alfredFile
+				}
+			}
 			return true
 		}
 
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err == nil {
+			if homeDir != "" {
+				err := os.MkdirAll(alfredDir, 0777)
+				if err != nil {
+					say("ERROR", "Creating offline directories.")
+				} else {
+					err := ioutil.WriteFile(alfredFile, body, 0644)
+					if err != nil {
+						say("ERROR", "Saving offline alfred files")
+					}
+				}
+			}
 			// We found something ... lets use it!
 			//a.contents = append(append(a.contents, []byte("\n")...), body...)
 			a.contents = body
