@@ -10,6 +10,7 @@ The Manual
    * [Tasks](#tasks)
       * [Naming tasks](#naming-tasks)
       * [Important tasks](#important-tasks)
+      * [Calling with Parameters](#calling-with-parameters)
    * [Task components](#task-components)
       * [Alias](#alias)
       * [Setup](#setup)
@@ -153,6 +154,24 @@ important.task*:
     command: |
         echo "I am important I say!"
 ```
+
+## Calling with Parameters
+It might help to call your tasks with parameters for example with `tasks`, `setup`, `multitask`, `ok`, `fail` as examples. If we were to rewrite the original demo example using params it would look something like this. 
+
+```yaml
+say:
+    summary: I will say what you send me!
+    usage: alfred say hello
+    command: echo {{ index .Args 0 }}
+
+speak:
+    tasks: say(hello) say(goodbye)
+    
+blurt:
+    multitask: say(hello) say(goodbye)
+```
+
+If you do call a task with params, all tasks that get called must have `()` even if they do *NOT* have params. The reason? I was lazy and didn't come up with a robust solution to fix this. It's either all or nothing. 
 
 # Task components
 Alfred comes with multiple components built in. A task can be as simple or as complex as you want to make it. It's really up to you. A task can have one or many components. Lets go over what's available to you, and more importantly, it's order that it's run within the task. By default, all alfred commands are run at the root level where `alfred.yml` exists.
