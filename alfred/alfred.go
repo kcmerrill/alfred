@@ -212,6 +212,9 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		// Register task output
 		if copyOfTask.Register != "" && copyOfTask.Command != "" {
+			if (a.Vars == nil) {
+				a.Vars = make(map[string]string)
+			}
 			a.Vars[copyOfTask.Register] = copyOfTask.Exec(copyOfTask.Command)
 		}
 
