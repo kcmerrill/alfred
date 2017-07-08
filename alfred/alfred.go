@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -206,14 +207,15 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		// First, lets show the summary
 		if copyOfTask.Summary != "" {
 			fmt.Println("")
-			say(task, copyOfTask.Summary)
+			say(task, fmt.Sprintf("%s (Args: %v)", copyOfTask.Summary, copyOfTask.Args))
 		}
 
 		// Register task output
 		if copyOfTask.Register != "" && copyOfTask.Command != "" {
+			if (a.Vars == nil) {
+				a.Vars = make(map[string]string)
+			}
 			a.Vars[copyOfTask.Register] = copyOfTask.Exec(copyOfTask.Command)
-			// No need to continue on ... return
-			return true
 		}
 
 		// Test ...
@@ -255,7 +257,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		if !taskok {
 			red := color.New(color.FgRed).SprintFunc()
 			fmt.Println("\n---")
-			fmt.Println(red("✘"), task)
+			fmt.Println(red("✘"), fmt.Sprintf("%s FAILED", taskWithArgs(task, copyOfTask.Args)))
 
 			// Failed? Lets run the failed tasks
 			for _, taskDefinition := range copyOfTask.TaskGroup(copyOfTask.Fail, args) {
@@ -266,7 +268,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		} else {
 			green := color.New(color.FgGreen).SprintFunc()
 			fmt.Println("\n---")
-			fmt.Println(green("✔"), task)
+			fmt.Println(green("✔"), fmt.Sprintf("%s DONE", taskWithArgs(task, copyOfTask.Args)))
 		}
 
 		// Handle skips ...
@@ -324,6 +326,15 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 	return true
 }
 
+// Pretty print a task name with it's args (if any)
+func taskWithArgs(task string, args []string) string {
+	if len(args) < 1 {
+		return task
+	} else {
+		return fmt.Sprintf("%s (%s)", task, strings.Join(args, ", "))
+	}
+}
+
 // Ensure that the task exists
 func (a *Alfred) isValidTask(task string) bool {
 	if _, exists := a.Tasks[task]; exists {
@@ -354,17 +365,54 @@ func (a *Alfred) findRemote() bool {
 			url = a.remote.URL(remote, module)
 		}
 
+		// Setup for offline mode
+		homeDir := os.Getenv("HOME")
+		if runtime.GOOS == "windows" {
+			homeDir = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+		}
+		alfredDir := ""
+		alfredFile := ""
+		if homeDir == "" {
+			say("ERROR", "home dir not set")
+		} else {
+			alfredDir = homeDir +
+				string(os.PathSeparator) + ".alfred" +
+				string(os.PathSeparator) + "offline" +
+				string(os.PathSeparator) + remote +
+				string(os.PathSeparator) + module
+			alfredFile = alfredDir + string(os.PathSeparator) + "alfred.yml"
+		}
+
 		// try to fetch the alfred file
 		resp, err := http.Get(url)
 		if err != nil || resp.StatusCode != 200 {
-			say("error", "Unknown module "+a.args[1])
-			say("url", url)
+			if homeDir != "" {
+				body, err := ioutil.ReadFile(alfredFile)
+				if err != nil {
+					say("ERROR", "Unknown module "+a.args[1])
+					say("url", url)
+				} else {
+					a.contents = body
+					a.location = alfredFile
+				}
+			}
 			return true
 		}
 
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err == nil {
+			if homeDir != "" {
+				err := os.MkdirAll(alfredDir, 0777)
+				if err != nil {
+					say("ERROR", "Creating offline directories.")
+				} else {
+					err := ioutil.WriteFile(alfredFile, body, 0644)
+					if err != nil {
+						say("ERROR", "Saving offline alfred files")
+					}
+				}
+			}
 			// We found something ... lets use it!
 			//a.contents = append(append(a.contents, []byte("\n")...), body...)
 			a.contents = body

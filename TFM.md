@@ -1,4 +1,4 @@
-User Guide
+The Manual 
 =================
 
    * [What is Alfred?](#what-is-alfred)
@@ -10,6 +10,7 @@ User Guide
    * [Tasks](#tasks)
       * [Naming tasks](#naming-tasks)
       * [Important tasks](#important-tasks)
+      * [Calling with Parameters](#calling-with-parameters)
    * [Task components](#task-components)
       * [Alias](#alias)
       * [Setup](#setup)
@@ -30,6 +31,7 @@ User Guide
       * [Private](#private)
       * [Skip](#skip)
       * [Exit](#exit)
+      * [Multitask](#multitask)
       * [OK](#ok)
       * [Every](#every)
    * [Arguments, Variables and Templates Oh My!](#arguments-variables-and-templates-oh-my)
@@ -152,6 +154,24 @@ important.task*:
     command: |
         echo "I am important I say!"
 ```
+
+## Calling with Parameters
+It might help to call your tasks with parameters for example with `tasks`, `setup`, `multitask`, `ok`, `fail` as examples. If we were to rewrite the original demo example using params it would look something like this. 
+
+```yaml
+say:
+    summary: I will say what you send me!
+    usage: alfred say hello
+    command: echo {{ index .Args 0 }}
+
+speak:
+    tasks: say(hello) say(goodbye)
+    
+blurt:
+    multitask: say(hello) say(goodbye)
+```
+
+If you do call a task with params, all tasks that get called must have `()` even if they do *NOT* have params. The reason? I was lazy and didn't come up with a robust solution to fix this. It's either all or nothing. 
 
 # Task components
 Alfred comes with multiple components built in. A task can be as simple or as complex as you want to make it. It's really up to you. A task can have one or many components. Lets go over what's available to you, and more importantly, it's order that it's run within the task. By default, all alfred commands are run at the root level where `alfred.yml` exists.
@@ -317,7 +337,7 @@ $ touch projectY/alfred.yml, is your standard alfred file with tasks in it.
 Ok, now that you have a location of private alfred files with a static webserver running on port `8080`, lets add it to the repos section to your `$HOME/.alfred/config.yml`
 
 ```
-repos:
+remote:
     companyxyz: http://localhost:8080/
 ```
 
@@ -591,6 +611,24 @@ bad.task:
     command:  |
         echo "Goodbye world :(" && false
     exit: 10
+```
+
+## Multitask
+A space separated list of task names that can be run in parallel. 
+
+Example use cases:
+ - Pulling/Building/Deleting docker images
+ - Setting up multiple dev projects at once
+ 
+A few things to note:
+ - Avoid changing directories or using the `dir` key as this might impact your other tasks
+ - The logging will appear different. It will be taskname | taskoutput
+ - A lot of applications use stdout as a way to filter debuggign information, `alfred` shows this as `taskname:error` even though it might not be an error.
+ 
+ ```
+run.many.tasks
+    summary: This task will call a bunch of other tasks at the SAME time
+    multitask: taska taskb taskc taskd
 ```
 
 ## OK

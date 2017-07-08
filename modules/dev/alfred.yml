@@ -27,6 +27,7 @@ fetch-proxy:
         -p 80:80
         -p 443:443
         -v /var/run/docker.sock:/var/run/docker.sock
+        -e DOCKER_API_VERSION=1.24
         --restart=always
         --name fetch-proxy
         kcmerrill/fetch-proxy

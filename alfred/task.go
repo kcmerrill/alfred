@@ -107,8 +107,16 @@ func (t *Task) Aliases() []string {
 }
 
 //TaskGroup takes in a string(bleh(1234) whatever(bleh, woot)) and returns the values and args
-func (t *Task) TaskGroup(tasks string, args []string) []TaskDefinition {
-	tasks = strings.TrimSpace(tasks)
+func (t *Task) TaskGroup(rawTasks string, args []string) []TaskDefinition {
+
+	// Prepare it
+	ok, tasks := t.template(strings.TrimSpace(rawTasks))
+	if !ok {
+		say("error", "Missing argument(s).")
+		// No need in going on, programmer error
+		os.Exit(1)
+	}
+
 	results := make([]TaskDefinition, 0)
 	if tasks == "" {
 		// If there is nothing, then there is nothing to report
@@ -358,6 +366,24 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 
 	if cmdOk, cmdTranslated := t.template(t.Commands); cmdOk {
 		t.Commands = cmdTranslated
+	} else {
+		return false
+	}
+
+	if tasksOk, tasksOkTranslated := t.template(t.Ok); tasksOk {
+		t.Ok = tasksOkTranslated
+	} else {
+		return false
+	}
+
+	if tasksFail, tasksFailTranslated := t.template(t.Fail); tasksFail {
+		t.Fail = tasksFailTranslated
+	} else {
+		return false
+	}
+
+	if multiFail, multiTranslated := t.template(t.Multitask); multiFail {
+		t.Multitask = multiTranslated
 	} else {
 		return false
 	}

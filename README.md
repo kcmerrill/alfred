@@ -12,7 +12,7 @@ A simple go/yaml powered make file/task runner with a bit of a twist.
 
 ## Binaries || Installation
 
-[![MacOSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX")] (http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64) [![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux")] (http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
+[![MacOSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX")](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64) [![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux")](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
 
 via go:
 
@@ -73,7 +73,7 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 
 ## Quick Walkthrough
 
-To see a comprehensive list of features and functionality please [RTFM](RTFM.md "additional documentation").
+To see a comprehensive list of features and functionality please [RTFM](TFM.md "additional documentation").
 
 [![asciicast](https://asciinema.org/a/103711.png)](https://asciinema.org/a/103711)
 
