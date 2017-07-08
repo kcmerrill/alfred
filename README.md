@@ -2,6 +2,8 @@
 
 Because even Batman needs a little help.
 
+*v2(see branch) is being built! Backwards compatable. Testable. More features. Trust the awesomeness.
+
 [![Build Status](https://travis-ci.org/kcmerrill/alfred.svg?branch=master)](https://travis-ci.org/kcmerrill/alfred) [![Join the chat at https://gitter.im/kcmerrill/alfred](https://badges.gitter.im/kcmerrill/alfred.svg)](https://gitter.im/kcmerrill/alfred?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ![Alfred](assets/alfred25.png "Alfred")
