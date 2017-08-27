@@ -33,3 +33,11 @@ run.node-firefox:
         -P
         selenium/node-firefox:2.53.1-beryllium
     exit: 1
+
+tdd.go:
+    summary: Watch .go files and run test.go
+    watch: ".*?go$"
+    tasks: test.go
+
+test.go:
+    command: go test $(go list ./... | grep -v /vendor/)
