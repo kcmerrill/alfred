@@ -75,7 +75,7 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 
 To see a comprehensive list of features and functionality please [RTFM](TFM.md "additional documentation").
 
-[![asciicast](https://asciinema.org/a/103711.png)](https://asciinema.org/a/103711)
+[![asciicast](assets/demo.png)](https://asciinema.org/a/103711)
 
 ## Example uses
 
