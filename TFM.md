@@ -41,7 +41,7 @@ The Manual
    * [Tab completion](#tab-completion)
 
 # What is Alfred?
-[Alfred](/ "Alfred") is a simple yaml based task runner. It helps automate tedious tasks among many things. I built it primarily as a replacement to `docker-compose` as an evolution to [Yoda](http://github.com/kcmerrill/yoda "Yoda") however it's grown into something a bit bigger. It's been used for all kinds of automated tasks, and has become part of my daily workflow automating tedious tasks I was previously doing by hand. Another reason it's been great is the automation of dev workflows. Setting up configuration files, creating symlinks, running all sorts of commands in the proper order in order to get dev boxes up and running as quickly as possible. Get
+[Alfred](/ "Alfred") is a simple yaml based task runner. It helps automate tedious tasks among many things. I built it primarily as a replacement to `docker-compose` as an evolution to [Yoda](http://github.com/kcmerrill/yoda "Yoda") however it's grown into something a bit bigger. It's been used for all kinds of automated tasks, and has become part of my daily workflow automating tedious tasks I was previously doing by hand. Another reason it's been great is the automation of dev workflows. Setting up configuration files, creating symlinks, running all sorts of commands in the proper order in order to get dev boxes up and running as quickly as possible. 
 
 # Features
 - Extendable. Common tasks(Private too)
@@ -701,6 +701,19 @@ $ alfred do.you.know
 ```
 
 If you do not specify defaults, alfred will exit due to insufficient arguments passed in.
+
+## Variables
+Variables are ways you can manage alfred tasks. Some use cases might be updating version numbers, env variables etc. 
+
+```
+alfred.vars:
+    varname: varvalue
+
+taskname:
+    summary: My task that users a variable!
+    command: |
+        echo {{ index .Vars "varname" }}
+```
 
 ## Date/Time
 Every task is injected with the time that the particular task started. You can use it in your task by using `{{ .Time }}`
