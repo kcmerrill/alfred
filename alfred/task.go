@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"html/template"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
-	"text/template"
 	"time"
 
+	sprig "github.com/Masterminds/sprig"
 	"github.com/satori/go.uuid"
 )
 
@@ -406,7 +407,7 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 
 // template a helper function to translate a string to a template
 func (t *Task) template(translate string) (bool, string) {
-	template := template.Must(template.New("translate").Parse(translate))
+	template := template.Must(template.New("translate").Funcs(sprig.FuncMap()).Parse(translate))
 	b := new(bytes.Buffer)
 	err := template.Execute(b, t)
 	if err == nil {
