@@ -292,7 +292,7 @@ func (t *Task) Exec(cmd string) string {
 	if err != nil {
 		return string(err.Error())
 	}
-	return string(out)
+	return strings.TrimSpace(string(out))
 }
 
 // Prepare will setup a bunch of things, including templates and argument defeaults
