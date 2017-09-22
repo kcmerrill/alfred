@@ -702,6 +702,10 @@ $ alfred do.you.know
 
 If you do not specify defaults, alfred will exit due to insufficient arguments passed in.
 
+## Templates
+
+For the cases where you might want to add some simple logic, alfred comes fully baked with golang templates. Furthermore, we make use of [Masterminds](https://github.com/Masterminds/sprig) for increased functionality. `.Args` and `.Vars` are the two defaults that you can use to access what was passed into the application as arguments or as variables. 
+
 ## Variables
 Variables are ways you can manage alfred tasks. Some use cases might be updating version numbers, env variables etc. 
 
