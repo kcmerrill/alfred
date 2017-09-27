@@ -37,7 +37,7 @@ run.node-firefox:
 run.go:
     summary: Watch .go files and then run the application
     watch: ".*?go$"
-    command: go install && ${PWD##*/} {{ index .Args 0 }}
+    command: go install && ${PWD##*/} {{ .AllArgs }}
     defaults:
         - " "
 
