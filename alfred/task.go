@@ -401,6 +401,11 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		return false
 	}
 
+	if setupOk, setupTranslated := t.template(t.Setup); setupOk {
+		t.Setup = setupTranslated
+	} else {
+		return false
+	}
 	// if we made it here, then we are good to go
 	return true
 }
@@ -413,5 +418,6 @@ func (t *Task) template(translate string) (bool, string) {
 	if err == nil {
 		return true, b.String()
 	}
+
 	return false, translate
 }

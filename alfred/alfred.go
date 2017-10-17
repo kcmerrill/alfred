@@ -138,6 +138,16 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 	// Infinite loop Used for the every command
 	for {
+
+		// Lets prep it, and if it's bunk, lets see if we can pump out it's usage
+                // We'll prepare it before running setup tasks in case we want to pass templated
+                // params to setup
+		if !copyOfTask.Prepare(args, a.Vars) {
+			say(task+":error", "Missing argument(s).")
+			// No need in going on, programmer error
+			os.Exit(1)
+		}
+
 		// Run our setup tasks
 		for _, taskDefinition := range copyOfTask.TaskGroup(copyOfTask.Setup, args) {
 			if !a.runTask(taskDefinition.Name, taskDefinition.Params, formatted) {
@@ -151,13 +161,6 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 		err := os.Chdir(a.dir)
 		if err != nil {
 			fmt.Println(err.Error())
-		}
-
-		// Lets prep it, and if it's bunk, lets see if we can pump out it's usage
-		if !copyOfTask.Prepare(args, a.Vars) {
-			say(task+":error", "Missing argument(s).")
-			// No need in going on, programmer error
-			os.Exit(1)
 		}
 
 		// Lets change the directory if set
@@ -212,7 +215,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		// Register task output
 		if copyOfTask.Register != "" && copyOfTask.Command != "" {
-			if (a.Vars == nil) {
+			if a.Vars == nil {
 				a.Vars = make(map[string]string)
 			}
 			a.Vars[copyOfTask.Register] = copyOfTask.Exec(copyOfTask.Command)
