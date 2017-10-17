@@ -344,3 +344,11 @@ func TestExample(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+func TestSetupTemplate(t *testing.T) {
+	sut, _ := run("alfred fourty.five hello world!", t)
+	if !strings.Contains(sut, "hello world!") {
+		t.Logf("Expecting 'hello world!' to be returned")
+		t.FailNow()
+	}
+}

@@ -25,3 +25,8 @@ fourty.three:
 fourty.four:
     summary: A task with two params
     command: echo {{ index .Args 0 }} {{ index .Args 1 }}
+
+fourty.five:
+    summary: Call a setup task with templated params
+    setup: fourty.four({{ index .Args 0 }}, {{ index .Args 1 }})
+    command: true
