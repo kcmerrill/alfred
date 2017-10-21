@@ -12,8 +12,3 @@ slack:
         curl -X POST
         --data-urlencode
         'payload={"channel": "{{ index .Args 2 }}", "text": "{{ index .Args 1 }}"}' https://hooks.slack.com/services/{{ index .Args 0 }}
-    defaults:
-        - "123123/123123123"
-        - "Alfred says hello!"
-        - "@kcmerrill"
-
