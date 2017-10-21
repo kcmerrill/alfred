@@ -12,7 +12,6 @@ http.recovered:
         alfred /oogway/slack attachment {{ index .Args 0 }} "good" "{{ index .Args 1 }} Recovered" "HTTP Check OK"
     exit: 1
 
-
 http.warning:
     summary: Used for HTTP OK notifications
     usage: alfred /oogway/slack http.ok "#general" "Check Name" "http://tourl.com"
