@@ -35,8 +35,6 @@ msg:
         --data-urlencode
         'payload={"channel": "{{ index .Args 0 }}", "text": "{{ index .Args 1 }}"}' ${SLACK_WEBHOOK_URL}
 
-
-
 attachment:
   summary: Send a slack message attachment
   usage: alfred /oogway/slack attachment "#general" "#hexcolor" "title" "http://titlelink.com" "My message"
