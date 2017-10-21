@@ -6,7 +6,7 @@ mail:
         mail -s "{{ index .Args 1 }}" {{ index .Args 0}}
 
 slack:
-    summary: Send a slack message
+    summary: Send a slack message(DEPRECATED, use /slack)
     usage: alfred /notify slack "supersecretkey" "My message" "#general"
     command: >
         curl -X POST

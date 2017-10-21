@@ -1,0 +1,25 @@
+msg: 
+  summary: Send a simple slack message
+  usage: alfred /slack msg "#general" "My simple message."
+  command: >
+        curl --fail -X POST
+        --data-urlencode
+        'payload={"channel": "{{ index .Args 0 }}", "text": "{{ index .Args 1 }}"}' ${SLACK_WEBHOOK_URL} 
+  exit: 1
+
+attachment:
+  summary: Send a slack message attachment
+  usage: alfred /slack attachment "#general" "#hexcolor" "My message"
+  command: >
+    curl --fail -X POST
+    --data-urlencode
+    'payload={
+    "channel": "{{ index .Args 0 }}",
+    "attachments": [
+        {
+            "fallback": "{{ index .Args 2 }}",
+            "color": "{{ index .Args 1 }}",
+            "text": "{{ index .Args 2 }}",
+        }
+    ]}' ${SLACK_WEBHOOK_URL}
+  exit: 1
