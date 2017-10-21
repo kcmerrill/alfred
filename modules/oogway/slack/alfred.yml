@@ -16,14 +16,14 @@ http.warning:
     summary: Used for HTTP Warning notifications
     usage: alfred /oogway/slack http.warning "#general" "Check Name" "http://tourl.com"
     command: |
-        alfred /oogway/slack attachment {{ index .Args 0 }} "warning" "{{ index .Args 1 }} Warning" "HTTP check in a warning state"
+        alfred /oogway/slack attachment {{ index .Args 0 }} "warning" "{{ index .Args 1 }} Warning" "{{ index .Args 2 }}" "HTTP check in a warning state"
     exit: 1
 
 http.critical:
     summary: Used for HTTP Critical notifications
     usage: alfred /oogway/slack http.critical "#general" "Check Name" "http://tourl.com"
     command: |
-        alfred /oogway/slack attachment {{ index .Args 0 }} "danger" "{{ index .Args 1 }} Critical" "HTTP check went critical"
+        alfred /oogway/slack attachment {{ index .Args 0 }} "danger" "{{ index .Args 1 }} Critical" "{{ index .Args 2 }}" "HTTP check went critical"
     exit: 1
 
 msg:
