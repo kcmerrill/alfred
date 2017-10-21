@@ -54,7 +54,7 @@ func (r *Remote) ModulePath(remote string) string {
 //Parse parses a string to see if it's a remote or not
 func (r *Remote) Parse(remoteModule string) (string, string) {
 	if strings.Contains(remoteModule, "/") {
-		s := strings.Split(remoteModule, "/")
+		s := strings.SplitN(remoteModule, "/", 2)
 		// Set some defaults
 		if s[0] == "" {
 			s[0] = "common"
