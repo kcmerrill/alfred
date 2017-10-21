@@ -2,28 +2,28 @@ http.ok:
     summary: Used for HTTP OK notifications
     usage: alfred /oogway/slack http.ok "#general" "Check Name" "http://tourl.com"
     command: |
-        alfred /oogway/slack attachment {{ index .Args 0 }} "good" "{{ index .Args 1 }} OK" "{{ index .Args 2 }}" "HTTP Check OK"
+        alfred /oogway/slack attachment "{{ index .Args 0 }}" "good" "{{ index .Args 1 }} OK" "{{ index .Args 2 }}" "HTTP Check OK"
     exit: 1
 
 http.recovered:
     summary: Used for HTTP Recovered notifications
     usage: alfred /oogway/slack http.recovered "#general" "Check Name" "http://tourl.com"
     command: |
-        alfred /oogway/slack attachment {{ index .Args 0 }} "good" "{{ index .Args 1 }} Recovered" "{{ index .Args 2}}" "HTTP Check OK"
+        alfred /oogway/slack attachment "{{ index .Args 0 }}" "good" "{{ index .Args 1 }} Recovered" "{{ index .Args 2}}" "HTTP Check OK"
     exit: 1
 
 http.warning:
     summary: Used for HTTP Warning notifications
     usage: alfred /oogway/slack http.warning "#general" "Check Name" "http://tourl.com"
     command: |
-        alfred /oogway/slack attachment {{ index .Args 0 }} "warning" "{{ index .Args 1 }} Warning" "{{ index .Args 2 }}" "HTTP check in a warning state"
+        alfred /oogway/slack attachment "{{ index .Args 0 }}" "warning" "{{ index .Args 1 }} Warning" "{{ index .Args 2 }}" "HTTP check in a warning state"
     exit: 1
 
 http.critical:
     summary: Used for HTTP Critical notifications
     usage: alfred /oogway/slack http.critical "#general" "Check Name" "http://tourl.com"
     command: |
-        alfred /oogway/slack attachment {{ index .Args 0 }} "danger" "{{ index .Args 1 }} Critical" "{{ index .Args 2 }}" "HTTP check went critical"
+        alfred /oogway/slack attachment "{{ index .Args 0 }}" "danger" "{{ index .Args 1 }} Critical" "{{ index .Args 2 }}" "HTTP check went critical"
     exit: 1
 
 msg:
