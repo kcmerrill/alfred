@@ -5,9 +5,9 @@ http.ok:
         alfred /oogway/slack attachment "{{ index .Args 0 }}" "good" "{{ index .Args 1 }} OK" "{{ index .Args 2 }}" "HTTP Check OK"
     exit: 1
 
-http.recovered:
-    summary: Used for HTTP Recovered notifications
-    usage: alfred /oogway/slack http.recovered "#general" "Check Name" "http://tourl.com"
+http.recover:
+    summary: Used for HTTP Recovery notifications
+    usage: alfred /oogway/slack http.recover "#general" "Check Name" "http://tourl.com"
     command: |
         alfred /oogway/slack attachment "{{ index .Args 0 }}" "good" "{{ index .Args 1 }} Recovered" "{{ index .Args 2}}" "HTTP Check OK"
     exit: 1
