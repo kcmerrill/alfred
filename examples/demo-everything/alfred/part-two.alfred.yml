@@ -30,3 +30,19 @@ fourty.five:
     summary: Call a setup task with templated params
     setup: fourty.four({{ index .Args 0 }}, {{ index .Args 1 }})
     command: true
+
+fourty.six:
+    summary: A task with a 'for' loop
+    test: rm -rf /tmp/* || true
+    for:
+        task: thirtyone
+        tasks: |
+            task1
+            task2
+            task3
+        multitask: |
+            mtask1
+            mtask2
+            mtask3
+
+    
