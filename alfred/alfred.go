@@ -138,10 +138,9 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 	// Infinite loop Used for the every command
 	for {
-
 		// Lets prep it, and if it's bunk, lets see if we can pump out it's usage
-                // We'll prepare it before running setup tasks in case we want to pass templated
-                // params to setup
+		// We'll prepare it before running setup tasks in case we want to pass templated
+		// params to setup
 		if !copyOfTask.Prepare(args, a.Vars) {
 			say(task+":error", "Missing argument(s).")
 			// No need in going on, programmer error
@@ -172,6 +171,16 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 				}
 				os.Chdir(copyOfTask.Dir)
 			}
+		}
+
+		// setup our tasks() based on the for loop
+		if copyOfTask.For.FTasks != "" && copyOfTask.For.FTask != "" {
+			copyOfTask.Tasks += " " + copyOfTask.For.FTask + "(" + strings.Join(strings.Split(copyOfTask.Eval(copyOfTask.For.FTasks), "\n"), ") "+copyOfTask.For.FTask+"(") + ")"
+		}
+
+		// setup our multitask() based on the for loop
+		if copyOfTask.For.FMultitask != "" && copyOfTask.For.FTask != "" {
+			copyOfTask.Multitask += " " + copyOfTask.For.FTask + "(" + strings.Join(strings.Split(copyOfTask.Eval(copyOfTask.For.FMultitask), "\n"), ") "+copyOfTask.For.FTask+"(") + ")"
 		}
 
 		// We watching for files?
@@ -235,7 +244,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			taskok = false
 		}
 
-		// Commands, not to be misaken for command
+		// Commands, not to be mistaken for Command
 		if taskok {
 			cmds := strings.Split(copyOfTask.Commands, "\n")
 			for _, c := range cmds {
@@ -333,9 +342,8 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 func taskWithArgs(task string, args []string) string {
 	if len(args) < 1 {
 		return task
-	} else {
-		return fmt.Sprintf("%s (%s)", task, strings.Join(args, ", "))
 	}
+	return fmt.Sprintf("%s (%s)", task, strings.Join(args, ", "))
 }
 
 // Ensure that the task exists

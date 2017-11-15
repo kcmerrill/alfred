@@ -23,6 +23,7 @@ A brief explination:
  - Commands: the shell command to run(except each line is it's own separate command)
  - Usage: explains how to use the command
  - Dir: Change to this directory for this particular command
+ - For: Takes in either a multi-line string, or cmd and adds to tasks() multitask()
  - Tasks: a space seperated list of strings that represent tasks to run
  - Every: a string representation of golang duration to run this task for.
  - Wait: a string representation of golang duration that pauses the task before continuing
@@ -49,12 +50,17 @@ A brief explination:
 
 // Task contains a task definition and all of it's components
 type Task struct {
-	Summary   string
-	Test      string
-	Command   string
-	Commands  string
-	Usage     string
-	Dir       string
+	Summary  string
+	Test     string
+	Command  string
+	Commands string
+	Usage    string
+	Dir      string
+	For      struct {
+		FTask      string `yaml:"task"`
+		FTasks     string `yaml:"tasks"`
+		FMultitask string `yaml:"multitask"`
+	}
 	Tasks     string
 	Setup     string
 	Multitask string
@@ -282,9 +288,9 @@ func (t *Task) TestF(tst string) bool {
 func (t *Task) Eval(cmd string) string {
 	out, err := exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
-		return cmd
+		return strings.TrimSpace(cmd)
 	}
-	return string(out)
+	return strings.TrimSpace(string(out))
 }
 
 // Exec runs the command, and sends the output back, either stdin or stdout

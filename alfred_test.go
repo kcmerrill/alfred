@@ -337,6 +337,22 @@ func TestRegisteringVariables(t *testing.T) {
 	}
 }
 
+func TestForLoops(t *testing.T) {
+	sut, _ := run("alfred fourty.six", t)
+
+	// test tasks
+	if !strings.Contains(sut, "task3") {
+		t.Logf("Expected task1 to be an argument")
+		t.FailNow()
+	}
+
+	// test multitask
+	if !strings.Contains(sut, "mtask3") {
+		t.Logf("Expected mtask1 to be an argument")
+		t.FailNow()
+	}
+}
+
 func TestExample(t *testing.T) {
 	sut, _ := run("alfred", t)
 	if len(sut) <= 0 {

@@ -16,6 +16,7 @@ The Manual
       * [Setup](#setup)
       * [Log](#log)
       * [Dir](#dir)
+      * [For](#for)
       * [Watch](#watch)
       * [Tasks](#tasks-1)
       * [Modules](#modules)
@@ -225,7 +226,6 @@ mytask:
 ## Dir
 The default starting location for this particular task. If set to a non empty string, will create the directory if not exist.
 
-
 A few things to note:
  - Relative paths are relative to the `alfred.yml` file.
  - Directories that do not exist will attempt to be created. If unable, the task will fail.
@@ -238,6 +238,33 @@ example.task:
     dir: /tmp
     command: |
         echo "The current working directory is now /tmp regardless of alfred file!"
+```
+
+## For
+Allows to iterate tasks/multitask without manually defining arguments. A string for either `tasks`, `multitask` that can be a string, or a command(exit 0 will return it's results) that are newline separated.  
+
+A few things to note:
+ - Behind the scenes alfred just appends to either `task` or `multitask` with each line as an arg
+ - Can do either `tasks` or `multitask`
+ - If you have defined `tasks` or `multitask`, ensure they all have `()`'s
+ - `task` is required, if not set `for` will be skipped.
+```
+example.task:
+    summary: List all files in a directory and echo the argument
+    for:
+        task: the.task.name
+        multitask: |
+            argument.one
+            argument.two
+            argument.three
+            argument.four
+        task: |
+            ls -R -1
+
+the.task.name:
+    summary: Echo text
+    command: |
+        echo {{ index .Args 0 }}
 ```
 
 ## Watch
