@@ -258,7 +258,7 @@ example.task:
             argument.two
             argument.three
             argument.four
-        task: |
+        tasks: |
             ls -R -1
 
 the.task.name:
