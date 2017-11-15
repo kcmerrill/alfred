@@ -250,14 +250,13 @@ A few things to note:
  - `task` is required, if not set `for` will be skipped.
 ```
 example.task:
-    summary: List all files in a directory and echo the argument
+    summary: List superheros or files and echo them out
     for:
         task: the.task.name
         multitask: |
-            argument.one
-            argument.two
-            argument.three
-            argument.four
+            batman
+            robin
+            spiderman
         tasks: |
             ls -R -1
 
