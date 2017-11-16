@@ -13,6 +13,7 @@ The Manual
       * [Calling with Parameters](#calling-with-parameters)
    * [Task components](#task-components)
       * [Alias](#alias)
+      * [Config](#config)
       * [Setup](#setup)
       * [Log](#log)
       * [Dir](#dir)
