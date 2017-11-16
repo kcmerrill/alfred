@@ -192,6 +192,35 @@ my.task:
         world"
 ```
 
+## Config
+A location of a simple yaml key:value pair configuration file. All data overwrites `.Vars` if it was previously set.
+
+A few things to note:
+ - You can use templates, meaning you can pass in arguments etc ...
+ - Problem unmarshaling the yaml file will throw an error, exiting with a non zero code
+
+```yaml
+# config/prod.yml
+database: production.db.domain.com
+username: produsername
+```
+
+```yaml
+# config/dev.yml
+database: dev.db.local
+username: devusername
+```
+
+```yaml
+example.task: 
+    summary: Load a config file
+    usage: alfred example.task <env>
+    # full path, or local to alfred.yml directory
+    config: config/{{ index .Args 0 }}.yml
+    command: |
+        echo {{ index .Args 0 }}: database={{ index .Vars "database" }}
+```
+
 ## Setup
 This component is the first to be called. It's a string of space seperated task names. Useful if you need tasks to run before this task is run.
 ```
