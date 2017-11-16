@@ -61,3 +61,10 @@ fourty.nine:
     config: alfred/{{ index .Args 0 }}
     command: |
         echo Twitter Handle: {{ index .Vars "twitter" }}
+
+fifty:
+    summary: Checkpoint!
+    checkpoint: alfred/{{ index .Args 0 }}
+    command: |
+        # checkpoint exists ... should never get here
+        echo "SADPANDA"

@@ -26,6 +26,8 @@ A brief explination:
  - Usage: explains how to use the command
  - Dir: Change to this directory for this particular command
  - For: Takes in either a multi-line string, or cmd and adds to tasks() multitask()
+ - Config: Takes in a yaml key:value paired yaml file for configuration
+ - Checkpoint: A filename determining whether to skip the task or not
  - Tasks: a space seperated list of strings that represent tasks to run
  - Every: a string representation of golang duration to run this task for.
  - Wait: a string representation of golang duration that pauses the task before continuing
@@ -63,31 +65,32 @@ type Task struct {
 		FTasks     string `yaml:"tasks"`
 		FMultitask string `yaml:"multitask"`
 	}
-	Config    string `yaml:"config"`
-	Tasks     string
-	Setup     string
-	Multitask string
-	Every     string
-	Wait      string
-	Ok        string
-	Fail      string
-	AllArgs   string
-	Args      []string
-	CleanArgs []string
-	UUID      string
-	Vars      map[string]string
-	Time      time.Time
-	Modules   map[string]string `yaml:",inline"`
-	Defaults  []string
-	Alias     string
-	Private   bool
-	Exit      string
-	Skip      bool
-	Log       string
-	Retry     int
-	Watch     string
-	Serve     string
-	Register  string
+	Config     string `yaml:"config"`
+	CheckPoint string
+	Tasks      string
+	Setup      string
+	Multitask  string
+	Every      string
+	Wait       string
+	Ok         string
+	Fail       string
+	AllArgs    string
+	Args       []string
+	CleanArgs  []string
+	UUID       string
+	Vars       map[string]string
+	Time       time.Time
+	Modules    map[string]string `yaml:",inline"`
+	Defaults   []string
+	Alias      string
+	Private    bool
+	Exit       string
+	Skip       bool
+	Log        string
+	Retry      int
+	Watch      string
+	Serve      string
+	Register   string
 }
 
 // TaskDefinition defines the name and params of a task when originally in string format
@@ -442,6 +445,12 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 
 	if logOk, logTranslated := t.template(t.Log); logOk {
 		t.Log = logTranslated
+	} else {
+		return false
+	}
+
+	if checkPointOk, checkPointTranslated := t.template(t.CheckPoint); checkPointOk {
+		t.CheckPoint = checkPointTranslated
 	} else {
 		return false
 	}

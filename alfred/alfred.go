@@ -207,20 +207,33 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 			}
 		}
 
+		// First, lets show the summary
+		if copyOfTask.Summary != "" {
+			fmt.Println("")
+			say(task, fmt.Sprintf("%s (Args: %v)", copyOfTask.Summary, copyOfTask.Args))
+		}
+
+		// Do we have a checkpoint file? If so .... we should move to the next task
+		if copyOfTask.CheckPoint != "" {
+			if _, checkPointErr := os.Stat(copyOfTask.CheckPoint); checkPointErr == nil {
+				// checkpoint exists ... move along
+				taskok = true
+				green := color.New(color.FgGreen).SprintFunc()
+				fmt.Println("\n---")
+				fmt.Println(green("✔"), fmt.Sprintf("%s CHECKPOINT EXISTS", taskWithArgs(task, copyOfTask.Args)))
+				break
+			}
+		}
+
 		// Go through each of the modules ...
 		// before command, docker stop for example
+		// This is _after_ the summary. Controversal. I know ...
 		for module, cmd := range copyOfTask.Modules {
 			if !copyOfTask.RunCommand(a.args[0]+" "+a.remote.ModulePath(module)+" "+cmd, task, formatted) {
 				// It failed :(
 				taskok = false
 				break
 			}
-		}
-
-		// First, lets show the summary
-		if copyOfTask.Summary != "" {
-			fmt.Println("")
-			say(task, fmt.Sprintf("%s (Args: %v)", copyOfTask.Summary, copyOfTask.Args))
 		}
 
 		// Register task output
