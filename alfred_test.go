@@ -373,6 +373,16 @@ func TestWithDefaultVarVals(t *testing.T) {
 	}
 }
 
+func TestLoadingConfigYAML(t *testing.T) {
+	sut, _ := run("alfred fourty.nine kcmerrill", t)
+
+	// test directory is a command
+	if !strings.Contains(sut, "@awesomesauce") {
+		t.Logf("Expecting @awesomesauce in config file")
+		t.FailNow()
+	}
+}
+
 func TestExample(t *testing.T) {
 	sut, _ := run("alfred", t)
 	if len(sut) <= 0 {

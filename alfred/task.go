@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
@@ -13,6 +14,7 @@ import (
 
 	sprig "github.com/Masterminds/sprig"
 	"github.com/satori/go.uuid"
+	yaml "gopkg.in/yaml.v2"
 )
 
 /* Contains our task information
@@ -61,6 +63,7 @@ type Task struct {
 		FTasks     string `yaml:"tasks"`
 		FMultitask string `yaml:"multitask"`
 	}
+	Config    string `yaml:"config"`
 	Tasks     string
 	Setup     string
 	Multitask string
@@ -365,6 +368,30 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		return false
 	}
 
+	if configFileOk, configFile := t.template(t.Config); configFileOk {
+		t.Config = configFile
+	} else {
+		return false
+	}
+
+	// load up the config, if any
+	if t.Config != "" {
+		if contents, configFileErr := ioutil.ReadFile(t.Config); configFileErr != nil {
+			say("ERROR", configFileErr.Error())
+			os.Exit(1)
+		} else {
+			c := make(map[string]string)
+			if configFileUnMarshalErr := yaml.Unmarshal(contents, &c); configFileUnMarshalErr != nil {
+				say("ERROR", configFileUnMarshalErr.Error())
+				os.Exit(1)
+			} else {
+				for key, value := range c {
+					t.Vars[key] = value
+				}
+			}
+		}
+	}
+
 	if cmdOk, cmdTranslated := t.template(t.Command); cmdOk {
 		t.Command = cmdTranslated
 	} else {
@@ -412,6 +439,7 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 	} else {
 		return false
 	}
+
 	// if we made it here, then we are good to go
 	return true
 }

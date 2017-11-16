@@ -55,3 +55,9 @@ fourty.eight:
     summary: Test out the default argument stuff
     command: |
         echo {{ index .Vars "asdf" | default "foo" }}
+
+fourty.nine: 
+    summary: Test out loading a simple config file!
+    config: alfred/{{ index .Args 0 }}
+    command: |
+        echo Twitter Handle: {{ index .Vars "twitter" }}
