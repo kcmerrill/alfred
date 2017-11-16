@@ -353,6 +353,16 @@ func TestForLoops(t *testing.T) {
 	}
 }
 
+func TestDirWithShellCommand(t *testing.T) {
+	sut, _ := run("alfred fourty.seven", t)
+
+	// test directory is a command
+	if !strings.Contains(sut, "kcmerrill/alfred/examples/demo-everything-cmd-in-dir") {
+		t.Logf("Expected $PWD to print out the new directory")
+		t.FailNow()
+	}
+}
+
 func TestExample(t *testing.T) {
 	sut, _ := run("alfred", t)
 	if len(sut) <= 0 {

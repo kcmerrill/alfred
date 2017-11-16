@@ -164,6 +164,7 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		// Lets change the directory if set
 		if copyOfTask.Dir != "" {
+			copyOfTask.Dir = copyOfTask.Eval(copyOfTask.Dir)
 			if err := os.Chdir(copyOfTask.Dir); err != nil {
 				if err := os.MkdirAll(copyOfTask.Dir, 0755); err != nil {
 					say(task+":dir", "Invalid directory")

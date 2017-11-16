@@ -45,4 +45,8 @@ fourty.six:
             mtask2
             mtask3
 
-    
+fourty.seven:
+    summary: Test out commands in the dir space
+    dir: echo /tmp/$PWD-cmd-in-dir
+    command: |
+        echo $PWD
