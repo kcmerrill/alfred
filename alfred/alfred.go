@@ -215,9 +215,20 @@ func (a *Alfred) runTask(task string, args []string, formatted bool) bool {
 
 		// Do we have a checkpoint file? If so .... we should move to the next task
 		if copyOfTask.CheckPoint != "" {
+			cp := false
 			if _, checkPointErr := os.Stat(copyOfTask.CheckPoint); checkPointErr == nil {
-				// checkpoint exists ... move along
+				// checkpoint file exists ... move along
 				taskok = true
+				cp = true
+			} else {
+				// try to see if it's a command and if it evals to true
+				if copyOfTask.TestF(copyOfTask.CheckPoint) {
+					taskok = true
+					cp = true
+				}
+			}
+
+			if cp {
 				green := color.New(color.FgGreen).SprintFunc()
 				fmt.Println("\n---")
 				fmt.Println(green("✔"), fmt.Sprintf("%s CHECKPOINT EXISTS", taskWithArgs(task, copyOfTask.Args)))
