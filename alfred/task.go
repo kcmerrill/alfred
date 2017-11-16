@@ -440,6 +440,12 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 		return false
 	}
 
+	if logOk, logTranslated := t.template(t.Log); logOk {
+		t.Log = logTranslated
+	} else {
+		return false
+	}
+
 	// if we made it here, then we are good to go
 	return true
 }
