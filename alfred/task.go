@@ -4,11 +4,11 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"html/template"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
+	"text/template"
 	"time"
 
 	sprig "github.com/Masterminds/sprig"
@@ -418,12 +418,16 @@ func (t *Task) Prepare(args []string, vars map[string]string) bool {
 
 // template a helper function to translate a string to a template
 func (t *Task) template(translate string) (bool, string) {
-	template := template.Must(template.New("translate").Funcs(sprig.FuncMap()).Parse(translate))
-	b := new(bytes.Buffer)
-	err := template.Execute(b, t)
-	if err == nil {
-		return true, b.String()
+	if translate == "" {
+		// Nothing to translate, move along
+		return true, translate
 	}
-
-	return false, translate
+	fmap := sprig.TxtFuncMap()
+	te := template.Must(template.New("test").Funcs(fmap).Parse(translate))
+	var b bytes.Buffer
+	err := te.Execute(&b, t)
+	if err != nil {
+		return false, err.Error()
+	}
+	return true, b.String()
 }

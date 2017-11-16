@@ -50,3 +50,8 @@ fourty.seven:
     dir: echo /tmp/$PWD-cmd-in-dir
     command: |
         echo $PWD
+
+fourty.eight:
+    summary: Test out the default argument stuff
+    command: |
+        echo {{ index .Vars "asdf" | default "foo" }}

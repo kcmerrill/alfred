@@ -1,22 +1,22 @@
 hash: 5358914b85eabdf251d598bc084daf91000d57f9617c985d7b8e3b8cf17b4b68
-updated: 2017-09-22T15:23:59.299728537-06:00
+updated: 2017-11-15T22:09:49.105392-07:00
 imports:
 - name: github.com/aokoli/goutils
   version: 3391d3790d23d03408670993e957e8f408993c34
 - name: github.com/fatih/color
-  version: 67c513e5729f918f5e69786686770c27141a4490
+  version: 5df930a27be2502f99b292b7cc09ebad4d0891f4
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
-  version: 24fca303ac6da784b9e8269f724ddeb0b2eea5e7
+  version: 7f08801859139f86dfafd1c296e2cba9a80d292e
 - name: github.com/huandu/xstrings
   version: d6590c0c31d16526217fa60fbd2067f7afcd78c5
 - name: github.com/imdario/mergo
-  version: 3e95a51e0639b4cf372f2ccf74c86749d747fbdc
+  version: 7fe0c75c13abdee74b09fcacef5ea1c6bba6a874
 - name: github.com/Masterminds/semver
   version: 59c29afe1a994eacb71c833025ca7acf874bb1da
 - name: github.com/Masterminds/sprig
-  version: 4c164950cd0a8d3724ddb78982e2c56dc7f47112
+  version: efda631a76d70875162cdc25ffa0d0164bf69758
 - name: github.com/mattn/go-colorable
   version: 5411d3eea5978e6cdc258b30de592b60df6aba96
   repo: https://github.com/mattn/go-colorable
@@ -26,7 +26,7 @@ imports:
 - name: github.com/satori/go.uuid
   version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: golang.org/x/crypto
-  version: 81e90905daefcd6fd217b62423c0908922eadb30
+  version: 9f005a07e0d31d45e6656d241bb5c0f2efd4bc94
   subpackages:
   - pbkdf2
   - scrypt

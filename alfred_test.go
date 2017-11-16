@@ -363,6 +363,16 @@ func TestDirWithShellCommand(t *testing.T) {
 	}
 }
 
+func TestWithDefaultVarVals(t *testing.T) {
+	sut, _ := run("alfred fourty.eight", t)
+
+	// test directory is a command
+	if !strings.Contains(sut, "foo") {
+		t.Logf("Default 'foo' was expected to be echo'd")
+		t.FailNow()
+	}
+}
+
 func TestExample(t *testing.T) {
 	sut, _ := run("alfred", t)
 	if len(sut) <= 0 {
