@@ -45,4 +45,3 @@ tdd.go:
     summary: Watch .go files and run test.go
     watch: ".*?go$"
     command: go test $(go list ./... | grep -v /vendor/)
-    tasks: test.go
