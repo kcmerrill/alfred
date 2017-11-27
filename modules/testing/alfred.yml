@@ -44,4 +44,4 @@ run.go:
 tdd.go:
     summary: Watch .go files and run test.go
     watch: ".*?go$"
-    command: go test $(go list ./... | grep -v /vendor/)
+    command: go test $(go list ./... | grep -v /vendor/) --race
