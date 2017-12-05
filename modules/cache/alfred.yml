@@ -1,5 +1,0 @@
-clear:
-    summary: Clear Alfred's offline cache
-    command: rm -rf ~/.alfred/offline
-    exit: 1
-
