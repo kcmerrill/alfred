@@ -14,5 +14,12 @@ func tasksTestHelper() Tasks {
 }
 
 func TestTasksGet(t *testing.T) {
-
+	tasks := tasksTestHelper()
+	if task, exists := tasks.Get("hello.world"); !exists {
+		t.Fatalf("Unable to find the task 'hello.world'")
+	} else {
+		if task.Command != "whoami" {
+			t.Fatalf("The incorrect task was found. Expected 'whoami' as the command")
+		}
+	}
 }
