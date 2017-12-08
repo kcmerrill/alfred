@@ -15,18 +15,31 @@ type Task struct {
 }
 
 // NewTask will create a new task
-func NewTask(name string, context Context, tasks Tasks) {
+func NewTask(name string, context Context, event *EventStream, tasks Tasks) {
 	// component order
 	co := []string{
 		"summary",
 	}
 	// does the task exist?
 	if task, exists := tasks.Get(name); exists {
+		event.Emit(Event{Action: "start.task", Payload: "name"})
 		for _, component := range co {
-			context = task.Component(component, context, tasks)
+			event.Emit(Event{Action: "start.component", Component: component, Payload: name})
+			context = task.Component(component, context, event, tasks)
+			event.Emit(Event{Action: "finished.component", Component: component, Payload: name})
 		}
+		return
 	}
-	// TODO: Task does not exist
+
+	event.Emit(Event{
+		Action:  "error.msg",
+		Payload: "Invalid task: " + name + "",
+	})
+
+	event.Emit(Event{
+		Action:  "exit",
+		Payload: "1",
+	})
 }
 
 // Component executes a task component

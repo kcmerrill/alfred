@@ -4,6 +4,7 @@ import "testing"
 
 func TestNewTask(t *testing.T) {
 	tasks := tasksTestHelper()
-	NewTask("hello.world", Context{}, tasks)
+	eventStream := NewEventStream(&EventStream{})
+	NewTask("hello.world", Context{}, eventStream, tasks)
 	t.Fatalf("Something failed")
 }
