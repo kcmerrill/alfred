@@ -26,8 +26,11 @@ func serve(task Task, context *Context) {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	event.Trigger("speak", "Serving "+dir+" 0.0.0.0:"+task.Serve, task, context)
-	if err := srv.ListenAndServe(); err != nil {
-		event.Trigger("speak", "{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", task, context)
-	}
+	go func() {
+		event.Trigger("speak", "Serving "+dir+" 0.0.0.0:"+task.Serve, task, context)
+		if err := srv.ListenAndServe(); err != nil {
+			event.Trigger("speak", "{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", task, context)
+		}
+	}()
+
 }

@@ -8,4 +8,6 @@ func main() {
 		Serve: "8080",
 	}
 	NewTask("hello.world", InitialContext([]string{}), tasks)
+	for {
+	}
 }
