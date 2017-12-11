@@ -17,6 +17,9 @@ func init() {
 	// Register both ok/fail task groups
 	event.Register("task.group", taskGroup)
 
+	// Serve will serve up a static HTTP webserver
+	event.Register("task.serve", serve)
+
 	// SummaryFooter displays the summary footer
 	event.Register("task.summary.footer", summaryFooter)
 

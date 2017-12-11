@@ -27,6 +27,7 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 	event.Trigger("task.group", t.Setup, t, c, tasks)
 	event.Trigger("task.summary.header", t, c)
 	event.Trigger("task.command", t, c)
+	event.Trigger("task.serve", t, c)
 	event.Trigger("task.summary.footer", t, c)
 	if c.Ok {
 		event.Trigger("task.group", t.Ok, t, c, tasks)
@@ -45,9 +46,11 @@ type Task struct {
 	Setup       string
 	Dir         string
 	Command     string
+	Serve       string
 	Script      string
 	Ok          string
 	Fail        string
+	Private     bool
 	Wait        string
 	ExitCode    int
 }
