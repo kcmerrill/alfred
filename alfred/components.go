@@ -19,4 +19,7 @@ func init() {
 
 	// SummaryFooter displays the summary footer
 	event.Register("task.summary.footer", summaryFooter)
+
+	// Wait a given duration
+	event.Register("task.wait", wait)
 }

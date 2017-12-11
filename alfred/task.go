@@ -13,18 +13,26 @@ import (
 // NewTask will execute a task
 func NewTask(task string, context *Context, tasks map[string]Task) {
 	t, exists := tasks[task]
+
 	if !exists {
 		// TODO, Lookup ... then exit
+		event.Trigger("speak", "shit is broke", Task{}, context)
 		return
 	}
+
 	c := context
 	c.TaskName = task
-	event.Trigger("task.new", t, c)
+
+	event.Trigger("task.group", t.Setup, t, c, tasks)
 	event.Trigger("task.summary.header", t, c)
 	event.Trigger("task.command", t, c)
 	event.Trigger("task.summary.footer", t, c)
-	event.Trigger("task.group", t.Ok, t, c, tasks)
-	//event.Trigger("task.group", t.Fail, t, c, tasks)
+	if c.Ok {
+		event.Trigger("task.group", t.Ok, t, c, tasks)
+	} else {
+		event.Trigger("task.group", t.Fail, t, c, tasks)
+	}
+	event.Trigger("task.wait", t, c)
 }
 
 // Task holds all of our task components
@@ -33,11 +41,13 @@ type Task struct {
 	Summary     string
 	Description string
 	Args        []string
+	Setup       string
 	Dir         string
 	Command     string
 	Script      string
 	Ok          string
 	Fail        string
+	Wait        string
 	ExitCode    int
 }
 
