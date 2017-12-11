@@ -3,6 +3,7 @@ package alfred
 import (
 	"bytes"
 	"os"
+	"regexp"
 	"strings"
 	"text/template"
 
@@ -74,6 +75,21 @@ func (t *Task) ParseTaskGroup(group string) []TaskGroup {
 		}
 	} else {
 		// mix and match here
+		tasks := strings.Split(group, "\n")
+		for _, task := range tasks {
+			re := regexp.MustCompile(`(.*?)\((.*?)\)`)
+			results := re.FindStringSubmatch(task)
+			if len(results) == 0 {
+				tg = append(tg, TaskGroup{Name: strings.TrimSpace(task), Args: []string{}})
+			} else {
+				args := strings.Split(results[2], ",")
+				for idx, a := range args {
+					// trim the extra whitespace
+					args[idx] = strings.TrimSpace(a)
+				}
+				tg = append(tg, TaskGroup{Name: strings.TrimSpace(results[1]), Args: args})
+			}
+		}
 	}
 
 	return tg
