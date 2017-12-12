@@ -42,10 +42,14 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 		"wait",
 	}
 
+	event.Trigger("start.task", task)
 	// cycle through our components ...
 	for _, component := range components {
+		event.Trigger("before."+component, t, context, tasks)
 		event.Trigger(component, t, context, tasks)
+		event.Trigger("after."+component, t, context, tasks)
 	}
+	event.Trigger("completed.task", task)
 }
 
 // Task holds all of our task components
