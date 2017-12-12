@@ -42,14 +42,14 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 		"wait",
 	}
 
-	event.Trigger("start.task", task)
+	event.Trigger("task.started", task)
 	// cycle through our components ...
 	for _, component := range components {
 		event.Trigger("before."+component, t, context, tasks)
 		event.Trigger(component, t, context, tasks)
 		event.Trigger("after."+component, t, context, tasks)
 	}
-	event.Trigger("completed.task", task)
+	event.Trigger("task.completed", task)
 }
 
 // Task holds all of our task components
@@ -93,7 +93,7 @@ func (t *Task) Template(translate string, context *Context) string {
 	var b bytes.Buffer
 	err := te.Execute(&b, context)
 	if err != nil {
-		event.Trigger("output", "{{ .Text.Failure }} Bad Template: "+err.Error()+"{{ .Text.Reset }}", t, context)
+		event.Trigger("output", "{{ .Text.Failure }}{{ .Text.FailureIcon }}Bad Template: "+err.Error()+"{{ .Text.Reset }}", t, context)
 		return ""
 	}
 	return b.String()
