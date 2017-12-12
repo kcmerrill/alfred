@@ -2,7 +2,7 @@ package alfred
 
 import "time"
 
-func wait(task Task, context *Context) {
+func wait(task Task, context *Context, tasks map[string]Task) {
 	if task.Wait == "" {
 		return
 	}

@@ -8,12 +8,16 @@ import (
 	event "github.com/kcmerrill/hook"
 )
 
-func command(task Task, context *Context) {
+func command(task Task, context *Context, tasks map[string]Task) {
 	if task.Command == "" {
 		return
 	}
 
 	cmd := exec.Command("bash", "-c", task.Template(task.Command, context))
+
+	// set the directory where to run
+	cmd.Dir = task.Dir
+
 	cmdReaderStdOut, _ := cmd.StdoutPipe()
 	scannerStdOut := bufio.NewScanner(cmdReaderStdOut)
 	go func() {

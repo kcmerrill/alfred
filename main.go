@@ -5,9 +5,12 @@ import . "github.com/kcmerrill/alfred/alfred"
 func main() {
 	tasks := make(map[string]Task)
 	tasks["hello.world"] = Task{
+		Summary: "Hello world! How are you!",
+		Command: "whoami && sleep 1",
+	}
+	tasks["http.serve"] = Task{
 		Serve: "8080",
 	}
-	NewTask("hello.world", InitialContext([]string{}), tasks)
-	for {
-	}
+
+	NewTask("http.serve", InitialContext([]string{}), tasks)
 }

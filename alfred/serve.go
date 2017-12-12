@@ -9,7 +9,7 @@ import (
 )
 
 // serve is alfred's built in web server, useful for sharing private repos
-func serve(task Task, context *Context) {
+func serve(task Task, context *Context, tasks map[string]Task) {
 	if task.Serve == "" {
 		return
 	}
@@ -17,6 +17,7 @@ func serve(task Task, context *Context) {
 	if task.Dir != "" {
 		dir = task.Dir
 	}
+	event.Trigger("speak", "Serving "+dir+" 0.0.0.0:"+task.Serve, task, context)
 	r := mux.NewRouter()
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 	srv := &http.Server{
@@ -26,11 +27,12 @@ func serve(task Task, context *Context) {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	go func() {
-		event.Trigger("speak", "Serving "+dir+" 0.0.0.0:"+task.Serve, task, context)
-		if err := srv.ListenAndServe(); err != nil {
-			event.Trigger("speak", "{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", task, context)
-		}
-	}()
+	//go func() {
+	if err := srv.ListenAndServe(); err != nil {
+		event.Trigger("speak", "{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", task, context)
+		context.Ok = false
+		task.Exit()
+	}
+	//}()
 
 }

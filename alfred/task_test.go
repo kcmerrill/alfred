@@ -11,6 +11,9 @@ func _sampleTasks() map[string]Task {
 		Summary: "Hello world! How are you!",
 		Command: "whoami && sleep 1",
 	}
+	tasks["http.serve"] = Task{
+		Serve: "8080",
+	}
 	return tasks
 }
 func TestNewTask(t *testing.T) {

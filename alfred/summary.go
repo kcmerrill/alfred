@@ -6,7 +6,7 @@ import (
 	event "github.com/kcmerrill/hook"
 )
 
-func summaryHeader(task Task, context *Context) {
+func summary(task Task, context *Context, tasks map[string]Task) {
 	event.Trigger("speak", "{{  .Text.Success }}{{ .TaskName }}{{ .Text.Reset}}", task, context)
 	if task.Summary != "" {
 		event.Trigger("speak", "    "+task.Summary, task, context)
@@ -15,7 +15,7 @@ func summaryHeader(task Task, context *Context) {
 	event.Trigger("speak", "{{ .Text.Success }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}\n", task, context)
 }
 
-func summaryFooter(task Task, context *Context) {
+func result(task Task, context *Context, tasks map[string]Task) {
 	if context.Ok {
 		event.Trigger("speak", "\n{{ .Text.Success }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}", task, context)
 		event.Trigger("speak", "{{  .Text.Success }}{{ .Text.SuccessIcon }} {{ .TaskName }} Ok{{ .Text.Reset}}\n\n", task, context)
