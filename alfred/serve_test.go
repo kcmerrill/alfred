@@ -7,14 +7,12 @@ import (
 
 func TestServeComponent(t *testing.T) {
 	tasks := _sampleTasks()
-	tasks["http.server"] = Task{
-		Serve: "8088",
-	}
+
 	context := &Context{}
 
-	NewTask("http.server", context, tasks)
+	go serve(tasks["http.serve"], context, _sampleTasks())
 
-	response, err := http.Get("http://localhost:8088/main.go")
+	response, err := http.Get("http://localhost:8080/serve_test.go")
 	if err != nil {
 		t.Fatalf("Unable to start HTTP webserver")
 	}

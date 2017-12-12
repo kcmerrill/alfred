@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func speak(text string, task Task, context *Context) {
+func output(text string, task Task, context *Context) {
 	t := task.Template(text, context)
 	fmt.Println(t)
 }

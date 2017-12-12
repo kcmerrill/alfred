@@ -15,7 +15,7 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 
 	if !exists {
 		// TODO, Lookup ... then exit
-		event.Trigger("speak", "shit is broke", Task{}, context)
+		event.Trigger("output", "shit is broke", Task{}, context)
 		return
 	}
 
@@ -89,7 +89,7 @@ func (t *Task) Template(translate string, context *Context) string {
 	var b bytes.Buffer
 	err := te.Execute(&b, context)
 	if err != nil {
-		event.Trigger("speak", "{{ .Text.Failure }} Bad Template: "+err.Error()+"{{ .Text.Reset }}", t, context)
+		event.Trigger("output", "{{ .Text.Failure }} Bad Template: "+err.Error()+"{{ .Text.Reset }}", t, context)
 		return ""
 	}
 	return b.String()

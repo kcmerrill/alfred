@@ -17,7 +17,7 @@ func serve(task Task, context *Context, tasks map[string]Task) {
 	if task.Dir != "" {
 		dir = task.Dir
 	}
-	event.Trigger("speak", "Serving "+dir+" 0.0.0.0:"+task.Serve, task, context)
+	event.Trigger("output", "Serving "+dir+" 0.0.0.0:"+task.Serve, task, context)
 	r := mux.NewRouter()
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 	srv := &http.Server{
@@ -29,7 +29,7 @@ func serve(task Task, context *Context, tasks map[string]Task) {
 
 	//go func() {
 	if err := srv.ListenAndServe(); err != nil {
-		event.Trigger("speak", "{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", task, context)
+		event.Trigger("output", "{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", task, context)
 		context.Ok = false
 		task.Exit()
 	}

@@ -5,7 +5,7 @@ import (
 )
 
 func init() {
-	event.Register("speak", speak)
+	event.Register("output", output)
 	event.Register("setup", setup)
 	event.Register("summary", summary)
 	event.Register("serve", serve)
