@@ -26,10 +26,10 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 	c.TaskName = task
 
 	// lets setup our task groups
-	t.Setup = t.ParseTaskGroup(t.SetupStr)
-	t.Tasks = t.ParseTaskGroup(t.TasksStr)
-	t.Ok = t.ParseTaskGroup(t.OkStr)
-	t.Fail = t.ParseTaskGroup(t.FailStr)
+	t.Setup = t.ParseTaskGroup(t.setup)
+	t.Tasks = t.ParseTaskGroup(t.tasks)
+	t.Ok = t.ParseTaskGroup(t.ok)
+	t.Fail = t.ParseTaskGroup(t.fail)
 
 	components := []string{
 		"setup",
@@ -57,20 +57,20 @@ type Task struct {
 	Aliases     string
 	Summary     string
 	Description string
+	Usage       string
 	Args        []string
-	SetupStr    string
+	setup       string
 	Setup       []TaskGroup
 	Dir         string
 	Command     string
 	Serve       string
 	Script      string
-	TasksStr    string
+	tasks       string
 	Tasks       []TaskGroup
-	OkStr       string
+	ok          string
 	Ok          []TaskGroup
-	FailStr     string
+	fail        string
 	Fail        []TaskGroup
-	Private     bool
 	Wait        string
 	ExitCode    int
 }

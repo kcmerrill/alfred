@@ -14,6 +14,7 @@ type Context struct {
 	Register map[string]string
 	Ok       bool
 	Text     TextConfig
+	Silent   bool
 }
 
 // TextConfig contains configuration needed to display text

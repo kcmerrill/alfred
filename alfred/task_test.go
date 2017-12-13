@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func _sampleTasks() map[string]Task {
+func _testSampleTasks() map[string]Task {
 	tasks := make(map[string]Task)
 	tasks["hello.world"] = Task{
 		Summary: "Hello world! How are you!",
@@ -21,8 +21,9 @@ func _sampleTasks() map[string]Task {
 	}
 	return tasks
 }
+
 func TestNewTask(t *testing.T) {
-	tasks := _sampleTasks()
+	tasks := _testSampleTasks()
 	NewTask("hello.world", InitialContext([]string{}), tasks)
 }
 

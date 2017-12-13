@@ -6,5 +6,7 @@ import (
 
 func output(text string, task Task, context *Context) {
 	t := task.Template(text, context)
-	fmt.Println(t)
+	if !context.Silent {
+		fmt.Println(t)
+	}
 }

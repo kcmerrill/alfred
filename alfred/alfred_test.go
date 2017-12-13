@@ -6,7 +6,7 @@ import (
 
 func _testAlfred() *Alfred {
 	return &Alfred{
-		Tasks: _sampleTasks(),
+		Tasks: _testSampleTasks(),
 		Lock:  &sync.Mutex{},
 	}
 }

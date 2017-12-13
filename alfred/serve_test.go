@@ -6,16 +6,13 @@ import (
 )
 
 func TestServeComponent(t *testing.T) {
-	tasks := _sampleTasks()
+	tasks := _testSampleTasks()
 
-	context := &Context{}
+	context := _testSilentContext()
 
-	go serve(tasks["http.serve"], context, _sampleTasks())
+	serve(tasks["http.serve"], context, _testSampleTasks())
 
-	response, err := http.Get("http://localhost:8080/serve_test.go")
-	if err != nil {
-		t.Fatalf("Unable to start HTTP webserver")
-	}
+	response, _ := http.Get("http://localhost:8080/serve_test.go")
 	if response.StatusCode != 200 {
 		t.Fatalf("Status code 200 expected")
 	}

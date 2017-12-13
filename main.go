@@ -9,7 +9,7 @@ func main() {
 		Command: "whoami && sleep 1",
 	}
 	tasks["http.serve"] = Task{
-		Serve: "8080",
+		Serve: "8088",
 	}
 
 	NewTask("http.serve", InitialContext([]string{}), tasks)
