@@ -6,12 +6,12 @@ import (
 )
 
 func TestServeComponent(t *testing.T) {
-	tasks := _testSampleTasks()
-
+	tasks := make(map[string]Task)
+	tasks["http.serve"] = Task{
+		Serve: "8088",
+	}
 	context := _testSilentContext()
-
-	serve(tasks["http.serve"], context, _testSampleTasks())
-
+	go serve(tasks["http.serve"], context, tasks)
 	response, _ := http.Get("http://localhost:8080/serve_test.go")
 	if response.StatusCode != 200 {
 		t.Fatalf("Status code 200 expected")

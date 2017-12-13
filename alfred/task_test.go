@@ -17,7 +17,7 @@ func _testSampleTasks() map[string]Task {
 		Command: "ls -alh",
 	}
 	tasks["http.serve"] = Task{
-		Serve: "8080",
+		Serve: "8088",
 	}
 	return tasks
 }
