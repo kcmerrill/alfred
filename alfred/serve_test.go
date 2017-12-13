@@ -12,7 +12,10 @@ func TestServeComponent(t *testing.T) {
 	}
 	context := _testSilentContext()
 	go serve(tasks["http.serve"], context, tasks)
-	response, _ := http.Get("http://localhost:8080/serve_test.go")
+	response, err := http.Get("http://localhost:8088/serve_test.go")
+	if err != nil {
+		t.Fatalf("Expected a proper 200 response from localhost")
+	}
 	if response.StatusCode != 200 {
 		t.Fatalf("Status code 200 expected")
 	}
