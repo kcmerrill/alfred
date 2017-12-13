@@ -3,6 +3,8 @@ package alfred
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func _testSampleTasks() map[string]Task {
@@ -65,4 +67,31 @@ func TestParseTaskGroup(t *testing.T) {
 	if tgWArgs[1].Args[1] != "arg2" {
 		t.Fatalf("Expected 'arg2' as argument with no white space")
 	}
+}
+
+func TestTaskTemplate(t *testing.T) {
+	context := &Context{
+		Text: TextConfig{
+			Success:     "green",
+			SuccessIcon: "checkmark",
+			Failure:     "red",
+			FailureIcon: "x",
+		},
+	}
+
+	task := Task{}
+
+	if task.Template("{{ .Text.Success }}", context) != "green" {
+		t.Fatalf(".Text.Success should be green")
+	}
+
+	if task.Template("{{ .Text.SuccessIcon }}", context) != "checkmark" {
+		t.Fatalf(".Text.SuccessIcon should be icon")
+	}
+
+	if task.Template("{{ .Text.Failure }}", context) != "red" {
+		t.Fatalf(".Text.Failure should be red")
+	}
+
+	assert.Equal(t, task.Template("{{ .Text.FailureIcon }}", context), "x", "Should be X")
 }

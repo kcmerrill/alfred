@@ -9,7 +9,9 @@ func TestWaitComponent(t *testing.T) {
 	task := Task{
 		Wait: "2s",
 	}
-	context := _testSilentContext()
+	context := &Context{
+		Silent: true,
+	}
 	start := time.Now().Unix()
 	wait(task, context, _testSampleTasks())
 	finish := time.Now().Unix()
