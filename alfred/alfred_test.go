@@ -5,8 +5,9 @@ import (
 )
 
 func _testAlfred() *Alfred {
+	tasks := make(map[string]Task)
 	return &Alfred{
-		Tasks: _testSampleTasks(),
+		Tasks: tasks,
 		Lock:  &sync.Mutex{},
 	}
 }

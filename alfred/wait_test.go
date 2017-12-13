@@ -13,7 +13,8 @@ func TestWaitComponent(t *testing.T) {
 		Silent: true,
 	}
 	start := time.Now().Unix()
-	wait(task, context, _testSampleTasks())
+	tasks := make(map[string]Task)
+	wait(task, context, tasks)
 	finish := time.Now().Unix()
 	if finish-2 != start {
 		t.Fatalf("wait() did not wait 2 seconds. #sadpanda")

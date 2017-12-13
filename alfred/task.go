@@ -98,3 +98,15 @@ func (t *Task) Template(translate string, context *Context) string {
 	}
 	return b.String()
 }
+
+// IsPrivate determines if a task is private
+func (t *Task) IsPrivate() bool {
+	// I like the idea of not needing to put an astrick next to a task
+	// ... Descriptions and usage automagically qualify for "important tasks"
+	// No descriptions, or usage information means it's filler, or private
+
+	if t.Description != "" || t.Usage != "" {
+		return false
+	}
+	return true
+}

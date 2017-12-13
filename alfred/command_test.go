@@ -5,7 +5,7 @@ import (
 )
 
 func TestCommandComponent(t *testing.T) {
-	tasks := _testSampleTasks()
+	tasks := make(map[string]Task)
 	context := &Context{}
 	command(tasks["ls"], context, tasks)
 	// todo: figure out stdout capture
