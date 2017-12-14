@@ -6,7 +6,7 @@ import (
 
 func (t *Task) dir(context *Context) (string, bool) {
 	if t.Dir != "" {
-		dir := evaluate(t.Template(t.Dir, context))
+		dir := evaluate(t.Template(t.Dir, context), ".")
 		if _, err := os.Stat(dir); err == nil {
 			// woot!
 			return dir, true

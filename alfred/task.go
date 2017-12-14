@@ -72,6 +72,7 @@ type Task struct {
 	fail        string
 	Fail        []TaskGroup
 	Wait        string
+	Watch       string
 	ExitCode    int
 }
 
