@@ -13,10 +13,10 @@ func serve(task Task, context *Context, tasks map[string]Task) {
 	if task.Serve == "" {
 		return
 	}
-	dir := "."
-	if task.Dir != "" {
-		dir = task.Dir
-	}
+
+	dir, _ := task.dir(context)
+
+	// TODO taskdir task.dir()
 	event.Trigger("output", "Serving "+dir+" 0.0.0.0:"+task.Serve, task, context)
 	r := mux.NewRouter()
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))

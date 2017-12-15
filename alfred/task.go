@@ -34,6 +34,7 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 	components := []string{
 		"setup",
 		"summary",
+		"watch",
 		"command",
 		"serve",
 		"result",

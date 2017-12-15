@@ -8,6 +8,7 @@ func init() {
 	event.Register("output", output)
 	event.Register("setup", setup)
 	event.Register("summary", summary)
+	event.Register("watch", watch)
 	event.Register("serve", serve)
 	event.Register("result", result)
 	event.Register("ok", ok)
