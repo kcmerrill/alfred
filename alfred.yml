@@ -1,0 +1,18 @@
+say.hello:
+    summary: I will say hello!
+    usage: alfred say.hello
+    command: echo "Hello!"
+
+say.howareyou:
+    summary: I will ask how you are
+    usage: alfred say.howareyou
+    command: |
+        echo "How"
+        echo "Are"
+        echo "You?"
+
+speak:
+    tasks: say.hello say.howareyou
+
+blurt:
+    multitask: say.hello say.howareyou

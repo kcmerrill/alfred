@@ -5,9 +5,9 @@ import (
 	"os"
 	"sync"
 
-	"gopkg.in/yaml.v2"
-
+	"github.com/kcmerrill/common.go/config"
 	"github.com/kcmerrill/common.go/file"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // Alfred coordinates the tasks
@@ -38,18 +38,31 @@ func Initialize(alfred *Alfred) *Alfred {
 
 // Task will start off our entrypoint task
 func (a *Alfred) Task(cli CLI) {
+	var tasks []byte
 	if cli.file != "_local" {
 		f, err := file.Get(cli.file)
 		if err != nil {
 			fmt.Println(translate("{{ .Text.FailureIcon }}{{ .Text.Failure }}Unable to load: "+cli.file+"{{ .Text.Reset }}", emptyContext()))
 			os.Exit(42)
 		}
-		err = yaml.Unmarshal(f, a.Tasks)
+		tasks = f
+	} else {
+		// must be local
+		local, err := config.Find("alfred.yml")
 		if err != nil {
-			fmt.Println(translate("{{ .Text.FailureIcon }}{{ .Text.Failure }}Unable to unmarshal: "+cli.file+"{{ .Text.Reset }}", emptyContext()))
-			fmt.Println(translate("{{ .Text.FailureIcon }}{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", emptyContext()))
+			fmt.Println(translate("{{ .Text.FailureIcon }}{{ .Text.Failure }}Unable to load: "+cli.file+"{{ .Text.Reset }}", emptyContext()))
 			os.Exit(42)
 		}
+		tasks = local
 	}
+
+	err := yaml.Unmarshal(tasks, a.Tasks)
+	if err != nil {
+		fmt.Println(translate("{{ .Text.FailureIcon }}{{ .Text.Failure }}Unable to unmarshal: "+cli.file+"{{ .Text.Reset }}", emptyContext()))
+		fmt.Println(translate("{{ .Text.FailureIcon }}{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", emptyContext()))
+		os.Exit(42)
+	}
+
+	// lets get rocking and rolling ...
 	NewTask(cli.task, InitialContext(cli.args), a.Tasks)
 }

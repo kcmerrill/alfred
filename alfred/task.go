@@ -1,7 +1,6 @@
 package alfred
 
 import (
-	"fmt"
 	"os"
 
 	event "github.com/kcmerrill/hook"
@@ -40,7 +39,6 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 	event.Trigger("task.started", task)
 	// cycle through our components ...
 	for _, component := range components {
-		fmt.Println("component:", component.Name)
 		event.Trigger("before."+component.Name, t, context, tasks)
 		component.F(t, context, tasks)
 		event.Trigger("after."+component.Name, t, context, tasks)
