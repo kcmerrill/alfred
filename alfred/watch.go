@@ -29,7 +29,7 @@ func watch(task Task, context *Context, tasks map[string]Task) {
 
 		if matched != nil {
 			// seems weird, but we are passing back
-			output("Modified: "+matched.Error(), task, context)
+			output("Modified: "+matched.Error()+"\n", task, context)
 			break
 		} else {
 			<-time.After(time.Second)

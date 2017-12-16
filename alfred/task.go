@@ -2,7 +2,6 @@ package alfred
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"text/template"
 
@@ -26,16 +25,10 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 	// set our taskname
 	c.TaskName = task
 
-	// lets setup our task groups
-	t.Setup = t.ParseTaskGroup(t.setup)
-	t.Tasks = t.ParseTaskGroup(t.tasks)
-	t.Ok = t.ParseTaskGroup(t.ok)
-	t.Fail = t.ParseTaskGroup(t.fail)
-
-	fmt.Println("here?")
 	components := []Component{
 		Component{"setup", setup},
 		Component{"summary", summary},
+		Component{"tasks", tasksC},
 		Component{"watch", watch},
 		Component{"command", command},
 		Component{"serve", serve},
@@ -49,9 +42,8 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 	event.Trigger("task.started", task)
 	// cycle through our components ...
 	for _, component := range components {
-		fmt.Println("---->", component.Name)
 		event.Trigger("before."+component.Name, t, context, tasks)
-		//component.F(t, context, tasks)
+		component.F(t, context, tasks)
 		event.Trigger("after."+component.Name, t, context, tasks)
 	}
 	event.Trigger("task.completed", task)
@@ -64,19 +56,15 @@ type Task struct {
 	Description string
 	Usage       string
 	Args        []string
-	setup       string
-	Setup       []TaskGroup
+	Setup       string
 	Dir         string
 	Every       string
 	Command     string
 	Serve       string
 	Script      string
-	tasks       string
-	Tasks       []TaskGroup
-	ok          string
-	Ok          []TaskGroup
-	fail        string
-	Fail        []TaskGroup
+	Tasks       string
+	Ok          string
+	Fail        string
 	Wait        string
 	Watch       string
 	ExitCode    int
