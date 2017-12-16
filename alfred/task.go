@@ -1,11 +1,9 @@
 package alfred
 
 import (
-	"bytes"
+	"fmt"
 	"os"
-	"text/template"
 
-	"github.com/Masterminds/sprig"
 	event "github.com/kcmerrill/hook"
 )
 
@@ -15,7 +13,7 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 
 	if !exists {
 		// TODO, Lookup ... then exit
-		output("shit is broke", Task{}, context)
+		output("Cannot find "+task, Task{}, context)
 		return
 	}
 
@@ -42,6 +40,7 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 	event.Trigger("task.started", task)
 	// cycle through our components ...
 	for _, component := range components {
+		fmt.Println("component:", component.Name)
 		event.Trigger("before."+component.Name, t, context, tasks)
 		component.F(t, context, tasks)
 		event.Trigger("after."+component.Name, t, context, tasks)
@@ -75,23 +74,6 @@ func (t *Task) Exit() {
 	if t.ExitCode != 0 {
 		os.Exit(t.ExitCode)
 	}
-}
-
-// Template is a helper function to translate a string to a template
-func (t *Task) Template(translate string, context *Context) string {
-	if translate == "" {
-		// Nothing to translate, move along
-		return translate
-	}
-	fmap := sprig.TxtFuncMap()
-	te := template.Must(template.New("template").Funcs(fmap).Parse(translate))
-	var b bytes.Buffer
-	err := te.Execute(&b, context)
-	if err != nil {
-		output("{{ .Text.Failure }}{{ .Text.FailureIcon }}Bad Template: "+err.Error()+"{{ .Text.Reset }}", *t, context)
-		return ""
-	}
-	return b.String()
 }
 
 // IsPrivate determines if a task is private

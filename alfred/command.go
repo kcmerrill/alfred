@@ -11,7 +11,7 @@ func command(task Task, context *Context, tasks map[string]Task) {
 		return
 	}
 
-	cmd := exec.Command("bash", "-c", task.Template(task.Command, context))
+	cmd := exec.Command("bash", "-c", translate(task.Command, context))
 
 	// set the directory where to run
 	cmd.Dir = task.Dir

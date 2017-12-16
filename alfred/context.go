@@ -1,8 +1,6 @@
 package alfred
 
 import (
-	"os"
-
 	"github.com/mgutz/ansi"
 )
 
@@ -30,11 +28,12 @@ type TextConfig struct {
 func InitialContext(args []string) *Context {
 	return &Context{
 		TaskName: "n/a",
-		Args:     os.Args[1:],
+		Args:     args,
 		Register: make(map[string]string),
 		Log:      make([]string, 0),
 		Ok:       true, // innocent until proven guilty
 		Text: TextConfig{
+			// TODO: I don't like this, let me chew on this a bit more
 			Success:     ansi.ColorCode("green"),
 			SuccessIcon: "✔",
 			Failure:     ansi.ColorCode("red"),

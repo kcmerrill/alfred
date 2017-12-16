@@ -1,6 +1,8 @@
 package alfred
 
-import "os/exec"
+import (
+	"os/exec"
+)
 
 func evaluate(command, dir string) string {
 	results, ok := execute(command, dir)
@@ -19,8 +21,16 @@ func execute(command, dir string) (string, bool) {
 	cmd := exec.Command("bash", "-c", command)
 	cmd.Dir = dir
 	cmdOutput, error := cmd.CombinedOutput()
-	if error == nil {
+	if error != nil {
 		return error.Error(), false
 	}
 	return string(cmdOutput), true
+}
+
+func emptyContext() *Context {
+	return InitialContext([]string{})
+}
+func emptyTaskList() map[string]Task {
+	etl := make(map[string]Task)
+	return etl
 }
