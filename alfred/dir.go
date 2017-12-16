@@ -16,9 +16,9 @@ func (t *Task) dir(context *Context) (string, bool) {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			// problem making directory
 			os.Exit(42)
-			return ".", false
+			return "./", false
 		}
 		return dir, true
 	}
-	return ".", true
+	return "./", true
 }

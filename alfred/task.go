@@ -15,7 +15,7 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 
 	if !exists {
 		// TODO, Lookup ... then exit
-		event.Trigger("output", "shit is broke", Task{}, context)
+		output("shit is broke", Task{}, context)
 		return
 	}
 
@@ -41,12 +41,14 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 		"ok",
 		"fail",
 		"wait",
+		"every",
 	}
 
 	event.Trigger("task.started", task)
 	// cycle through our components ...
 	for _, component := range components {
 		event.Trigger("before."+component, t, context, tasks)
+		// todo: turn into invoke(s)
 		event.Trigger(component, t, context, tasks)
 		event.Trigger("after."+component, t, context, tasks)
 	}
@@ -63,6 +65,7 @@ type Task struct {
 	setup       string
 	Setup       []TaskGroup
 	Dir         string
+	Every       string
 	Command     string
 	Serve       string
 	Script      string
@@ -95,7 +98,7 @@ func (t *Task) Template(translate string, context *Context) string {
 	var b bytes.Buffer
 	err := te.Execute(&b, context)
 	if err != nil {
-		event.Trigger("output", "{{ .Text.Failure }}{{ .Text.FailureIcon }}Bad Template: "+err.Error()+"{{ .Text.Reset }}", t, context)
+		output("{{ .Text.Failure }}{{ .Text.FailureIcon }}Bad Template: "+err.Error()+"{{ .Text.Reset }}", *t, context)
 		return ""
 	}
 	return b.String()
@@ -106,9 +109,9 @@ func (t *Task) IsPrivate() bool {
 	// I like the idea of not needing to put an astrick next to a task
 	// ... Descriptions and usage automagically qualify for "important tasks"
 	// No descriptions, or usage information means it's filler, or private
-
 	if t.Description != "" || t.Usage != "" {
 		return false
 	}
+
 	return true
 }

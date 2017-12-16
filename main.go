@@ -1,6 +1,8 @@
 package main
 
-import . "github.com/kcmerrill/alfred/alfred"
+import (
+	. "github.com/kcmerrill/alfred/alfred"
+)
 
 func main() {
 	tasks := make(map[string]Task)

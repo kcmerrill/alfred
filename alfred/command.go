@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os/exec"
-
-	event "github.com/kcmerrill/hook"
 )
 
 func command(task Task, context *Context, tasks map[string]Task) {
@@ -23,7 +21,7 @@ func command(task Task, context *Context, tasks map[string]Task) {
 	go func() {
 		for scannerStdOut.Scan() {
 			s := fmt.Sprintf("%s", scannerStdOut.Text())
-			event.Trigger("output", s, task, context)
+			output(s, task, context)
 		}
 	}()
 
@@ -32,14 +30,14 @@ func command(task Task, context *Context, tasks map[string]Task) {
 	go func() {
 		for scannerStdErr.Scan() {
 			s := fmt.Sprintf("%s", scannerStdErr.Text())
-			event.Trigger("output", s, task, context)
+			output(s, task, context)
 		}
 	}()
 
 	err := cmd.Start()
 	if err != nil {
 		s := fmt.Sprintf("{{ .Text.Failure }}%s{{ .Text.Reset }}", err.Error())
-		event.Trigger("output", s, task, context)
+		output(s, task, context)
 	}
 	statusCode := cmd.Wait()
 	if statusCode != nil {

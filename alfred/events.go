@@ -14,4 +14,5 @@ func init() {
 	event.Register("ok", ok)
 	event.Register("fail", fail)
 	event.Register("wait", wait)
+	event.Register("every", every)
 }

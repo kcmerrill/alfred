@@ -13,31 +13,27 @@ func watch(task Task, context *Context, tasks map[string]Task) {
 		return
 	}
 	dir, _ := task.dir(context)
+
+	output("Watching: "+dir, task, context)
+
 	for {
-		fmt.Println("watching", "---", dir, "---")
-		matched := filepath.Walk("/tmp/", func(path string, f os.FileInfo, err error) error {
-			fmt.Println("path", path)
-			fmt.Println(f.Name())
+		matched := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
 			if f.ModTime().After(time.Now().Add(-2 * time.Second)) {
-				fmt.Println("Name:", f.Name())
 				m, _ := regexp.Match(task.Watch, []byte(path))
 				if m {
-					fmt.Println("matches:", m)
 					// If not a match ...
-					return nil
+					return fmt.Errorf(path)
 				}
 			}
-			fmt.Println("Nothing")
-			return fmt.Errorf("No matches found")
+			// continue on
+			return nil
 		})
-		<-time.After(time.Second)
-		fmt.Println(matched)
-		//if matched != nil {
-		//fmt.Println(".... lets try again")
-		//<-time.After(1 * time.Second)
-		//} else {
-		//fmt.Println("good to go ...")
-		//break
-		//}
+		if matched != nil {
+			// seems weird, but we are passing back
+			output(matched.Error(), task, context)
+			break
+		} else {
+			<-time.After(time.Second)
+		}
 	}
 }
