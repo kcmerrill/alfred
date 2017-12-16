@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-func every(task Task, context *Context) {
+func every(task Task, context *Context, tasks map[string]Task) {
 	// convert task.Every into a duration
 	if task.Every == "" {
 		return
@@ -17,5 +17,5 @@ func every(task Task, context *Context) {
 
 	// pause ...
 	<-time.After(dur)
-	NewTask(context.Name, context, tasks)
+	NewTask(context.TaskName, context, tasks)
 }

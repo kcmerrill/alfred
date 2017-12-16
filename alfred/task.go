@@ -2,6 +2,7 @@ package alfred
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"text/template"
 
@@ -31,26 +32,27 @@ func NewTask(task string, context *Context, tasks map[string]Task) {
 	t.Ok = t.ParseTaskGroup(t.ok)
 	t.Fail = t.ParseTaskGroup(t.fail)
 
-	components := []string{
-		"setup",
-		"summary",
-		"watch",
-		"command",
-		"serve",
-		"result",
-		"ok",
-		"fail",
-		"wait",
-		"every",
+	fmt.Println("here?")
+	components := []Component{
+		Component{"setup", setup},
+		Component{"summary", summary},
+		Component{"watch", watch},
+		Component{"command", command},
+		Component{"serve", serve},
+		Component{"result", result},
+		Component{"ok", ok},
+		Component{"fail", fail},
+		Component{"wait", wait},
+		Component{"every", every},
 	}
 
 	event.Trigger("task.started", task)
 	// cycle through our components ...
 	for _, component := range components {
-		event.Trigger("before."+component, t, context, tasks)
-		// todo: turn into invoke(s)
-		event.Trigger(component, t, context, tasks)
-		event.Trigger("after."+component, t, context, tasks)
+		fmt.Println("---->", component.Name)
+		event.Trigger("before."+component.Name, t, context, tasks)
+		//component.F(t, context, tasks)
+		event.Trigger("after."+component.Name, t, context, tasks)
 	}
 	event.Trigger("task.completed", task)
 }

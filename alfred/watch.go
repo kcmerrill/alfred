@@ -13,9 +13,7 @@ func watch(task Task, context *Context, tasks map[string]Task) {
 		return
 	}
 	dir, _ := task.dir(context)
-
 	output("Watching: "+dir, task, context)
-
 	for {
 		matched := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
 			if f.ModTime().After(time.Now().Add(-2 * time.Second)) {
@@ -28,9 +26,10 @@ func watch(task Task, context *Context, tasks map[string]Task) {
 			// continue on
 			return nil
 		})
+
 		if matched != nil {
 			// seems weird, but we are passing back
-			output(matched.Error(), task, context)
+			output("Modified: "+matched.Error(), task, context)
 			break
 		} else {
 			<-time.After(time.Second)
