@@ -13,9 +13,13 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// copy our context
 	c := context
 
-	// set our taskname
-	c.TaskName = task
+	// innocent until proven guilty
+	c.Ok = true
 
+	// set our taskname
+	c.TaskName, c.TaskFile = TaskParser(task, "")
+
+	// cycle through our components
 	components := []Component{
 		Component{"setup", setup},
 		Component{"tasks", tasksC},
@@ -30,13 +34,13 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	}
 
 	// cycle through our components ...
-	event.Trigger("task.started", task)
+	event.Trigger("task.started", t, context, tasks)
 	for _, component := range components {
 		event.Trigger("before."+component.Name, t, context, tasks)
 		component.F(t, context, tasks)
 		event.Trigger("after."+component.Name, t, context, tasks)
 	}
-	event.Trigger("task.completed", task)
+	event.Trigger("task.completed", t, context, tasks)
 }
 
 // Task holds all of our task components

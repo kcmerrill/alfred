@@ -1,5 +1,5 @@
 hash: 84fbdff1808e07610833ac19bda154d7a774a5743791b17565fa4f76385533c5
-updated: 2017-12-18T09:00:16.545183-07:00
+updated: 2017-12-18T16:28:21.189423-07:00
 imports:
 - name: github.com/aokoli/goutils
   version: 3391d3790d23d03408670993e957e8f408993c34
@@ -17,7 +17,7 @@ imports:
   - config
   - file
 - name: github.com/kcmerrill/hook
-  version: 10efbe8cb7a9e44747c6204e579f4534310ff0fa
+  version: 24e50f31a4f1184f590f057d0feb049e0b542acf
 - name: github.com/Masterminds/semver
   version: 59c29afe1a994eacb71c833025ca7acf874bb1da
 - name: github.com/Masterminds/sprig

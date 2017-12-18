@@ -7,6 +7,7 @@ import (
 // Context contains the state of a task
 type Context struct {
 	TaskName string
+	TaskFile string
 	Log      []string
 	Args     []string
 	Register map[string]string

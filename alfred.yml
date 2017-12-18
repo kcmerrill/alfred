@@ -17,3 +17,7 @@ speak:
 
 blurt:
     multitask: say.hello say.howareyou
+
+t:
+    summary: TDD alfred style
+    tasks: https://raw.githubusercontent.com/kcmerrill/alfred/master/modules/testing/alfred.yml:tdd.go

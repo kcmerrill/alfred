@@ -15,15 +15,9 @@ func TestNewTask(t *testing.T) {
 	NewTask("hello.world", InitialContext([]string{}), tasks)
 }
 
-
 func TestTaskIsPrivate(t *testing.T) {
 	task := Task{
 		Description: "A non private task here",
-	}
-	assert.Equal(t, false, task.IsPrivate(), "Task should be private")
-
-	task = Task{
-		Usage: "Usage goes here",
 	}
 	assert.Equal(t, false, task.IsPrivate(), "Task should be private")
 

@@ -85,6 +85,11 @@ func Trigger(trigger string, args ...interface{}) {
 			}
 		}
 	}
+
+	// fire off subscriptions for all events
+	if trigger != "*" {
+		Trigger("*", args...)
+	}
 }
 
 // Giddy Up

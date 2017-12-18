@@ -82,3 +82,21 @@ func TestPlugin(t *testing.T) {
 		t.Fatalf("Unable to call plugin")
 	}
 }
+
+func TestWildcardRegister(t *testing.T) {
+	Register("wildcard", func(word *string) {
+		*word = "wildcard"
+	})
+	Register("*", func(word *string) {
+		*word += "*"
+	})
+	Register("*", func(word *string) {
+		*word += "*"
+	})
+	word := ""
+	Trigger("wildcard", &word)
+
+	if word != "wildcard**" {
+		t.Fatalf("* register should have been called last")
+	}
+}

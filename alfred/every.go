@@ -5,12 +5,19 @@ import (
 )
 
 func every(task Task, context *Context, tasks map[string]Task) {
+	e := task.Every
+
+	// override every if we are watching
+	if task.Watch != "" {
+		e = "1s"
+	}
+
 	// convert task.Every into a duration
-	if task.Every == "" {
+	if e == "" {
 		return
 	}
 
-	dur, err := time.ParseDuration(task.Every)
+	dur, err := time.ParseDuration(e)
 	if err != nil {
 		return
 	}
