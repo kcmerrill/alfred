@@ -7,14 +7,8 @@ import (
 )
 
 // NewTask will execute a task
-func NewTask(task string, context *Context, tasks map[string]Task) {
-	t, exists := tasks[task]
-
-	if !exists {
-		// TODO, Lookup ... then exit
-		output("Cannot find "+task, Task{}, context)
-		return
-	}
+func NewTask(task string, context *Context, loadedTasks map[string]Task) {
+	t, tasks := FetchTask(task, loadedTasks)
 
 	// copy our context
 	c := context

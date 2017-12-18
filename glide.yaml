@@ -1,8 +1,0 @@
-package: github.com/kcmerrill/alfred
-import:
-- package: github.com/Masterminds/sprig
-  version: ^2.14.1
-- package: github.com/gorilla/mux
-  version: ^1.6.0
-- package: github.com/kcmerrill/hook
-- package: github.com/mgutz/ansi

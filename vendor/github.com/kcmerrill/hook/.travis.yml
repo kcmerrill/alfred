@@ -1,8 +1,0 @@
-sudo: required
-language: go
-go:
-    - 1.9
-before_script:
-    - sudo apt-get install -y python
-script:
-    - go test $(go list ./... | grep -v /vendor/) --race
