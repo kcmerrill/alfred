@@ -10,6 +10,7 @@ say.howareyou:
         echo "How"
         echo "Are"
         echo "You?"
+        false
 
 speak:
     tasks: say.hello say.howareyou

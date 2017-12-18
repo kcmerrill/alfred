@@ -9,8 +9,8 @@ import (
 func main() {
 	tasks := make(map[string]Task)
 	task, args := CLI(os.Args)
-	context := &Context{
-		Args: args,
-	}
+
+	context := InitialContext(args)
+
 	NewTask(task, context, tasks)
 }

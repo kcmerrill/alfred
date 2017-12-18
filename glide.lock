@@ -1,0 +1,56 @@
+hash: 84fbdff1808e07610833ac19bda154d7a774a5743791b17565fa4f76385533c5
+updated: 2017-12-18T09:00:16.545183-07:00
+imports:
+- name: github.com/aokoli/goutils
+  version: 3391d3790d23d03408670993e957e8f408993c34
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/mux
+  version: 7f08801859139f86dfafd1c296e2cba9a80d292e
+- name: github.com/huandu/xstrings
+  version: 37469d0c81a7910b49d64a0d308ded4823e90937
+- name: github.com/imdario/mergo
+  version: 7fe0c75c13abdee74b09fcacef5ea1c6bba6a874
+- name: github.com/kcmerrill/common.go
+  version: 82826010913095ddf65a7cc65a95770ff50b42eb
+  subpackages:
+  - config
+  - file
+- name: github.com/kcmerrill/hook
+  version: 10efbe8cb7a9e44747c6204e579f4534310ff0fa
+- name: github.com/Masterminds/semver
+  version: 59c29afe1a994eacb71c833025ca7acf874bb1da
+- name: github.com/Masterminds/sprig
+  version: b217b9c388de2cacde4354c536e520c52c055563
+- name: github.com/mattn/go-colorable
+  version: 5411d3eea5978e6cdc258b30de592b60df6aba96
+- name: github.com/mattn/go-isatty
+  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
+- name: github.com/mgutz/ansi
+  version: 9520e82c474b0a04dd04f8a40959027271bab992
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
+- name: golang.org/x/crypto
+  version: 81e90905daefcd6fd217b62423c0908922eadb30
+  subpackages:
+  - pbkdf2
+  - scrypt
+- name: golang.org/x/sys
+  version: aaabbdc969c3935a2a7f61efac801e7163c73a2a
+  subpackages:
+  - unix
+- name: gopkg.in/yaml.v2
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert
