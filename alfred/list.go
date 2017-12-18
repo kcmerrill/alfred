@@ -23,21 +23,20 @@ func list(tasks map[string]Task) {
 	sort.Strings(labels)
 
 	// insignifigant tasks
+	// still chewing on this one. Not sure if we should include them or not
 	for _, label := range labels {
 		task := tasks[label]
 		if task.Summary == "" {
-			fmt.Print(translate("{{ .Text.Grey }}"+padRight(label, max, " ")+"{{ .Text.Reset }}", emptyContext()), "\t")
+			fmt.Print(translate("{{ .Text.Grey }}"+label+"{{ .Text.Reset }}", emptyContext()), "\t")
 		}
 	}
-
-	fmt.Println()
 	fmt.Println()
 
 	// signifigant tasks
 	for _, label := range labels {
 		task := tasks[label]
 		if task.Summary != "" {
-			fmt.Println(translate("{{ .Text.Task }}"+padRight(label, max, " ")+"{{ .Text.Grey }}| {{ .Text.Reset }}"+task.Summary, emptyContext()))
+			fmt.Println(translate("{{ .Text.Task }}"+padRight(label, max, " ")+"{{ .Text.Grey }} | {{ .Text.Reset }}"+task.Summary, emptyContext()))
 		}
 	}
 }
