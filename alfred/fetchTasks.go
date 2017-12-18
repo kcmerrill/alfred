@@ -26,7 +26,7 @@ func FetchTask(task string, tasks map[string]Task) (Task, map[string]Task) {
 		f, err := file.Get(location)
 		if err != nil {
 			// cannot use output, no task yet ...
-			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Unable to load: "+location+"{{ .Text.Reset }}", emptyContext()))
+			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} "+location+"{{ .Text.Reset }}", emptyContext()))
 			os.Exit(42)
 		}
 		contents = f
@@ -35,7 +35,7 @@ func FetchTask(task string, tasks map[string]Task) (Task, map[string]Task) {
 		local, err := config.Find("alfred.yml")
 		if err != nil {
 			// cannot use output, no task yet ...
-			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Unable to load: "+location+"{{ .Text.Reset }}", emptyContext()))
+			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing task file.{{ .Text.Reset }}", emptyContext()))
 			os.Exit(42)
 		}
 		contents = local
@@ -45,7 +45,7 @@ func FetchTask(task string, tasks map[string]Task) (Task, map[string]Task) {
 	if err != nil {
 		// cannot use output, no task yet ...
 		fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Unable to unmarshal: "+location+"{{ .Text.Reset }}", emptyContext()))
-		fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }}"+err.Error()+"{{ .Text.Reset }}", emptyContext()))
+		fmt.Println(translate("{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", emptyContext()))
 		os.Exit(42)
 	}
 
@@ -59,11 +59,13 @@ func FetchTask(task string, tasks map[string]Task) (Task, map[string]Task) {
 
 	if task == ":list" {
 		list(tasks)
+		os.Exit(0)
 	}
 
 	// hmmm, all dressed up and no where to go
+	list(tasks)
 	fmt.Println(translate("\n{{ .Text.Failure }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}", emptyContext()))
-	fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Unable to find '"+task+"' task {{ .Text.Reset }}", emptyContext()))
+	fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} The task '"+task+"' is invalid.{{ .Text.Reset }}", emptyContext()))
 	os.Exit(42)
 	return Task{}, tasks
 }

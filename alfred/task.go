@@ -18,7 +18,6 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 
 	components := []Component{
 		Component{"setup", setup},
-		Component{"summary", summary},
 		Component{"tasks", tasksC},
 		Component{"watch", watch},
 		Component{"command", command},
@@ -45,7 +44,6 @@ type Task struct {
 	Aliases     string
 	Summary     string
 	Description string
-	Usage       string
 	Args        []string
 	Setup       string
 	Dir         string
@@ -71,9 +69,9 @@ func (t *Task) Exit() {
 // IsPrivate determines if a task is private
 func (t *Task) IsPrivate() bool {
 	// I like the idea of not needing to put an astrick next to a task
-	// ... Descriptions and usage automagically qualify for "important tasks"
-	// No descriptions, or usage information means it's filler, or private
-	if t.Description != "" || t.Usage != "" {
+	// ... Descriptions automagically qualify for "important tasks"
+	// No descriptions means it's filler, or private
+	if t.Description != "" {
 		return false
 	}
 

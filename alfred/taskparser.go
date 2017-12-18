@@ -11,7 +11,6 @@ func TaskParser(task, defaultTask string) (string, string) {
 	if strings.HasPrefix(task, "http") {
 		// we have to get the http: colon out of the way :(
 		bits := strings.SplitN(task, ":", 3)
-		fmt.Println(bits)
 		url := strings.Join(bits[0:2], ":")
 		if len(bits) >= 3 {
 			// alright, so we have tasks and args ...

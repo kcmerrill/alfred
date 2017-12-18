@@ -30,7 +30,29 @@ func execute(command, dir string) (string, bool) {
 func emptyContext() *Context {
 	return InitialContext([]string{})
 }
+
 func emptyTaskList() map[string]Task {
 	etl := make(map[string]Task)
 	return etl
+}
+
+func padLeft(word string, size int, padding string) string {
+	return pad(word, size, padding) + word
+}
+
+func padRight(word string, size int, padding string) string {
+	return word + pad(word, size, padding)
+}
+
+func pad(word string, size int, padding string) string {
+	padded := ""
+	if len(word) >= size {
+		return padded
+	}
+
+	for l := 0; l < size-len(word); l++ {
+		padded += padding
+	}
+
+	return padded
 }

@@ -21,7 +21,14 @@ type TextConfig struct {
 	SuccessIcon string
 	Failure     string
 	FailureIcon string
+	Task        string
+	Warning     string
 	Reset       string
+
+	// color codes
+	Grey   string
+	Orange string
+	Pink   string
 }
 
 // InitialContext will return an empty context
@@ -36,8 +43,15 @@ func InitialContext(args []string) *Context {
 			// TODO: I don't like this, let me chew on this a bit more
 			Success:     ansi.ColorCode("green"),
 			SuccessIcon: "✔",
-			Failure:     ansi.ColorCode("red"),
+			Failure:     ansi.ColorCode("9"),
 			FailureIcon: "✘",
+			Task:        ansi.ColorCode("33"),
+			Warning:     ansi.ColorCode("185"),
 			Reset:       ansi.ColorCode("reset"),
+
+			// Color codes
+			Grey:   ansi.ColorCode("238"),
+			Orange: ansi.ColorCode("202"),
+			Pink:   ansi.ColorCode("197"),
 		}}
 }
