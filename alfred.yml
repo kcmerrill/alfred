@@ -1,23 +1,10 @@
-say.hello:
-    summary: I will say hello!
-    usage: alfred say.hello
-    command: echo "Hello!"
-
-say.howareyou:
-    summary: I will ask how you are
-    usage: alfred say.howareyou
+example:
+    summary: This is the summary
     command: |
-        echo "How"
-        echo "Are"
-        echo "You?"
         false
+        echo "hello world"
 
-speak:
-    tasks: say.hello say.howareyou
-
-blurt:
-    multitask: say.hello say.howareyou
-
-t:
-    summary: TDD alfred style
-    tasks: https://raw.githubusercontent.com/kcmerrill/alfred/master/modules/testing/alfred.yml:tdd.go
+examplea:
+    tasks: |
+        example
+        example

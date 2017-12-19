@@ -45,22 +45,21 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 
 // Task holds all of our task components
 type Task struct {
-	Aliases     string
-	Summary     string
-	Description string
-	Args        []string
-	Setup       string
-	Dir         string
-	Every       string
-	Command     string
-	Serve       string
-	Script      string
-	Tasks       string
-	Ok          string
-	Fail        string
-	Wait        string
-	Watch       string
-	ExitCode    int
+	Aliases  string
+	Summary  string
+	Args     []string
+	Setup    string
+	Dir      string
+	Every    string
+	Command  string
+	Serve    string
+	Script   string
+	Tasks    string
+	Ok       string
+	Fail     string
+	Wait     string
+	Watch    string
+	ExitCode int
 }
 
 // Exit determins whether a task should exit or not
@@ -75,7 +74,7 @@ func (t *Task) IsPrivate() bool {
 	// I like the idea of not needing to put an astrick next to a task
 	// ... Descriptions automagically qualify for "important tasks"
 	// No descriptions means it's filler, or private
-	if t.Description != "" {
+	if t.Summary != "" {
 		return false
 	}
 

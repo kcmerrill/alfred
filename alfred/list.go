@@ -30,6 +30,8 @@ func list(tasks map[string]Task) {
 			fmt.Print(translate("{{ .Text.Grey }}"+label+"{{ .Text.Reset }}", emptyContext()), "\t")
 		}
 	}
+
+	// TODO: we need to detemine if we should show this or not
 	fmt.Println()
 
 	// signifigant tasks
