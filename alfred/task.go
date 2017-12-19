@@ -17,7 +17,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	c.Ok = true
 
 	// set our taskname
-	c.TaskName, c.TaskFile = TaskParser(task, "")
+	c.TaskFile, c.TaskName = TaskParser(task, ":default")
 
 	// cycle through our components
 	components := []Component{
