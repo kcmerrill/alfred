@@ -22,6 +22,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// cycle through our components
 	components := []Component{
 		Component{"setup", setup},
+		Component{"multitask", multitask},
 		Component{"tasks", tasksC},
 		Component{"watch", watch},
 		Component{"command", command},
@@ -45,21 +46,22 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 
 // Task holds all of our task components
 type Task struct {
-	Aliases  string
-	Summary  string
-	Args     []string
-	Setup    string
-	Dir      string
-	Every    string
-	Command  string
-	Serve    string
-	Script   string
-	Tasks    string
-	Ok       string
-	Fail     string
-	Wait     string
-	Watch    string
-	ExitCode int
+	Aliases   string
+	Summary   string
+	Args      []string
+	Setup     string
+	Dir       string
+	Every     string
+	Command   string
+	Serve     string
+	Script    string
+	Tasks     string
+	MultiTask string
+	Ok        string
+	Fail      string
+	Wait      string
+	Watch     string
+	ExitCode  int
 }
 
 // Exit determins whether a task should exit or not

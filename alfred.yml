@@ -1,10 +1,15 @@
 example:
     summary: This is the summary
     command: |
-        false
-        echo "hello world"
+        true
 
-examplea:
+entrypoint:
+    multitask: sleep1 sleep3
     tasks: |
         example
-        example
+    command: ls -alh /doesnotexist 
+
+sleep1: 
+    command: sleep 1 && echo sleep1
+sleep3: 
+    command: sleep 3 && echo sleep3
