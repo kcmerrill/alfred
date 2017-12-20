@@ -23,7 +23,7 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 	cmd := exec.Command("bash", "-c", translate(commandStr, context))
 
 	// set the directory where to run
-	cmd.Dir = task.Dir
+	cmd.Dir, _ = task.dir(context)
 
 	// wait for output to be completed before moving on
 	var wg sync.WaitGroup
@@ -57,8 +57,8 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 	}
 	statusCode := cmd.Wait()
 	wg.Wait()
+	fmt.Println("command", commandStr)
 	if statusCode != nil {
-		context.Ok = false
-		task.Exit()
+		task.Exit(context, tasks)
 	}
 }

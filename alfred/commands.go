@@ -1,6 +1,9 @@
 package alfred
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 func commands(task Task, context *Context, tasks map[string]Task) {
 	if task.Commands == "" {
@@ -10,6 +13,7 @@ func commands(task Task, context *Context, tasks map[string]Task) {
 	cmds := strings.Split(task.Commands, "\n")
 	for _, cmd := range cmds {
 		// the task component
+		fmt.Println("command to run:", cmd)
 		command(cmd, task, context, tasks)
 	}
 }

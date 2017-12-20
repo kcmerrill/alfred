@@ -13,10 +13,10 @@ func result(task Task, context *Context, tasks map[string]Task) {
 
 	if context.Ok {
 		output("\n{{ .Text.Success }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}", task, context)
-		output("{{  .Text.Success }}{{ .Text.SuccessIcon }} {{ .TaskName }}"+args+" Ok{{ .Text.Reset}}\n\n", task, context)
+		output("{{  .Text.Success }}{{ .Text.SuccessIcon }} {{ .TaskName }}"+args+" Ok{{ .Text.Reset}}\n", task, context)
 		return
 	}
 
 	output("\n{{ .Text.Failure }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}", task, context)
-	output("{{  .Text.Failure }}{{ .Text.FailureIcon }} {{ .TaskName }}"+args+" Failed{{ .Text.Reset}}\n\n", task, context)
+	output("{{  .Text.Failure }}{{ .Text.FailureIcon }} {{ .TaskName }}"+args+" Failed{{ .Text.Reset}}\n", task, context)
 }

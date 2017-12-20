@@ -21,13 +21,13 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 
 	// cycle through our components
 	components := []Component{
+		Component{"serve", serve},
 		Component{"setup", setup},
 		Component{"multitask", multitask},
 		Component{"tasks", tasksC},
 		Component{"watch", watch},
 		Component{"command", commandC},
 		Component{"commands", commands},
-		Component{"serve", serve},
 		Component{"result", result},
 		Component{"ok", ok},
 		Component{"fail", fail},
@@ -67,9 +67,10 @@ type Task struct {
 }
 
 // Exit determins whether a task should exit or not
-func (t *Task) Exit() {
+func (t *Task) Exit(context *Context, tasks map[string]Task) {
+	context.Ok = false
 	if t.ExitCode != 0 {
-		output("")
+		result(*t, context, tasks)
 		os.Exit(t.ExitCode)
 	}
 }

@@ -1,26 +1,5 @@
-example:
-    summary: This is the summary
-    command: |
-        true
-
-entrypoint:
-    multitask: sleep1 sleep3
-    tasks: |
-        example
-    command: ls -alh /doesnotexist 
-
-server:
-    task: serve
-    wait: 1h
-
-serve:
-    serve: 8089
-
-sleep: 
-    command: |
-        sleep {{ index .Args 0 }} && echo slept {{ index .Args 2 }}
-
-test.args:
-    command: |
+dir: 
+    dir: /tmp/testing
+    commands: |
         false
-    exit: 42
+        touch myfile.txt

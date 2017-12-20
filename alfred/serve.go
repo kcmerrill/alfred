@@ -30,7 +30,10 @@ func serve(task Task, context *Context, tasks map[string]Task) {
 		if err := srv.ListenAndServe(); err != nil {
 			output("{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", task, context)
 			context.Ok = false
-			task.Exit()
+			task.Exit(context, tasks)
 		}
 	}()
+
+	// Pause, let the port open up before continuing on ...
+	//<-time.After(time.Second)
 }
