@@ -21,8 +21,10 @@ func (t *Task) ParseTaskGroup(group string) []TaskGroup {
 		return tg
 	}
 
-	if strings.Index(group, "\n") == -1 {
-		// This means we have a regular space delimited list
+	// TODO: This is pretty terrible ... but until I get something better it stays
+	// I need to research tokenizers
+	if strings.Index(group, "\n") == -1 && !strings.Contains(group, "(") {
+		// This means we have a regular space delimited list, probably
 		tasks := strings.Split(group, " ")
 		for _, task := range tasks {
 			tg = append(tg, TaskGroup{Name: task, Args: []string{}})
@@ -45,7 +47,6 @@ func (t *Task) ParseTaskGroup(group string) []TaskGroup {
 			}
 		}
 	}
-
 	return tg
 }
 
