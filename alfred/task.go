@@ -25,7 +25,8 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"multitask", multitask},
 		Component{"tasks", tasksC},
 		Component{"watch", watch},
-		Component{"command", command},
+		Component{"command", commandC},
+		Component{"commands", commands},
 		Component{"serve", serve},
 		Component{"result", result},
 		Component{"ok", ok},
@@ -53,6 +54,7 @@ type Task struct {
 	Dir       string
 	Every     string
 	Command   string
+	Commands  string
 	Serve     string
 	Script    string
 	Tasks     string
@@ -61,12 +63,13 @@ type Task struct {
 	Fail      string
 	Wait      string
 	Watch     string
-	ExitCode  int
+	ExitCode  int `yaml:"exit"`
 }
 
 // Exit determins whether a task should exit or not
 func (t *Task) Exit() {
 	if t.ExitCode != 0 {
+		output("")
 		os.Exit(t.ExitCode)
 	}
 }

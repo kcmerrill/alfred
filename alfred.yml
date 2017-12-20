@@ -21,5 +21,6 @@ sleep:
         sleep {{ index .Args 0 }} && echo slept {{ index .Args 2 }}
 
 test.args:
-    tasks: |
-        sleep(1, {{ index .Args 0 }}, {{ index .Args 1 }})
+    command: |
+        false
+    exit: 42

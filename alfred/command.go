@@ -7,12 +7,20 @@ import (
 	"sync"
 )
 
-func command(task Task, context *Context, tasks map[string]Task) {
-	if task.Command == "" {
+// the task component
+func commandC(task Task, context *Context, tasks map[string]Task) {
+	command(task.Command, task, context, tasks)
+}
+
+// within the context of a task, run a command with proper output
+// looking for eval, or simple execs? If so, see utils.go
+// this one will hook into the GUI where appropriate
+func command(commandStr string, task Task, context *Context, tasks map[string]Task) {
+	if commandStr == "" {
 		return
 	}
 
-	cmd := exec.Command("bash", "-c", translate(task.Command, context))
+	cmd := exec.Command("bash", "-c", translate(commandStr, context))
 
 	// set the directory where to run
 	cmd.Dir = task.Dir
