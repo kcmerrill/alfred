@@ -26,12 +26,11 @@ func serve(task Task, context *Context, tasks map[string]Task) {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	//go func() {
-	if err := srv.ListenAndServe(); err != nil {
-		output("{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", task, context)
-		context.Ok = false
-		task.Exit()
-	}
-	//}()
-
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			output("{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", task, context)
+			context.Ok = false
+			task.Exit()
+		}
+	}()
 }

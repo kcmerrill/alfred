@@ -9,7 +9,17 @@ entrypoint:
         example
     command: ls -alh /doesnotexist 
 
-sleep1: 
-    command: sleep 1 && echo sleep1
-sleep3: 
-    command: sleep 3 && echo sleep3
+server:
+    task: serve
+    wait: 1h
+
+serve:
+    serve: 8089
+
+sleep: 
+    command: sleep {{ index .Args 0 }} && echo slept {{ index .Args 0 }}
+
+test.args:
+    tasks: |
+        sleep(1)
+    command: echo {{ index .Args 0 }}

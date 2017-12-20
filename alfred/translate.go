@@ -2,6 +2,7 @@ package alfred
 
 import (
 	"bytes"
+	"fmt"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
@@ -17,7 +18,8 @@ func translate(raw string, context *Context) string {
 	var b bytes.Buffer
 	err := te.Execute(&b, context)
 	if err != nil {
-		return translate("{{ .Text.Failure }}{{ .Text.FailureIcon }}Bad Template: "+err.Error()+"{{ .Text.Reset }}", context)
+		context.Ok = false
+		fmt.Print(translate("{{ .Text.Failure }}Missing arguments{{ .Text.Reset }}", context))
 	}
 	return b.String()
 }

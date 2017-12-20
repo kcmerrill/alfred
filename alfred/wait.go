@@ -1,6 +1,8 @@
 package alfred
 
-import "time"
+import (
+	"time"
+)
 
 func wait(task Task, context *Context, tasks map[string]Task) {
 	if task.Wait == "" {
@@ -11,6 +13,8 @@ func wait(task Task, context *Context, tasks map[string]Task) {
 	if err != nil {
 		return
 	}
+
+	output("Waiting: "+task.Wait, task, context)
 
 	// get to waiting!
 	<-time.After(dur)
