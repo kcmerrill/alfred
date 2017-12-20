@@ -52,7 +52,7 @@ func (t *Task) ParseTaskGroup(group string) []TaskGroup {
 
 func execTaskGroup(taskGroups []TaskGroup, task Task, context *Context, tasks map[string]Task) {
 	for _, tg := range taskGroups {
-		NewTask(tg.Name, InitialContext(tg.Args), tasks)
+		NewTask(tg.Name, InitialContext(translateArgs(tg.Args, context)), tasks)
 	}
 }
 
@@ -61,7 +61,7 @@ func goExecTaskGroup(taskGroups []TaskGroup, task Task, context *Context, tasks 
 	for _, tg := range taskGroups {
 		wg.Add(1)
 		go func() {
-			NewTask(tg.Name, InitialContext(tg.Args), tasks)
+			NewTask(tg.Name, InitialContext(translateArgs(tg.Args, context)), tasks)
 			wg.Done()
 		}()
 		wg.Wait()

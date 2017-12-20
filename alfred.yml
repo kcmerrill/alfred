@@ -17,9 +17,9 @@ serve:
     serve: 8089
 
 sleep: 
-    command: sleep {{ index .Args 0 }} && echo slept {{ index .Args 0 }}
+    command: |
+        sleep {{ index .Args 0 }} && echo slept {{ index .Args 2 }}
 
 test.args:
     tasks: |
-        sleep(1)
-    command: echo {{ index .Args 0 }}
+        sleep(1, {{ index .Args 0 }}, {{ index .Args 1 }})
