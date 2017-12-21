@@ -57,7 +57,6 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 	}
 	statusCode := cmd.Wait()
 	wg.Wait()
-	fmt.Println("command", commandStr)
 	if statusCode != nil {
 		task.Exit(context, tasks)
 	}
