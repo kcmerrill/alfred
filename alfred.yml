@@ -3,12 +3,12 @@ docker.pull:
        docker pull {{ index .Args 0 }}
        ls -alh /tmp/schmoedown2
     wait: "{{ index .Args 1 }}"
-    exit: 42
+    fail: punisher(hello) punisher(world)
 
 punisher:
     summary: do something awesome with punisher
     command: |
-        punisher --workers 1 --nice 1s --verbose echo hi
+        punisher --workers 1 --nice 1s --verbose echo {{ index .Args 0 }}
 
 download:
     summary: Download some shit

@@ -1,6 +1,17 @@
 package alfred
 
+import "strings"
+
 func multitask(task Task, context *Context, tasks map[string]Task) {
-	tg := task.ParseTaskGroup(task.MultiTask)
-	goExecTaskGroup(tg, task, context, tasks)
+	tgs := task.ParseTaskGroup(task.MultiTask)
+
+	tgsNames := make([]string, 0)
+	for _, tg := range tgs {
+		tgsNames = append(tgsNames, tg.Name)
+	}
+
+	if len(tgsNames) != 0 {
+		outFail("multitasks", strings.Join(tgsNames, ", "), context)
+		goExecTaskGroup(tgs, task, context, tasks)
+	}
 }

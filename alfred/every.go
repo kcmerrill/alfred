@@ -22,6 +22,7 @@ func every(task Task, context *Context, tasks map[string]Task) {
 		return
 	}
 
+	outOK("every", e, context)
 	// pause ...
 	<-time.After(dur)
 	NewTask(context.TaskName, context, tasks)

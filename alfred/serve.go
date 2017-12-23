@@ -16,7 +16,7 @@ func serve(task Task, context *Context, tasks map[string]Task) {
 	dir, _ := task.dir(context)
 
 	// TODO taskdir task.dir()
-	outOK("serve", "Serving "+dir+" 0.0.0.0:"+task.Serve, context)
+	outOK("serve", dir+" 0.0.0.0:"+task.Serve, context)
 	r := mux.NewRouter()
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 	srv := &http.Server{
@@ -29,7 +29,6 @@ func serve(task Task, context *Context, tasks map[string]Task) {
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
 			outFail("serve", err.Error(), context)
-			context.Ok = false
 			task.Exit(context, tasks)
 		}
 	}()

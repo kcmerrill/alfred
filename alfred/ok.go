@@ -1,6 +1,17 @@
 package alfred
 
+import "strings"
+
 func ok(task Task, context *Context, tasks map[string]Task) {
-	tg := task.ParseTaskGroup(task.Ok)
-	execTaskGroup(tg, task, context, tasks)
+	tgs := task.ParseTaskGroup(task.Ok)
+
+	tgsNames := make([]string, 0)
+	for _, tg := range tgs {
+		tgsNames = append(tgsNames, tg.Name)
+	}
+
+	if len(tgsNames) != 0 {
+		outOK("ok.tasks", strings.Join(tgsNames, ", "), context)
+		execTaskGroup(tgs, task, context, tasks)
+	}
 }
