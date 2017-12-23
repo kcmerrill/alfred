@@ -9,12 +9,14 @@ func wait(task Task, context *Context, tasks map[string]Task) {
 		return
 	}
 
-	dur, err := time.ParseDuration(task.Wait)
+	dur, err := time.ParseDuration(translate(task.Wait, context))
 	if err != nil {
+		context.Ok = false
+		outFail("waiting", "Unable to parse duration", context)
 		return
 	}
 
-	output("Waiting: "+task.Wait, task, context)
+	outOK("wait", task.Wait, context)
 
 	// get to waiting!
 	<-time.After(dur)

@@ -60,10 +60,10 @@ func goExecTaskGroup(taskGroups []TaskGroup, task Task, context *Context, tasks 
 	var wg sync.WaitGroup
 	for _, tg := range taskGroups {
 		wg.Add(1)
-		go func() {
+		go func(tg TaskGroup) {
 			NewTask(tg.Name, InitialContext(translateArgs(tg.Args, context)), tasks)
 			wg.Done()
-		}()
-		wg.Wait()
+		}(tg)
 	}
+	wg.Wait()
 }

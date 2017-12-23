@@ -2,6 +2,7 @@ package alfred
 
 import (
 	"os"
+	"strconv"
 
 	event "github.com/kcmerrill/hook"
 )
@@ -19,8 +20,8 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// set our taskname
 	c.TaskFile, c.TaskName = TaskParser(task, ":default")
 
-	// cycle through our components
 	components := []Component{
+		Component{"summary", summary},
 		Component{"serve", serve},
 		Component{"setup", setup},
 		Component{"multitask", multitask},
@@ -28,7 +29,6 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"watch", watch},
 		Component{"command", commandC},
 		Component{"commands", commands},
-		Component{"result", result},
 		Component{"ok", ok},
 		Component{"fail", fail},
 		Component{"wait", wait},
@@ -70,7 +70,7 @@ type Task struct {
 func (t *Task) Exit(context *Context, tasks map[string]Task) {
 	context.Ok = false
 	if t.ExitCode != 0 {
-		result(*t, context, tasks)
+		outFail("exit", strconv.Itoa(t.ExitCode), context)
 		os.Exit(t.ExitCode)
 	}
 }

@@ -2,7 +2,6 @@ package alfred
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"text/template"
 
@@ -28,7 +27,7 @@ func translate(raw string, context *Context) string {
 	err := te.Execute(&b, context)
 	if err != nil {
 		context.Ok = false
-		fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing arguments{{ .Text.Reset }}", context))
+		outFail("template", "Invalid Argument(s)", context)
 		// TODO: chew on this some, should we fail? If not, how do we handle this gracefully?
 		os.Exit(42)
 	}

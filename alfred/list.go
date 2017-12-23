@@ -6,7 +6,6 @@ import (
 )
 
 func list(tasks map[string]Task) {
-
 	max := 0
 	labels := make([]string, 0)
 	for label := range tasks {
@@ -18,21 +17,24 @@ func list(tasks map[string]Task) {
 			max = len(label)
 		}
 	}
-
 	// alphabatize the list
 	sort.Strings(labels)
 
+	noLabels := 0
 	// insignifigant tasks
 	// still chewing on this one. Not sure if we should include them or not
 	for _, label := range labels {
 		task := tasks[label]
 		if task.Summary == "" {
+			noLabels++
 			fmt.Print(translate("{{ .Text.Grey }}"+label+"{{ .Text.Reset }}", emptyContext()), "\t")
 		}
 	}
 
-	// TODO: we need to detemine if we should show this or not
-	fmt.Println()
+	if noLabels != 0 {
+		// TODO: we need to determine if we should show this or not
+		fmt.Println()
+	}
 
 	// signifigant tasks
 	for _, label := range labels {

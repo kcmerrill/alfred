@@ -1,22 +1,10 @@
 package alfred
 
-import (
-	"strings"
-)
+import "strings"
 
-func result(task Task, context *Context, tasks map[string]Task) {
-
-	args := ""
-	if len(context.Args) >= 1 {
-		args = " (" + strings.Join(context.Args, ", ") + ")"
+func summary(task Task, context *Context, tasks map[string]Task) {
+	if task.Summary != "" {
+		outOK("summary", task.Summary, context)
+		outOK("args", "["+strings.Join(context.Args, ", ")+"]", context)
 	}
-
-	if context.Ok {
-		output("\n{{ .Text.Success }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}", task, context)
-		output("{{  .Text.Success }}{{ .Text.SuccessIcon }} {{ .TaskName }}"+args+" Ok{{ .Text.Reset}}\n", task, context)
-		return
-	}
-
-	output("\n{{ .Text.Failure }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}", task, context)
-	output("{{  .Text.Failure }}{{ .Text.FailureIcon }} {{ .TaskName }}"+args+" Failed{{ .Text.Reset}}\n", task, context)
 }
