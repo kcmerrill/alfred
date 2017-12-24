@@ -23,13 +23,13 @@ func list(tasks map[string]Task) {
 	noLabels := 0
 	// insignifigant tasks
 	// still chewing on this one. Not sure if we should include them or not
-	for _, label := range labels {
+	/*for _, label := range labels {
 		task := tasks[label]
 		if task.Summary == "" {
 			noLabels++
 			fmt.Print(translate("{{ .Text.Grey }}"+label+"{{ .Text.Reset }}", emptyContext()), "\t")
 		}
-	}
+	}*/
 
 	if noLabels != 0 {
 		// TODO: we need to determine if we should show this or not
