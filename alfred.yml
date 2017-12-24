@@ -88,6 +88,6 @@ retry:
 
 config.tester:
     summary: Lets test out the configuration stuff! 
-    config: somefile.txt
-    command: echo {{ index .Vars "bingo" }}
-    exit: 1
+    config: |
+        user whoami
+    command: echo {{ index .Vars "user" }}
