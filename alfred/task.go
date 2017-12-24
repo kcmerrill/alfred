@@ -2,7 +2,7 @@ package alfred
 
 import (
 	"os"
-	"strconv"
+	"strings"
 
 	event "github.com/kcmerrill/hook"
 )
@@ -20,6 +20,13 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// set our taskname
 	c.TaskFile, c.TaskName = TaskParser(task, ":default")
 
+	/*for x := 0; x <= 256; x++ {
+		color := strconv.Itoa(x)
+		fmt.Println(ansi.ColorCode(color), "COLOR#", x)
+	}
+	return
+	*/
+
 	components := []Component{
 		Component{"summary", summary},
 		Component{"serve", serve},
@@ -29,6 +36,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"watch", watch},
 		Component{"command", commandC},
 		Component{"commands", commands},
+		Component{"result", result},
 		Component{"ok", ok},
 		Component{"fail", fail},
 		Component{"wait", wait},
@@ -39,6 +47,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	event.Trigger("task.started", t, context, tasks)
 	for _, component := range components {
 		event.Trigger("before."+component.Name, t, context, tasks)
+		context.Component = component.Name
 		component.F(t, context, tasks)
 		event.Trigger("after."+component.Name, t, context, tasks)
 	}
@@ -70,7 +79,7 @@ type Task struct {
 func (t *Task) Exit(context *Context, tasks map[string]Task) {
 	context.Ok = false
 	if t.ExitCode != 0 {
-		outFail("exit", strconv.Itoa(t.ExitCode), context)
+		outFail("["+strings.Join(context.Args, ", ")+"]", "{{ .Text.Failure }}{{ .Text.FailureIcon }} exiting ...", context)
 		os.Exit(t.ExitCode)
 	}
 }

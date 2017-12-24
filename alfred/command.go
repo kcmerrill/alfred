@@ -25,6 +25,7 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 	cmd.Dir, _ = task.dir(context)
 
 	cmdFailed := false
+
 	// wait for output to be completed before moving on
 	var wg sync.WaitGroup
 	cmdReaderStdOut, _ := cmd.StdoutPipe()

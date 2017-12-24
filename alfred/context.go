@@ -1,19 +1,24 @@
 package alfred
 
 import (
+	"time"
+
 	"github.com/mgutz/ansi"
 )
 
 // Context contains the state of a task
 type Context struct {
-	TaskName string
-	TaskFile string
-	Log      []string
-	Args     []string
-	Register map[string]string
-	Ok       bool
-	Text     TextConfig
-	Silent   bool
+	TaskName  string
+	TaskFile  string
+	Started   time.Time
+	Log       []string
+	Args      []string
+	Register  map[string]string
+	Ok        bool
+	Text      TextConfig
+	Silent    bool
+	Status    string
+	Component string
 }
 
 // TextConfig contains configuration needed to display text
@@ -42,6 +47,8 @@ func InitialContext(args []string) *Context {
 		Register: make(map[string]string),
 		Log:      make([]string, 0),
 		Ok:       true, // innocent until proven guilty
+		Started:  time.Now(),
+		Status:   "",
 		Text: TextConfig{
 			// TODO: I don't like this, let me chew on this a bit more
 			Success:     ansi.ColorCode("green"),
@@ -51,7 +58,7 @@ func InitialContext(args []string) *Context {
 			Task:        ansi.ColorCode("33"),
 			Warning:     ansi.ColorCode("185"),
 			Command:     ansi.ColorCode("reset"),
-			Args:        ansi.ColorCode("198"),
+			Args:        ansi.ColorCode("6"),
 			Reset:       ansi.ColorCode("reset"),
 
 			// Color codes

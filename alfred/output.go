@@ -17,9 +17,13 @@ func outWarn(component, text string, context *Context) {
 	output("Warning", component, text+"\n", context)
 }
 
+func outArgs(component, text string, context *Context) {
+	output("Args", component, text+"\n", context)
+}
+
 func output(color, component, text string, context *Context) {
 	date := "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }}"
-	out := date + " {{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text
+	out := elapsed(context) + date + " {{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text
 	t := translate(out, context)
 	fmt.Print(t)
 }
@@ -34,7 +38,11 @@ func cmdFail(text string, context *Context) {
 
 func outputCommand(color, component, text string, context *Context) {
 	date := "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }}"
-	out := date + " {{ .Text." + color + " }}" + text
+	out := elapsed(context) + date + " {{ .Text." + color + " }}" + text
 	t := translate(out, context)
 	fmt.Println(t)
+}
+
+func elapsed(context *Context) string {
+	return "{{ .Text.Grey }}[{{ .Text.Success }}" + padLeft(time.Since(context.Started).Round(time.Second).String(), 3, " ") + "{{ .Text.Grey }}] "
 }

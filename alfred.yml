@@ -3,17 +3,22 @@ docker.pull:
        docker pull {{ index .Args 0 }}
        ls -alh /tmp/schmoedown2
     wait: "{{ index .Args 1 }}"
-    fail: punisher(hello) punisher(world)
+    fail: letsgo
+
+letsgo:
+    multitask: |
+        punisher(hello)
+        punisher(world)
 
 punisher:
     summary: do something awesome with punisher
     command: |
-        punisher --workers 1 --nice 1s --verbose echo {{ index .Args 0 }}
+        punisher --workers 1 --nice 1s --verbose --duration 10s echo {{ index .Args 0 }}
 
 download:
     summary: Download some shit
     multitask: |
-        docker.pull(kcmerrill/fetch-proxy, 1s)
+        docker.pull(kcmerrill/fetch-proxy, 10s)
 
 say.hello:
     summary: I will say hello!
@@ -33,3 +38,10 @@ speak:
 
 blurt:
     multitask: say.hello say.howareyou
+
+fail.me:
+    summary: Fail Me should fail
+    command: |
+        echo "hello world"
+        ls -alh /tmp/whatever
+    exit: 42

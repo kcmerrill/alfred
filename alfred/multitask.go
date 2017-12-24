@@ -11,7 +11,7 @@ func multitask(task Task, context *Context, tasks map[string]Task) {
 	}
 
 	if len(tgsNames) != 0 {
-		outFail("multitasks", strings.Join(tgsNames, ", "), context)
+		outOK("multitasks", strings.Join(tgsNames, ", "), context)
 		goExecTaskGroup(tgs, task, context, tasks)
 	}
 }
