@@ -65,3 +65,18 @@ test.defaults:
     defaults:
         - ""
         - "world"
+
+echo :
+    summary: I will echo something
+    command: |
+        sleep 1 && echo {{ index .Args 0 }}
+
+for.each:
+    summary: Lets test out our loops!
+    for:
+        multitask: |
+            echo
+        args: |
+            one
+            two
+            three

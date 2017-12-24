@@ -38,6 +38,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"multitask", multitask},
 		Component{"tasks", tasksC},
 		Component{"watch", watch},
+		Component{"for", forC},
 		Component{"command", commandC},
 		Component{"commands", commands},
 		Component{"result", result},
@@ -60,12 +61,17 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 
 // Task holds all of our task components
 type Task struct {
-	Aliases   string
-	Summary   string
-	Args      []string
-	Setup     string
-	Defaults  []string
-	Dir       string
+	Aliases  string
+	Summary  string
+	Args     []string
+	Setup    string
+	Defaults []string
+	Dir      string
+	For      struct {
+		Tasks     string
+		MultiTask string
+		Args      string
+	}
 	Every     string
 	Command   string
 	Commands  string
