@@ -1,3 +1,7 @@
+the.dir:
+    command:
+        echo $PWD
+
 docker.pull:
     commands: |
        docker pull {{ index .Args 0 }}
@@ -45,3 +49,10 @@ fail.me:
         echo "hello world"
         ls -alh /tmp/whatever
     exit: 42
+
+serve:
+    summary: serve some shit up
+    command: | 
+        echo hello world
+    serve: 8090
+    wait: 10h

@@ -9,7 +9,10 @@ import (
 
 // NewTask will execute a task
 func NewTask(task string, context *Context, loadedTasks map[string]Task) {
-	t, tasks := FetchTask(task, loadedTasks)
+	dir, t, tasks := FetchTask(task, loadedTasks)
+
+	// switch the directory
+	os.Chdir(dir)
 
 	// copy our context
 	c := context

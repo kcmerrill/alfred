@@ -23,7 +23,7 @@ func outArgs(component, text string, context *Context) {
 
 func output(color, component, text string, context *Context) {
 	date := "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }}"
-	out := elapsed(context) + date + " {{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text
+	out := elapsed(context) + date + " {{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text + "{{ .Text.Reset }}"
 	t := translate(out, context)
 	fmt.Print(t)
 }

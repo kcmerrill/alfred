@@ -10,9 +10,9 @@ import (
 )
 
 // FetchTask will fetch the tasks
-func FetchTask(task string, tasks map[string]Task) (Task, map[string]Task) {
+func FetchTask(task string, tasks map[string]Task) (string, Task, map[string]Task) {
 	if t, exists := tasks[task]; exists {
-		return t, tasks
+		return "./", t, tasks
 	}
 
 	var fetched map[string]Task
@@ -32,12 +32,13 @@ func FetchTask(task string, tasks map[string]Task) (Task, map[string]Task) {
 		contents = f
 	} else {
 		// must be local
-		local, err := config.Find("alfred.yml")
+		dir, local, err := config.Find("alfred.yml")
 		if err != nil {
 			// cannot use output, no task yet ...
 			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing task file.{{ .Text.Reset }}", emptyContext()))
 			os.Exit(42)
 		}
+		os.Chdir(dir)
 		contents = local
 	}
 
@@ -54,7 +55,7 @@ func FetchTask(task string, tasks map[string]Task) (Task, map[string]Task) {
 	}
 
 	if t, exists := tasks[task]; exists {
-		return t, tasks
+		return "", t, tasks
 	}
 
 	if task == ":list" {
@@ -67,5 +68,5 @@ func FetchTask(task string, tasks map[string]Task) (Task, map[string]Task) {
 	fmt.Println(translate("\n{{ .Text.Failure }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}", emptyContext()))
 	fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} The task '"+task+"' is invalid.{{ .Text.Reset }}", emptyContext()))
 	os.Exit(42)
-	return Task{}, tasks
+	return "", Task{}, tasks
 }
