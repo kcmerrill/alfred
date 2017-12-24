@@ -85,3 +85,9 @@ retry:
     command: ls -alh /tmp/bleh
     retry: 3
     exit: 323
+
+config.tester:
+    summary: Lets test out the configuration stuff! 
+    config: somefile.txt
+    command: echo {{ index .Vars "bingo" }}
+    exit: 1

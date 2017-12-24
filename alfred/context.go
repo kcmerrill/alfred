@@ -19,6 +19,7 @@ type Context struct {
 	Silent    bool
 	Status    string
 	Component string
+	Vars      map[string]string
 }
 
 // TextConfig contains configuration needed to display text
@@ -49,6 +50,7 @@ func InitialContext(args []string) *Context {
 		Ok:       true, // innocent until proven guilty
 		Started:  time.Now(),
 		Status:   "",
+		Vars:     make(map[string]string, 0),
 		Text: TextConfig{
 			// TODO: I don't like this, let me chew on this a bit more
 			Success:     ansi.ColorCode("green"),

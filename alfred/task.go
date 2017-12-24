@@ -33,6 +33,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	components := []Component{
 		Component{"defaults", defaults},
 		Component{"summary", summary},
+		Component{"config", configC},
 		Component{"serve", serve},
 		Component{"setup", setup},
 		Component{"multitask", multitask},
@@ -72,6 +73,7 @@ type Task struct {
 		MultiTask string
 		Args      string
 	}
+	Config    string
 	Every     string
 	Command   string
 	Retry     int
