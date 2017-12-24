@@ -56,3 +56,12 @@ serve:
         echo hello world
     serve: 8090
     wait: 10h
+
+
+test.defaults:
+    summary: testing defaults
+    command: |
+        echo {{ index .Args 0 }} {{ index .Args 1 }}
+    defaults:
+        - ""
+        - "world"

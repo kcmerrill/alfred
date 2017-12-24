@@ -31,6 +31,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	*/
 
 	components := []Component{
+		Component{"defaults", defaults},
 		Component{"summary", summary},
 		Component{"serve", serve},
 		Component{"setup", setup},
@@ -63,6 +64,7 @@ type Task struct {
 	Summary   string
 	Args      []string
 	Setup     string
+	Defaults  []string
 	Dir       string
 	Every     string
 	Command   string
