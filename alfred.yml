@@ -80,3 +80,8 @@ for.each:
             one
             two
             three
+
+retry: 
+    command: ls -alh /tmp/bleh
+    retry: 3
+    exit: 323

@@ -74,6 +74,7 @@ type Task struct {
 	}
 	Every     string
 	Command   string
+	Retry     int
 	Commands  string
 	Serve     string
 	Script    string

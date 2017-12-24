@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"os/exec"
 	"sync"
+	"time"
 )
 
 // the task component
@@ -19,48 +20,55 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		return
 	}
 
-	cmd := exec.Command("bash", "-c", translate(commandStr, context))
+	for retry := 0; retry <= task.Retry; retry++ {
+		cmd := exec.Command("bash", "-c", translate(commandStr, context))
 
-	// set the directory where to run
-	cmd.Dir, _ = task.dir(context)
+		// set the directory where to run
+		cmd.Dir, _ = task.dir(context)
 
-	cmdFailed := false
+		cmdFailed := false
 
-	// wait for output to be completed before moving on
-	var wg sync.WaitGroup
-	cmdReaderStdOut, _ := cmd.StdoutPipe()
-	scannerStdOut := bufio.NewScanner(cmdReaderStdOut)
-	go func() {
-		wg.Add(1)
-		for scannerStdOut.Scan() {
-			cmdOK(scannerStdOut.Text(), context)
-			cmdFailed = false
-		}
-		wg.Done()
-	}()
+		// wait for output to be completed before moving on
+		var wg sync.WaitGroup
+		cmdReaderStdOut, _ := cmd.StdoutPipe()
+		scannerStdOut := bufio.NewScanner(cmdReaderStdOut)
+		go func() {
+			wg.Add(1)
+			for scannerStdOut.Scan() {
+				cmdOK(scannerStdOut.Text(), context)
+				cmdFailed = false
+			}
+			wg.Done()
+		}()
 
-	cmdReaderStdErr, _ := cmd.StderrPipe()
-	scannerStdErr := bufio.NewScanner(cmdReaderStdErr)
-	go func() {
-		wg.Add(1)
-		for scannerStdErr.Scan() {
-			cmdFailed = true
+		cmdReaderStdErr, _ := cmd.StderrPipe()
+		scannerStdErr := bufio.NewScanner(cmdReaderStdErr)
+		go func() {
+			wg.Add(1)
+			for scannerStdErr.Scan() {
+				cmdFailed = true
+				cmdFail(scannerStdErr.Text(), context)
+			}
+			wg.Done()
+		}()
+
+		err := cmd.Start()
+		if err != nil {
 			cmdFail(scannerStdErr.Text(), context)
 		}
-		wg.Done()
-	}()
-
-	err := cmd.Start()
-	if err != nil {
-		cmdFail(scannerStdErr.Text(), context)
-	}
-	statusCode := cmd.Wait()
-	wg.Wait()
-	if statusCode != nil {
-		if !cmdFailed {
-			// was the last thing we saw a not failure?
-			outFail("command", "failed", context)
+		statusCode := cmd.Wait()
+		wg.Wait()
+		if statusCode != nil {
+			context.Ok = false
+			if !cmdFailed {
+				outFail("command", "failed", context)
+				task.Exit(context, tasks)
+			}
+			<-time.After(time.Second)
+		} else {
+			return
 		}
-		task.Exit(context, tasks)
 	}
+	// was the last thing we saw a not failure?
+	outFail("command", "failed", context)
 }
