@@ -32,7 +32,4 @@ func serve(task Task, context *Context, tasks map[string]Task) {
 			task.Exit(context, tasks)
 		}
 	}()
-
-	// Pause, let the port open up before continuing on ...
-	//<-time.After(time.Second)
 }
