@@ -1,5 +1,5 @@
 hash: 84fbdff1808e07610833ac19bda154d7a774a5743791b17565fa4f76385533c5
-updated: 2017-12-23T22:29:29.319434-07:00
+updated: 2017-12-24T21:29:56.8404-07:00
 imports:
 - name: github.com/aokoli/goutils
   version: 9c37978a95bd5c709a15883b6242714ea6709e64
@@ -12,7 +12,7 @@ imports:
 - name: github.com/imdario/mergo
   version: 7fe0c75c13abdee74b09fcacef5ea1c6bba6a874
 - name: github.com/kcmerrill/common.go
-  version: c9d1cfe716ec26939f555830f8076b4d0b8c2880
+  version: 95897e8a33296847cad085a86d8b4d77c9526648
   subpackages:
   - config
   - file

@@ -32,7 +32,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		contents = f
 	} else {
 		// must be local
-		dir, local, err := config.Find("alfred.yml")
+		dir, local, err := config.FindAndCombine("alfred", "yml")
 		if err != nil {
 			// cannot use output, no task yet ...
 			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing task file.{{ .Text.Reset }}", emptyContext()))

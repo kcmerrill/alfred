@@ -5,7 +5,7 @@ import (
 )
 
 func every(task Task, context *Context, tasks map[string]Task) {
-	e := task.Every
+	e := translate(task.Every, context)
 
 	// override every if we are watching
 	if task.Watch != "" {
