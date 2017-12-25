@@ -52,6 +52,7 @@ fail.me:
 
 serve:
     summary: serve some shit up
+    dir: /tmp
     command: | 
         echo hello world
     serve: 8090
