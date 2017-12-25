@@ -1,12 +1,11 @@
-# alfred
-
-Because even Batman needs a little help.
 
 [![Build Status](https://travis-ci.org/kcmerrill/alfred.svg?branch=master)](https://travis-ci.org/kcmerrill/alfred) [![Join the chat at https://gitter.im/kcmerrill/alfred](https://badges.gitter.im/kcmerrill/alfred.svg)](https://gitter.im/kcmerrill/alfred?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ![Alfred](assets/alfred.jpg "Alfred")
 
-## What is it
+# alfred
+
+> Even Batman needs a little help.
 
 A simple go/yaml powered make file/task runner with a bit of a twist.
 
@@ -87,16 +86,4 @@ To see a comprehensive list of features and functionality please [RTFM](TFM.md "
 - Monitor crons(alert on failures, update endpoints etc ... )
 - Watch for file modifications to run tests->builds
 
-## Tab completion
-
-Copy the included `alfred.completion.sh` to `/etc/bash_completion.d/`.
-
-Or source it in your `~/.profile` file.
-
-Or `alfred /self tab.completion`
-
-## Testing
-
-You might say I've cheated the testing route by only scraping the output. You'd be right.
-
-"I live with a wizard. I cheat" ~ Mouse
+[![forthebadge](http://forthebadge.com/images/badges/contains-technical-debt.svg)](http://forthebadge.com) [![forthebadge](http://forthebadge.com/images/badges/does-not-contain-msg.svg)](http://forthebadge.com)
