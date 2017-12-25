@@ -10,17 +10,6 @@
 
 A simple go/yaml powered make file/task runner with a bit of a twist and a ton of flexibility + baked in goodies.
 
-## Binaries || Installation
-
-[![MacOSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX")](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64) [![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux")](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
-
-via go:
-
-`$ go get -u github.com/kcmerrill/alfred`
-
-via docker:
-
-`$ docker run -v $PWD:$PWD -w $PWD kcmerrill/alfred`
 
 ## Features
 
@@ -86,5 +75,17 @@ To see a comprehensive list of features and functionality please [RTFM](TFM.md "
 - Simple Nagios, Jenkins, pingdom replacement
 - Monitor crons(alert on failures, update endpoints etc ... )
 - Watch for file modifications to run tests->builds
+
+## Binaries || Installation
+
+[![MacOSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX")](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64) [![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux")](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
+
+via go:
+
+`$ go get -u github.com/kcmerrill/alfred`
+
+via docker:
+
+`$ docker run -v $PWD:$PWD -w $PWD kcmerrill/alfred`
 
 [![forthebadge](http://forthebadge.com/images/badges/does-not-contain-msg.svg)](http://forthebadge.com)[![forthebadge](http://forthebadge.com/images/badges/built-by-neckbeards.svg)](http://forthebadge.com)
