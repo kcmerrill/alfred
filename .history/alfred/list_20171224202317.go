@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-func list(context *Context, tasks map[string]Task) {
+func list(tasks map[string]Task) {
 	max := 0
 	labels := make([]string, 0)
 	for label := range tasks {

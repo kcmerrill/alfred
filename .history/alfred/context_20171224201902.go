@@ -1,6 +1,7 @@
 package alfred
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -43,6 +44,7 @@ type TextConfig struct {
 
 // InitialContext will return an empty context
 func InitialContext(args []string) *Context {
+	fmt.Println("INITIALCONTEXTCALLED()JK")
 	return &Context{
 		TaskName: "n/a",
 		Args:     args,

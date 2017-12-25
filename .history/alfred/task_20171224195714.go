@@ -9,7 +9,7 @@ import (
 
 // NewTask will execute a task
 func NewTask(task string, context *Context, loadedTasks map[string]Task) {
-	dir, t, tasks := FetchTask(task, context, loadedTasks)
+	dir, t, tasks := FetchTask(task, loadedTasks)
 
 	// switch the directory
 	os.Chdir(dir)
@@ -31,7 +31,6 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	*/
 
 	components := []Component{
-		Component{"log", log},
 		Component{"defaults", defaults},
 		Component{"summary", summary},
 		Component{"config", configC},
@@ -55,7 +54,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	for _, component := range components {
 		context.Component = component.Name
 		event.Trigger("before."+component.Name, t, &c, tasks)
-		component.F(t, &c, tasks)
+		component.F(t, context, tasks)
 		event.Trigger("after."+component.Name, t, &c, tasks)
 	}
 	event.Trigger("task.completed", t, &c, tasks)

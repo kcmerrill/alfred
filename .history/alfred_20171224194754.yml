@@ -91,18 +91,3 @@ config.tester:
     config: |
         user whoami
     command: echo {{ index .Vars "user" }}
-
-root:
-    summary: would go here is there was a good one
-    log: /tmp/root.log
-    command: echo "root"
-    ok: child.one
-
-child.one:
-    log: /tmp/child.one.log
-    command: echo "child.one"
-    ok: child.two
-
-child.two:
-    log: /tmp/child.two.log
-    command: echo "child.two"

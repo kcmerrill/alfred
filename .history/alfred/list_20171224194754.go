@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-func list(context *Context, tasks map[string]Task) {
+func list(tasks map[string]Task) {
 	max := 0
 	labels := make([]string, 0)
 	for label := range tasks {
@@ -40,7 +40,7 @@ func list(context *Context, tasks map[string]Task) {
 	for _, label := range labels {
 		task := tasks[label]
 		if task.Summary != "" {
-			fmt.Println(translate("{{ .Text.Task }}"+padRight(label, max, " ")+"{{ .Text.Grey }} | {{ .Text.Reset }}"+task.Summary, context))
+			fmt.Println(translate("{{ .Text.Task }}"+padRight(label, max, " ")+"{{ .Text.Grey }} | {{ .Text.Reset }}"+task.Summary, emptyContext()))
 		}
 	}
 }

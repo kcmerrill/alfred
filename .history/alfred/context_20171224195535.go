@@ -12,7 +12,7 @@ type Context struct {
 	TaskName  string
 	TaskFile  string
 	Started   time.Time
-	Log       map[string]*os.File
+	Log       []string
 	Args      []string
 	Register  map[string]string
 	Ok        bool

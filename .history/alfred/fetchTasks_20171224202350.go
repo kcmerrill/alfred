@@ -59,12 +59,12 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 	}
 
 	if task == ":list" {
-		list(context, tasks)
+		list(tasks)
 		os.Exit(0)
 	}
 
 	// hmmm, all dressed up and no where to go
-	list(context, tasks)
+	list(tasks)
 	fmt.Println(translate("\n{{ .Text.Failure }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}", emptyContext()))
 	fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} The task '"+task+"' is invalid.{{ .Text.Reset }}", emptyContext()))
 	os.Exit(42)

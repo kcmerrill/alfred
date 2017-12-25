@@ -9,13 +9,13 @@ import (
 
 // NewTask will execute a task
 func NewTask(task string, context *Context, loadedTasks map[string]Task) {
-	dir, t, tasks := FetchTask(task, context, loadedTasks)
+	dir, t, tasks := FetchTask(task, loadedTasks)
 
 	// switch the directory
 	os.Chdir(dir)
 
 	// copy our context
-	c := *context
+	c := context
 
 	// innocent until proven guilty
 	c.Ok = true
@@ -31,7 +31,6 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	*/
 
 	components := []Component{
-		Component{"log", log},
 		Component{"defaults", defaults},
 		Component{"summary", summary},
 		Component{"config", configC},
@@ -51,14 +50,14 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	}
 
 	// cycle through our components ...
-	event.Trigger("task.started", t, &c, tasks)
+	event.Trigger("task.started", t, context, tasks)
 	for _, component := range components {
 		context.Component = component.Name
-		event.Trigger("before."+component.Name, t, &c, tasks)
-		component.F(t, &c, tasks)
-		event.Trigger("after."+component.Name, t, &c, tasks)
+		event.Trigger("before."+component.Name, t, context, tasks)
+		component.F(t, context, tasks)
+		event.Trigger("after."+component.Name, t, context, tasks)
 	}
-	event.Trigger("task.completed", t, &c, tasks)
+	event.Trigger("task.completed", t, context, tasks)
 }
 
 // Task holds all of our task components
@@ -75,7 +74,6 @@ type Task struct {
 		Args      string
 	}
 	Config    string
-	Log       string
 	Every     string
 	Command   string
 	Retry     int

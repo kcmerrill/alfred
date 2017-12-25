@@ -66,6 +66,8 @@ func goExecTaskGroup(taskGroups []TaskGroup, task Task, context *Context, tasks 
 			c := *context
 			c.Args = translateArgs(tg.Args, context)
 			NewTask(tg.Name, &c, tasks)
+
+			NewTask(tg.Name, InitialContext(translateArgs(tg.Args, context)), tasks)
 			wg.Done()
 		}(tg)
 	}

@@ -41,7 +41,7 @@ func outputCommand(color, component, text string, context *Context) {
 	out := elapsed(context) + date + " {{ .Text." + color + " }}" + text
 	t := translate(out, context)
 	fmt.Println(t)
-	logger(text, context)
+	logger(text+, context)
 }
 
 func elapsed(context *Context) string {

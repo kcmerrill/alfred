@@ -63,9 +63,7 @@ func goExecTaskGroup(taskGroups []TaskGroup, task Task, context *Context, tasks 
 	for _, tg := range taskGroups {
 		wg.Add(1)
 		go func(tg TaskGroup) {
-			c := *context
-			c.Args = translateArgs(tg.Args, context)
-			NewTask(tg.Name, &c, tasks)
+			NewTask(tg.Name, InitialContext(translateArgs(tg.Args, context)), tasks)
 			wg.Done()
 		}(tg)
 	}
