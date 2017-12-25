@@ -23,13 +23,6 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// set our taskname
 	c.TaskFile, c.TaskName = TaskParser(task, ":default")
 
-	/*for x := 0; x <= 256; x++ {
-		color := strconv.Itoa(x)
-		fmt.Println(ansi.ColorCode(color), "COLOR#", x)
-	}
-	return
-	*/
-
 	components := []Component{
 		Component{"log", log},
 		Component{"defaults", defaults},

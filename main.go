@@ -1,25 +1,43 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"os"
+
+	"github.com/mgutz/ansi"
 
 	. "github.com/kcmerrill/alfred/alfred"
 )
 
+var (
+	Version = "Development"
+	Commit  = ""
+)
+
 func main() {
-	//https://blog.stevenocchipinti.com/2013/06/removing-previously-printed-lines.html/
-	//https://godoc.org/golang.org/x/crypto/ssh/terminal#GetSize
-	/*fd := int(os.Stdout.Fd())
-	fmt.Println(terminal.GetSize(fd))
-	for x := 0; x < 100; x++ {
-		fmt.Print(strconv.Itoa(x) + "\r")
-		<-time.After(time.Second)
+	version := flag.Bool("version", false, "Alfred's version number")
+	flag.Parse()
+
+	/* Giddy up! */
+	if *version {
+		fmt.Println()
+		fmt.Println("Alfred - Even Batman needs a little help.")
+		if Version != "Development" {
+			fmt.Print("v", Version)
+			fmt.Println("#" + Commit[0:9])
+		} else {
+			fmt.Println(Version)
+		}
+		fmt.Println()
+		fmt.Println("---")
+		fmt.Println("Made with " + ansi.ColorCode("red") + "<3" + ansi.ColorCode("reset") + " by kcmerrill")
+		fmt.Println()
+		return
 	}
-	fmt.Println("finished!")*/
+
 	tasks := make(map[string]Task)
 	task, args := CLI(os.Args)
-
 	context := InitialContext(args)
-
 	NewTask(task, context, tasks)
 }
