@@ -87,5 +87,3 @@ via go:
 via docker:
 
 `$ docker run -v $PWD:$PWD -w $PWD kcmerrill/alfred`
-
-[![forthebadge](http://forthebadge.com/images/badges/does-not-contain-msg.svg)](http://forthebadge.com)[![forthebadge](http://forthebadge.com/images/badges/built-by-neckbeards.svg)](http://forthebadge.com)
