@@ -17,7 +17,7 @@ func watch(task Task, context *Context, tasks map[string]Task) {
 	for {
 		matched := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
 			if f.ModTime().After(time.Now().Add(-2 * time.Second)) {
-				m, _ := regexp.Match(task.Watch, []byte(path))
+				m, _ := regexp.Match(translate(task.Watch, context), []byte(path))
 				if m {
 					// If not a match ...
 					return fmt.Errorf(path)

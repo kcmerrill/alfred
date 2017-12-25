@@ -14,7 +14,7 @@ func configC(task Task, context *Context, tasks map[string]Task) {
 		if contents, configFileErr := ioutil.ReadFile(translate(task.Config, context)); configFileErr == nil {
 			yamlFile = contents
 		} else {
-			yamlFile = []byte(task.Config)
+			yamlFile = []byte(translate(task.Config, context))
 		}
 		c := make(map[string]string)
 		if configFileUnMarshalErr := yaml.Unmarshal(yamlFile, &c); configFileUnMarshalErr != nil {

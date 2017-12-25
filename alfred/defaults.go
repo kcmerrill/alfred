@@ -19,9 +19,12 @@ func defaults(task Task, context *Context, tasks map[string]Task) {
 		// empty? we should bail ...
 		if task.Defaults[idx] == "" {
 			outFail("template", "Invalid Argument(s)", context)
+			task.Exit(context, tasks)
+			// if we made it here, then no exit specified, we will exit
+			result(task, context, tasks)
 			os.Exit(42)
 		}
 		// set the defaults
-		context.Args = append(context.Args, task.Defaults[idx])
+		context.Args = append(context.Args, translate(task.Defaults[idx], context))
 	}
 }
