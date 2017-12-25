@@ -71,7 +71,7 @@ func InitialContext(args []string) *Context {
 			Task:        ansi.ColorCode("33"),
 			Warning:     ansi.ColorCode("185"),
 			Command:     ansi.ColorCode("reset"),
-			Args:        ansi.ColorCode("6"),
+			Args:        ansi.ColorCode("162"),
 			Reset:       ansi.ColorCode("reset"),
 
 			// Color codes

@@ -4,6 +4,13 @@ import (
 	"os"
 )
 
+// Log will set an external logger
+func Log(filename string, context *Context) {
+	tasks := make(map[string]Task)
+	log(Task{
+		Log: filename,
+	}, context, tasks)
+}
 func log(task Task, context *Context, tasks map[string]Task) {
 	if task.Log != "" {
 		l := translate(task.Log, context)

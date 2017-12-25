@@ -3,7 +3,7 @@ package alfred
 import "testing"
 
 func TestEmptyCLI(t *testing.T) {
-	task, args := CLI([]string{"alfred"})
+	task, args := CLI([]string{})
 	if task != "" {
 		t.Fatalf("Expected: an empty task")
 	}
@@ -14,7 +14,7 @@ func TestEmptyCLI(t *testing.T) {
 }
 
 func TestCLI(t *testing.T) {
-	task, args := CLI([]string{"alfred", "/tester:one", "two"})
+	task, args := CLI([]string{"/tester:one", "two"})
 	if task != "/tester:one" {
 		t.Fatalf("Expected /tester:one")
 	}
