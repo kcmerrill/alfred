@@ -1,0 +1,7 @@
+builds:
+  - binary: alfred
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64

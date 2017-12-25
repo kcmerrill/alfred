@@ -53,7 +53,7 @@ fail.me:
 serve:
     summary: serve some shit up
     dir: /tmp
-    command: | 
+    command: |
         echo hello world
     serve: 8090
     wait: 10h
@@ -82,13 +82,13 @@ for.each:
             two
             three
 
-retry: 
+retry:
     command: ls -alh /tmp/bleh
     retry: 3
     exit: 323
 
 config.tester:
-    summary: Lets test out the configuration stuff! 
+    summary: Lets test out the configuration stuff!
     config: |
         user whoami
     command: echo {{ index .Vars "user" }}
