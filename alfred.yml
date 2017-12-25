@@ -52,3 +52,22 @@ dockerize:
 docker.push:
     summary: Push kcmerrill/alfred to dockerhub
     command: docker push kcmerrill/alfred
+
+
+register:
+    summary: Register some stuff
+    register:
+        one: one
+        user: whoami
+        "{{ index .Args 0 }}": "hello"
+        two: "{{ index .Args 0 }}"
+    command: |
+        echo --{{ default uuidv4 .Vars.stuff }}
+
+env.one:
+    env:
+        BINGO: washisnameo
+        washisnameo: whoami
+    command: |
+        echo $BINGO
+    ok: env.two

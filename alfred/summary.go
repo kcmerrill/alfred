@@ -7,9 +7,9 @@ import (
 
 func summary(task Task, context *Context, tasks map[string]Task) {
 	if task.Summary != "" {
-		outOK("["+strings.Join(context.Args, ", ")+"]", task.Summary+"{{ .Text.Grey }} | {{ .Text.Reset }}started ...", context)
+		outOK("started ["+strings.Join(context.Args, ", ")+"]", task.Summary, context)
 	} else {
-		outOK("["+strings.Join(context.Args, ", ")+"]", "started ...", context)
+		outOK("started ["+strings.Join(context.Args, ", ")+"]", "", context)
 	}
 }
 

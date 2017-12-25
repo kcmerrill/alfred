@@ -2,12 +2,13 @@ package alfred
 
 import (
 	"os/exec"
+	"strings"
 )
 
 func evaluate(command, dir string) string {
 	results, ok := execute(command, dir)
 	if ok {
-		return results
+		return strings.TrimSpace(results)
 	}
 	return command
 }

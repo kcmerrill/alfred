@@ -61,7 +61,6 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		if statusCode != nil {
 			context.Ok = false
 			if !cmdFailed {
-				outFail("command", "failed", context)
 				task.Exit(context, tasks)
 			}
 			<-time.After(time.Second)
@@ -70,5 +69,5 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		}
 	}
 	// was the last thing we saw a not failure?
-	outFail("command", "failed", context)
+	outFail("command failed", "", context)
 }

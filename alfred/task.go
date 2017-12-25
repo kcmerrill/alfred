@@ -28,6 +28,8 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"defaults", defaults},
 		Component{"summary", summary},
 		Component{"config", configC},
+		Component{"register", register},
+		Component{"env", env},
 		Component{"serve", serve},
 		Component{"setup", setup},
 		Component{"multitask", multitask},
@@ -72,6 +74,8 @@ type Task struct {
 	Every     string
 	Command   string
 	Retry     int
+	Register  map[string]string
+	Env       map[string]string
 	Commands  string
 	Serve     string
 	Script    string

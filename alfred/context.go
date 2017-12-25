@@ -2,6 +2,7 @@ package alfred
 
 import (
 	"os"
+	"sync"
 	"time"
 
 	"github.com/mgutz/ansi"
@@ -21,6 +22,7 @@ type Context struct {
 	Status    string
 	Component string
 	Vars      map[string]string
+	Lock      *sync.Mutex
 }
 
 // TextConfig contains configuration needed to display text
@@ -41,6 +43,13 @@ type TextConfig struct {
 	Green  string
 }
 
+func (c *Context) SetVar(key, value string) {
+	c.Lock.Lock()
+	defer c.Lock.Unlock()
+
+	c.Vars[key] = value
+}
+
 // InitialContext will return an empty context
 func InitialContext(args []string) *Context {
 	return &Context{
@@ -52,6 +61,7 @@ func InitialContext(args []string) *Context {
 		Started:  time.Now(),
 		Status:   "",
 		Vars:     make(map[string]string, 0),
+		Lock:     &sync.Mutex{},
 		Text: TextConfig{
 			// TODO: I don't like this, let me chew on this a bit more
 			Success:     ansi.ColorCode("green"),
