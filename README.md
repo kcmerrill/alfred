@@ -8,7 +8,7 @@
 
 # alfred
 
-A simple go/yaml powered make file/task runner with a bit of a twist and a ton of flexibility + baked in goodies.
+A simple go/yaml powered make file/task runner with a bit of a twist and a ton of flexibility.
 
 
 ## Features
