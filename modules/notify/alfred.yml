@@ -1,0 +1,14 @@
+mail:
+    summary: Send an email
+    usage: alfred /notify mail kcmerrill@gmail.com "subject" "Body of message"
+    command: >
+        echo "{{ index .Args 2 }}" |
+        mail -s "{{ index .Args 1 }}" {{ index .Args 0}}
+
+slack:
+    summary: Send a slack message(DEPRECATED, use /slack)
+    usage: alfred /notify slack "supersecretkey" "My message" "#general"
+    command: >
+        curl -X POST
+        --data-urlencode
+        'payload={"channel": "{{ index .Args 2 }}", "text": "{{ index .Args 1 }}"}' https://hooks.slack.com/services/{{ index .Args 0 }}

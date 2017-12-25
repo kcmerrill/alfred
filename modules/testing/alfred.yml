@@ -1,0 +1,47 @@
+selenium:
+    summary: Run selenium hub
+    mulitask: pull.selenium-hub pull.node-firefox
+    tasks: run.selenium
+
+pull.selenium-hub:
+    docker: pull selenium/hub:2.53.1-beryllium
+
+run.selenium:
+    summary: Run selenium hub and nodes
+    tasks: run.selenium-hub run.node-firefox
+
+run.selenium-hub:
+    summary: Run selenium-hub
+    docker: kill.remove selenium-hub
+    command: >
+        docker run -d
+        -p 4444:4444
+        --name selenium-hub
+        selenium/hub:2.53.1-beryllium
+    exit: 1
+
+pull.node-firefox:
+    docker: pull selenium/node-firefox:2.53.1-beryllium
+
+run.node-firefox:
+    summary: Run a selenium hub firefox node
+    docker: kill.remove node-firefox
+    command: >
+        docker run -d
+        --link selenium-hub:hub
+        --name node-firefox
+        -P
+        selenium/node-firefox:2.53.1-beryllium
+    exit: 1
+
+run.go:
+    summary: Watch .go files and then run the application
+    watch: ".*?go$"
+    command: go install && ${PWD##*/} {{ .AllArgs }}
+    defaults:
+        - " "
+
+tdd.go:
+    summary: Watch .go files and run test.go
+    watch: ".*?go$"
+    command: go test $(go list ./... | grep -v /vendor/) --race
