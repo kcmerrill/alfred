@@ -85,4 +85,4 @@ To see a comprehensive list of features and functionality please [RTFM](TFM.md "
 - Monitor crons(alert on failures, update endpoints etc ... )
 - Watch for file modifications to run tests->builds
 
-[![forthebadge](http://forthebadge.com/images/badges/contains-technical-debt.svg)](http://forthebadge.com) [![forthebadge](http://forthebadge.com/images/badges/does-not-contain-msg.svg)](http://forthebadge.com)
+[![forthebadge](http://forthebadge.com/images/badges/does-not-contain-msg.svg)](http://forthebadge.com)[![forthebadge](http://forthebadge.com/images/badges/built-by-neckbeards.svg)](http://forthebadge.com)
