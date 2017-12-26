@@ -4,7 +4,7 @@ Alfred tasks can be complex or as simple as you want them to be. The idea is the
 
 ## Components 
 
-The components here will be listed in order in which they are executed within Alfred. With the way golang's maps work, [they are randomized](https://github.com/golang/go/issues/2630) to prevent DOS attacks. The reason this is important is, your yaml file and it's tasks can be ordered however you'd like, but they will be executed in a specific order. 
+The components here will be listed in order in which they are executed within Alfred. With the way golang's maps work, [they are randomized](https://github.com/golang/go/issues/2630) to prevent DOS attacks. The reason this is important is, your components within your tasks can be ordered however you'd like, but they will be executed in a specific order. 
 
 ## Taskgroups
 
@@ -14,7 +14,7 @@ You can define a task group in multiple ways. For task groups that do not need t
 
 If your task requires arguments, or a mix of no arguments and arguments, put the tasks on new lines. This way you can mix and match the type of tasks that need and don't need arguments. This also helps task readability.
 
-``yaml
+```yaml
 task.one:
     command: echo task.one
 
