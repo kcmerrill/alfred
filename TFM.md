@@ -2,13 +2,21 @@
 
 Alfred tasks can be complex or as simple as you want them to be. The idea is they are small, reusable and can help automate your daily workflow. Each task is made up of [Components](#components). You can think of these components as building blocks to build whatever it is you need. In this manual, we'll go over some classic use cases for alfred, we'll discuss each component in depth, tips and tricks and also ways of structuring your tasks for maximum awesomeness.
 
-## Components 
+If given enough building blocks anything is possible, so alfred really is up to you to choose your own adventure. There are some plugins, and remote tasks available to you, but the power behind alfred is it's flexibility to fit into your specific usecases. I'd like to think so anyways.
 
-The components here will be listed in order in which they are executed within Alfred. With the way golang's maps work, [they are randomized](https://github.com/golang/go/issues/2630) to prevent DOS attacks. The reason this is important is, your components within your tasks can be ordered however you'd like, but they will be executed in a specific order. 
+## About
+
+The history of Alfred is a fun one. There is a bit of a [backstory](https://medium.com/@themayor/docker-dev-test-ci-environments-fetch-proxy-and-alfred-oh-my-daed9c41e28e). 
+
+Essentially I was on a team responsible for getting dev environments up and running quickly. I wrote a tool called [Yoda](https://github.com/kcmerrill/yoda) which was 100% based around docker dev env's, and after a bunch of functionality was added, quickly morphed into `Alfred`. 
+
+# Usage
+
+There are a few underlying key concepts throughout Alfred that should be pointed out. [Taskgroups](#taskgroups), [Components](#components), [Arguments](#arguments). We'll go over a few of them here.
 
 ## Taskgroups
 
-There are several components that call other tasks. These are called TaskGroups. A few example of these components would be [tasks](#tasks), [multitask](#multitask), [setup](#setup) to name a few. 
+There are several components that call other tasks. These are called TaskGroups. A few example of these components would be [tasks](#tasks--taskgroup), [multitask](#multitask--taskgroup), [setup](#setup--taskgroup) to name a few. 
 
 You can define a task group in multiple ways. For task groups that do not need to call paramaters, you can simply put them on a single space delimited line. 
 
@@ -38,6 +46,13 @@ taskgroup.mixed:
         task.three({{ index .Args 0 }}, second.arg, third.arg)
         task.two
 ```
+
+
+
+## Components 
+
+The components here will be listed in order in which they are executed within Alfred. With the way golang's maps work, [they are randomized](https://github.com/golang/go/issues/2630) to prevent DOS attacks. The reason this is important? Your components within your tasks can be ordered however you'd like, but they will be executed in a specific order. 
+
 
 ### log | string
 
@@ -410,13 +425,11 @@ A list of tasks that will be run in order, with each new line of `args` provided
 
 A list of tasks that will be run concurrently, with each new line of `args` provided as the first argument.
 
-#### args | string(filename, command, text)
+#### args | string(command, text)
 
 The string is evaluated as a command, and if the result is a non zero exit code will be the resulting value. 
 
-If the string is a valid file path, the file will read in and the contents will be the resulting value. 
-
-If either of the above are not valid, will be consumed as a regular string. 
+If the string is not a valid command, it will be consumed as a regular string. 
 
 The resulting string should contain new lines which will be passed through as the first argument to the given `task` or `multitask` provided.
 
@@ -438,7 +451,6 @@ for.loop.two:
         ls -R -1
       tasks: |
         for.loop.echo
-
 ```
 
 ```sh
