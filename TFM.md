@@ -34,7 +34,7 @@ task.three:
     defaults:
         - "arg0"
         - "arg1"
-        - "arg2
+        - "arg2"
 
 taskgroup.inline:
     setup: task.one task.two task.three
@@ -479,4 +479,47 @@ for.loop.two:
 [ 0s] (26 Dec 17 15:46 MST) myfile.txt
 [ 0s] (26 Dec 17 15:46 MST) for.loop.echo ✔ ok [myfile.txt] elapsed time '0s'
 [ 0s] (26 Dec 17 15:46 MST) for.loop.two ✔ ok [] elapsed time '0s'
+```
+
+### command | string
+
+A string that will be run as a part of `bash -c <command>`. 
+
+If the command fails, the task will fail and the flow throughout the rest of the components if required. 
+
+Please note, failed commands do _NOT_ fail the task. You will still get a `0` exit code from alfred. If you do need to immediately fail, see [exit](#exit) component.
+
+Also, command _CAN_ take in multiple lines but only the last line of the command is evaluated with it's exit code if it's not part of a larger command. You'll need to try a few sample out to get a feel for it. If you need _EVERY_ line evaluated as it's own command, please refer to the [commands](#commands) component.
+
+```yaml
+demo.command:
+  summary: This is a single line command
+  command: echo "hello world!"
+
+demo.command.two:
+  summary: This is a multi line command with a failure(notice |)
+  command: |
+    echo I will fail on purpose && false
+    echo "Notice how I still am displayed?"
+demo.command.three:
+    summary: Because YAML is awesome, you can do this too!(notice >)
+    command: >
+        docker
+        run
+        -ti
+        --rm
+        ubuntu
+```
+
+```sh
+04:24 PM ✔ kcmerrill (v0.2) demo ] alfred demo.command
+[ 0s] (26 Dec 17 16:24 MST) demo.command started [] This is a single line command
+[ 0s] (26 Dec 17 16:24 MST) hello world!
+[ 0s] (26 Dec 17 16:24 MST) demo.command ✔ ok [] elapsed time '0s'
+04:24 PM ✔ kcmerrill (v0.2) demo ] alfred demo.command.two
+[ 0s] (26 Dec 17 16:25 MST) demo.command.two started [] This is a multi line command with a failure
+[ 0s] (26 Dec 17 16:25 MST) I will fail on purpose
+[ 0s] (26 Dec 17 16:25 MST) Notice how I still am displayed?
+[ 0s] (26 Dec 17 16:25 MST) demo.command.two ✔ ok [] elapsed time '0s'
+04:25 PM ✔ kcmerrill (v0.2) demo ]
 ```

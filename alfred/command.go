@@ -2,6 +2,7 @@ package alfred
 
 import (
 	"bufio"
+	"os"
 	"os/exec"
 	"sync"
 )
@@ -21,11 +22,10 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 
 	for retry := 0; retry <= task.Retry; retry++ {
 		cmd := exec.Command("bash", "-c", translate(commandStr, context))
+		cmd.Stdin = os.Stdin
 
 		// set the directory where to run
 		cmd.Dir, _ = task.dir(context)
-
-		cmdFailed := false
 
 		// wait for output to be completed before moving on
 		var wg sync.WaitGroup
@@ -33,22 +33,20 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		scannerStdOut := bufio.NewScanner(cmdReaderStdOut)
 		go func() {
 			wg.Add(1)
+			defer wg.Done()
 			for scannerStdOut.Scan() {
 				cmdOK(scannerStdOut.Text(), context)
-				cmdFailed = false
 			}
-			wg.Done()
 		}()
 
 		cmdReaderStdErr, _ := cmd.StderrPipe()
 		scannerStdErr := bufio.NewScanner(cmdReaderStdErr)
 		go func() {
 			wg.Add(1)
+			defer wg.Done()
 			for scannerStdErr.Scan() {
-				cmdFailed = true
 				cmdFail(scannerStdErr.Text(), context)
 			}
-			wg.Done()
 		}()
 
 		err := cmd.Start()
@@ -58,10 +56,7 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		statusCode := cmd.Wait()
 		wg.Wait()
 		if statusCode != nil {
-			context.Ok = false
-			if !cmdFailed {
-				task.Exit(context, tasks)
-			}
+			task.Exit(context, tasks)
 		} else {
 			return
 		}

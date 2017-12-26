@@ -127,3 +127,22 @@ for.loop.two:
         ls -R -1
       tasks: |
         for.loop.echo
+
+demo.command:
+  summary: This is a single line command
+  command: echo "hello world!"
+
+demo.command.two:
+  summary: This is a multi line command with a failure
+  command: |
+    echo I will fail on purpose && false
+    echo "Notice how I still am displayed?"
+
+demo.command.three:
+    summary: Because YAML is awesome, you can do this too!(notice >)
+    command: >
+        docker
+        run
+        --rm
+        -ti
+        ubuntu

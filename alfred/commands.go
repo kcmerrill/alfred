@@ -5,7 +5,7 @@ import (
 )
 
 func commands(task Task, context *Context, tasks map[string]Task) {
-	if task.Commands == "" {
+	if task.Commands == "" || !context.Ok {
 		return
 	}
 
@@ -13,5 +13,9 @@ func commands(task Task, context *Context, tasks map[string]Task) {
 	for _, cmd := range cmds {
 		// the task component
 		command(cmd, task, context, tasks)
+		if !context.Ok {
+			// command failed?
+			break
+		}
 	}
 }
