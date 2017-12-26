@@ -1,0 +1,71 @@
+static.web.server:
+    summary: Lets start up a static web server
+    serve: 8091
+    command: |
+      curl --verbose http://localhost:8091/myfile.txt
+dir:
+    summary: Lets display the directory
+    dir: "{{ index .Args 0 }}"
+    command: pwd
+
+log.task:
+  summary: Demo of the 'log' component
+  log: /tmp/log.demo.txt
+  command: |
+    echo "This should be in the log /tmp/log.demo.txt"
+
+arguments.task:
+    summary: Demo of arguments
+    command: |
+        echo {{ index .Args 0 }}
+        echo {{ index .Args 1 }}
+        echo {{ index .Args 2 }}
+    defaults:
+        - ""
+        - ""
+        - I am a default
+
+show.summary:
+    summary: This is the summary.
+
+configuration:
+    summary: This task will show how to use config
+    config: |
+        user: whoami
+        email: "kcmerrill@gmail.com"
+    command: |
+        echo "The current user is {{ .Vars.user }}"
+        echo "The current user's email address is {{ .Vars.email }}"
+        echo "The user twitter handle is {{ default "is not set" .Vars.twitter }}"
+
+register:
+    summary: Demonstrate the registration of variables
+    register:
+        user: whoami
+        twitter: "@themayor"
+    command: |
+      echo "{{ index .Vars "user" }}"
+      echo "{{ .Vars.twitter }}"
+
+env:
+  summary: Lets set some env variables!
+  env:
+    WHO: whoami
+    TWITTER: "{{ index .Args 0 }}"
+  command: |
+    echo twitter:$TWITTER
+    echo who:$WHO
+
+setup.task.one:
+    summary: one task
+    command: echo one task
+
+setup.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+setup.task:
+    summary: This is the main task
+    setup: |
+        setup.task.one
+        setup.task.two({{ index .Args 0 }})

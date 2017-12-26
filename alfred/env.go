@@ -15,6 +15,6 @@ func env(task Task, context *Context, tasks map[string]Task) {
 		keyT := translate(key, context)
 		valueT := evaluate(translate(value, context), dir)
 		os.Setenv(keyT, valueT)
-		outOK("env {{ .Text.Args }}"+keyT+"{{ .Text.Reset }}", valueT, context)
+		outOK("set {{ .Text.Args }}$"+keyT+"{{ .Text.Reset }}", valueT, context)
 	}
 }

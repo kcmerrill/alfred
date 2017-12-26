@@ -12,17 +12,20 @@ A simple go/yaml powered make file/task runner with a bit of a twist and a ton o
 
 ## Features
 
-- Extendable. Common tasks(Private too)
+- Extendable + Plugins
 - Watch files for modifications
 - Retry/Rerun tasks based on failures before giving up
 - Logging
 - Success/Failure decision tree
 - Run tasks asynchronously or synchronously
-- Autocomplete task names
+- Arguments
+- Loops
 - Static webserver
 - Many more!
 
-## Usage
+For more information [RTFM](TFM.md "additional documentation").
+
+## Sample Usage
 
 Create a file named: `alfred.yml`
 
@@ -58,10 +61,6 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 `alfred speak` will perform both tasks in the specified order
 
 `alfred blurt` will perform both tasks at the same time
-
-## Quick Walkthrough
-
-To see a comprehensive list of features and functionality please [RTFM](TFM.md "additional documentation").
 
 ## Screencast/Demo
 

@@ -2,6 +2,7 @@ package alfred
 
 import (
 	"os"
+	"strings"
 )
 
 // Log will set an external logger
@@ -13,7 +14,7 @@ func Log(filename string, context *Context) {
 }
 func log(task Task, context *Context, tasks map[string]Task) {
 	if task.Log != "" {
-		l := translate(task.Log, context)
+		l := translate(strings.TrimSpace(task.Log), context)
 		f, err := os.OpenFile(l, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 		if err == nil {
 			context.Log[l] = f

@@ -3,7 +3,6 @@ package alfred
 import (
 	"fmt"
 	"sort"
-	"strings"
 )
 
 func list(context *Context, tasks map[string]Task) {
@@ -48,20 +47,8 @@ func list(context *Context, tasks map[string]Task) {
 	for _, label := range labels {
 		task := tasks[label]
 		if task.Summary != "" {
-			fmt.Print(translate(" {{ .Text.Task }}"+padLeft(label, maxLabel, " "), context))
+			fmt.Print(translate(" {{ .Text.Task }}"+padRight(label, maxLabel, " "), context))
 			fmt.Println(translate("{{ .Text.Grey }} | {{ .Text.Reset }}"+padRight(task.Summary, maxSummary, " "), context))
-			if task.Usage != "" {
-				usage := strings.Join(strings.Split(task.Usage, " "), "{{ .Text.Grey }}, {{ .Text.Args }}")
-				usage = strings.Join(strings.Split(task.Usage, " "), "{{ .Text.Grey }},{{ .Text.Args }}")
-				fmt.Println(translate(padLeft("", maxLabel, " ")+"{{ .Text.Args }}    "+usage+"", context))
-				//fmt.Print(translate("{{ .Text.Grey }} ⇨ {{ .Text.Args }}"+usage+"", context))
-				//fmt.Print(translate("{{ .Text.Grey }} | {{ .Text.Args }}("+usage+") ➡ {{ .Text.Reset }}"+task.Summary, context))
-				//fmt.Print(translate("{{ .Text.Grey }} | {{ .Text.Args }}("+usage+") ⇨ {{ .Text.Reset }}"+task.Summary, context))
-				//fmt.Print(translate("{{ .Text.Grey }} | {{ .Text.Args }}"+usage+" {{ .Text.Reset }}", context))
-				//fmt.Print(translate("{{ .Text.Grey }} | {{ .Text.Reset }}"+task.Summary+"{{ .Text.Args }} ⇨ ("+usage+"){{ .Text.Reset }}", context))
-				//fmt.Print(translate("{{ .Text.Grey }} | {{ .Text.Reset }}"+task.Summary+"{{ .Text.Args }}("+usage+"){{ .Text.Reset }}", context))
-			}
 		}
-
 	}
 }
