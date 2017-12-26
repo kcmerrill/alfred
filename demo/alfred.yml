@@ -69,3 +69,61 @@ setup.task:
     setup: |
         setup.task.one
         setup.task.two({{ index .Args 0 }})
+
+multi.task.one:
+    summary: one task
+    commands: |
+      sleep 1
+      echo one task
+
+multi.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+multi.task:
+    summary: Run tasks concurrently
+    multitask: |
+        multi.task.one
+        multi.task.two({{ index .Args 0 }})
+
+tasks.task.one:
+    summary: one task
+    command: echo one task
+
+tasks.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+tasks:
+    summary: Run tasks before running a command
+    tasks: |
+        tasks.task.one
+        tasks.task.two({{ index .Args 0 }})
+
+tdd.go:
+    summary: Watch .go files and run test.go
+    watch: ".*?go$"
+    command: go test $(go list ./... | grep -v /vendor/) --race
+
+for.loop.echo:
+    summary: A simple task that echos the first argument
+    command: |
+      echo {{ index .Args 0 }}
+
+for.loop.one:
+    summary: Demo our for loop
+    for:
+      args: |
+          batman
+          robin
+          spiderman
+      tasks: |
+          for.loop.echo
+      
+for.loop.two:
+    summary: Demo our for loop as a command with arguments
+    for:
+      args: |
+        ls -R -1
+      tasks: |
+        for.loop.echo

@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"os/exec"
 	"sync"
-	"time"
 )
 
 // the task component
@@ -63,7 +62,6 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 			if !cmdFailed {
 				task.Exit(context, tasks)
 			}
-			<-time.After(time.Second)
 		} else {
 			return
 		}

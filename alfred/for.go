@@ -5,9 +5,17 @@ import (
 )
 
 func forC(task Task, context *Context, tasks map[string]Task) {
+	if task.For.Args == "" {
+		return
+	}
+
+	if task.For.Tasks == "" && task.For.MultiTask == "" {
+		return
+	}
+
 	dir, _ := task.dir(context)
 	// alright, lets figure out our new lines
-	args := strings.Split(evaluate(translate(task.For.Args, context), dir), "\n")
+	args := strings.Split(strings.TrimSpace(evaluate(translate(task.For.Args, context), dir)), "\n")
 	tg := make([]TaskGroup, 0)
 	// if our tasks list isn't empty, lets loop through it
 	if task.For.Tasks != "" {

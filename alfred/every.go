@@ -7,11 +7,6 @@ import (
 func every(task Task, context *Context, tasks map[string]Task) {
 	e := translate(task.Every, context)
 
-	// override every if we are watching
-	if task.Watch != "" {
-		e = "1s"
-	}
-
 	// convert task.Every into a duration
 	if e == "" {
 		return
