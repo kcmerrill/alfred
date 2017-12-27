@@ -14,6 +14,8 @@ Essentially I was on a team responsible for getting dev environments up and runn
 
 There are a few underlying key concepts throughout Alfred that should be pointed out. [Taskgroups](#taskgroups), [Components](#components), [Arguments](#arguments). We'll go over a few of them here.
 
+To see a list of tasks, simply invoke `alfred`. Any task that is deemed important by the tasks creator(read: any task that has a summary) will be displayed here.
+
 ## Tasks
 
 ### Local tasks
@@ -29,6 +31,8 @@ All tasks start where the alfred file/folder are located(unless it's a remote ta
 One bit of functionality that makes alfred so flexible is the ability to have private/remote repositories of alfred files. While this feature is not new to alfred, the way it's invoked is. By using a `/` at the start of the task name, alfred knows to lookup tasks in the newly created repository [kcmerrill/alfred-tasks](https://github.com/kcmerrill/alfred-tasks)
 
 Also, you can use a web address in order to get access to tasks. Of course, if the web address is private, then your tasks are protected.
+
+Notice the `:` which distinguishes the URL from the taskname. Without a taskname, alfred will list the available tasks.
 
 ```sh
 07:52 PM ✔ kcmerrill (v0.2) alfred ] alfred /testing:tdd.go
