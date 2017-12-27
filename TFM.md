@@ -237,22 +237,41 @@ configuration.file:
 [ 0s] (25 Dec 17 21:34 MST) configuration ✔ ok [] elapsed time '0s'
 ```
 
+### prompt | map[string]string
+
+A `key:value` pair, where the key is the registered variable, and the value is the phrase that the user will be prompted for.
+
+The values can then be access via `{{ .Vars.<key>}}`
+
+```yaml
+prompt:
+    summary: lets ask some questions
+    prompt:
+        fav: What is your favorite color? 
+        car: Whatis your favorite car?
+    command: |
+        echo Your favorite car is {{ .Vars.car }}
+        echo Your favorite color is {{ .Vars.fav }}
+```
+
+```sh
+02:05 PM ✔ kcmerrill (master) alfred ] alfred prompt
+[    0s] (27 Dec 17 14:05 MST) prompt started [] lets ask some questions
+[    0s] (27 Dec 17 14:05 MST) prompt prompt What is your favorite color? asdf
+[    1s] (27 Dec 17 14:05 MST) prompt prompt Whatis your favorite car? fff
+[    3s] (27 Dec 17 14:05 MST) prompt registered car fff
+[    3s] (27 Dec 17 14:05 MST) prompt registered fav asdf
+[    3s] (27 Dec 17 14:05 MST) Your favorite car is fff
+[    3s] (27 Dec 17 14:05 MST) Your favorite color is asdf
+[    3s] (27 Dec 17 14:05 MST) prompt ✔ ok [] elapsed time '3s'
+02:05 PM ✔ kcmerrill (master) alfred ]
+```
+
 ### register | map[string]string 
 
 Based on `key: value` pairs, will register the pairs as [variables](#variables). The value is then `evaluated` when a zero exit code is shown, the `CombinedOutput()` is the resulting value. 
 
 ```yaml
-09:43 PM ✔ kcmerrill (v0.2) demo ] alfred register
-[ 0s] (25 Dec 17 21:43 MST) register started [] Demonstrate the registration of variables
-[ 0s] (25 Dec 17 21:43 MST) register registered user kcmerrill
-[ 0s] (25 Dec 17 21:43 MST) register registered twitter @themayor
-[ 0s] (25 Dec 17 21:43 MST) kcmerrill
-[ 0s] (25 Dec 17 21:43 MST) @themayor
-[ 0s] (25 Dec 17 21:43 MST) register ✔ ok [] elapsed time '0s'
-09:43 PM ✔ kcmerrill (v0.2) demo ]
-```
-
-```sh
 register:
     summary: Demonstrate the registration of variables
     register:
@@ -261,6 +280,17 @@ register:
     command: |
       echo "{{ index .Vars "user" }}"
       echo "{{ .Vars.twitter }}"
+```
+
+```sh
+09:43 PM ✔ kcmerrill (v0.2) demo ] alfred register
+[ 0s] (25 Dec 17 21:43 MST) register started [] Demonstrate the registration of variables
+[ 0s] (25 Dec 17 21:43 MST) register registered user kcmerrill
+[ 0s] (25 Dec 17 21:43 MST) register registered twitter @themayor
+[ 0s] (25 Dec 17 21:43 MST) kcmerrill
+[ 0s] (25 Dec 17 21:43 MST) @themayor
+[ 0s] (25 Dec 17 21:43 MST) register ✔ ok [] elapsed time '0s'
+09:43 PM ✔ kcmerrill (v0.2) demo ]
 ```
 
 ### env | map[string]string

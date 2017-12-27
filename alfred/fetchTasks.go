@@ -45,8 +45,8 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 	err := yaml.Unmarshal(contents, &fetched)
 	if err != nil {
 		// cannot use output, no task yet ...
-		fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Unable to unmarshal: "+location+"{{ .Text.Reset }}", emptyContext()))
-		fmt.Println(translate("{{ .Text.Failure }}"+err.Error()+"{{ .Text.Reset }}", emptyContext()))
+		outFail("yaml", "Unable to unmarshal "+location, context)
+		outFail("yaml", "{{ .Text.Failure }}"+err.Error(), context)
 		os.Exit(42)
 	}
 
@@ -63,10 +63,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		os.Exit(0)
 	}
 
-	// hmmm, all dressed up and no where to go
-	list(context, tasks)
-	fmt.Println(translate("\n{{ .Text.Failure }}~~~~~~~~~~~~~~~~~~~~{{ .Text.Reset }}", emptyContext()))
-	fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} The task '"+task+"' is invalid.{{ .Text.Reset }}", emptyContext()))
+	outFail("invalid task", "{{ .Text.Failure }}'"+task+"'", context)
 	os.Exit(42)
 	return "", Task{}, tasks
 }

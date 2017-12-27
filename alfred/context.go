@@ -45,11 +45,23 @@ type TextConfig struct {
 	Green  string
 }
 
+// SetVar will the vars map with a given value
 func (c *Context) SetVar(key, value string) {
 	c.Lock.Lock()
 	defer c.Lock.Unlock()
 
 	c.Vars[key] = value
+}
+
+// GetVar will return a value with a given key, else returns default
+func (c *Context) GetVar(key, defaults string) string {
+	c.Lock.Lock()
+	defer c.Lock.Unlock()
+
+	if v, exists := c.Vars[key]; exists {
+		return v
+	}
+	return defaults
 }
 
 // InitialContext will return an empty context
