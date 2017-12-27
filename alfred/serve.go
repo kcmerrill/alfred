@@ -2,6 +2,7 @@ package alfred
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -15,18 +16,23 @@ func serve(task Task, context *Context, tasks map[string]Task) {
 
 	dir, _ := task.dir(context)
 
+	addr := []string{"0.0.0.0", task.Serve}
+	if strings.Contains(task.Serve, ":") {
+		addr = strings.Split(task.Serve, ":")
+	}
+
 	// TODO taskdir task.dir()
 	r := mux.NewRouter()
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         ":" + task.Serve,
+		Addr:         strings.Join(addr, ":"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
 	go func() {
-		outOK("serving "+dir, "0.0.0.0:"+task.Serve, context)
+		outOK("serving "+dir, strings.Join(addr, ":"), context)
 		if err := srv.ListenAndServe(); err != nil {
 			outFail("serve", err.Error(), context)
 			task.Exit(context, tasks)

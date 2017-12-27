@@ -1,6 +1,6 @@
 static.web.server:
     summary: Lets start up a static web server
-    serve: 8091
+    serve: 127.0.0.1:8091
     command: |
       curl --verbose http://localhost:8091/myfile.txt
 dir:

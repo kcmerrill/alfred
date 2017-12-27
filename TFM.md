@@ -324,6 +324,8 @@ env:
 
 This component will allow you to serve static context based on `dir`. The string provided will be the port, and the server will only last for as long as tasks are running. 
 
+By default, the server will bind to `0.0.0.0:<port>`, however, you can change this by using `127.0.0.1:<port>` where `127.0.0.1` is what you want bound.
+
 ```yaml
 static.web.server:
     summary: Lets start up a static web server
