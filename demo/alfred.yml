@@ -119,7 +119,7 @@ for.loop.one:
           spiderman
       tasks: |
           for.loop.echo
-      
+
 for.loop.two:
     summary: Demo our for loop as a command with arguments
     for:
@@ -140,9 +140,6 @@ demo.command.two:
 
 demo.command.three:
     summary: Because YAML is awesome, you can do this too!(notice >)
-    command: >
-        docker
-        run
-        --rm
-        -ti
-        ubuntu
+    command: |
+        docker pull kcmerrill/automagicproxy
+        docker run --rm -ti ubuntu

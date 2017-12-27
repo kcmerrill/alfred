@@ -9,7 +9,26 @@ import (
 
 // the task component
 func commandC(task Task, context *Context, tasks map[string]Task) {
+	if len(context.Log) != 0 {
+		command(task.Command, task, context, tasks)
+		return
+	}
 	command(task.Command, task, context, tasks)
+	//commandBasic(task.Command, task, context, tasks)
+}
+
+func commandBasic(commandStr string, task Task, context *Context, tasks map[string]Task) {
+	if commandStr == "" {
+		return
+	}
+
+	for retry := 0; retry <= task.Retry; retry++ {
+		cmd := exec.Command("bash", "-c", translate(commandStr, context))
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+	}
 }
 
 // within the context of a task, run a command with proper output
@@ -19,6 +38,9 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 	if commandStr == "" {
 		return
 	}
+
+	// hack
+	cmdOK("", context)
 
 	for retry := 0; retry <= task.Retry; retry++ {
 		cmd := exec.Command("bash", "-c", translate(commandStr, context))
@@ -31,6 +53,7 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		var wg sync.WaitGroup
 		cmdReaderStdOut, _ := cmd.StdoutPipe()
 		scannerStdOut := bufio.NewScanner(cmdReaderStdOut)
+		scannerStdOut.Split(bufio.ScanBytes)
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
@@ -41,6 +64,7 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 
 		cmdReaderStdErr, _ := cmd.StderrPipe()
 		scannerStdErr := bufio.NewScanner(cmdReaderStdErr)
+		scannerStdErr.Split(bufio.ScanBytes)
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
@@ -53,8 +77,9 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		if err != nil {
 			cmdFail(scannerStdErr.Text(), context)
 		}
-		statusCode := cmd.Wait()
 		wg.Wait()
+		statusCode := cmd.Wait()
+
 		if statusCode != nil {
 			task.Exit(context, tasks)
 		} else {
