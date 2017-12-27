@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
 
 	"github.com/mgutz/ansi"
 
@@ -47,6 +50,13 @@ func main() {
 
 	if *log != "" {
 		Log(*log, context)
+	}
+
+	// anything from stdin?
+	stdinFileInfo, _ := os.Stdin.Stat()
+	if stdinFileInfo.Mode()&os.ModeNamedPipe != 0 {
+		stdinContent, _ := ioutil.ReadAll(os.Stdin)
+		context.Stdin = strings.TrimSpace(string(stdinContent))
 	}
 
 	NewTask(task, context, tasks)
