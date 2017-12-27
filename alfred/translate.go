@@ -24,7 +24,9 @@ func translate(raw string, context *Context) string {
 	fmap := sprig.TxtFuncMap()
 	te := template.Must(template.New("template").Funcs(fmap).Parse(raw))
 	var b bytes.Buffer
+	context.Lock.Lock()
 	err := te.Execute(&b, context)
+	context.Lock.Unlock()
 	if err != nil {
 		context.Ok = false
 		outFail("template", "Invalid Argument(s)", context)

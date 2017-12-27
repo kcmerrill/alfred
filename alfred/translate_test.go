@@ -1,6 +1,7 @@
 package alfred
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,6 +9,7 @@ import (
 
 func TestTranslate(t *testing.T) {
 	context := &Context{
+		Lock: &sync.Mutex{},
 		Text: TextConfig{
 			Success:     "green",
 			SuccessIcon: "checkmark",

@@ -9,7 +9,7 @@ func TestWatchComponent(t *testing.T) {
 	task := Task{
 		Watch: ".*?go$",
 	}
-	context := &Context{Silent: true}
+	context := InitialContext([]string{})
 	tasks := make(map[string]Task)
 	changes := make(chan bool)
 	go func(changes chan bool) {

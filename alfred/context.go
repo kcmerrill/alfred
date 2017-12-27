@@ -2,6 +2,7 @@ package alfred
 
 import (
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -15,6 +16,7 @@ type Context struct {
 	Started   time.Time
 	Log       map[string]*os.File
 	Args      []string
+	AllArgs   string
 	Register  map[string]string
 	Ok        bool
 	Text      TextConfig
@@ -55,6 +57,7 @@ func InitialContext(args []string) *Context {
 	return &Context{
 		TaskName: "n/a",
 		Args:     args,
+		AllArgs:  strings.Join(args, " "),
 		Register: make(map[string]string),
 		Log:      make(map[string]*os.File, 0),
 		Ok:       true, // innocent until proven guilty

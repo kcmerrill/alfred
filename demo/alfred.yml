@@ -149,3 +149,54 @@ vim:
         echo "hello world"
         vim /tmp/whatever.txt
         echo "done"
+
+ok.task.one:
+    summary: one task
+    command: echo one task
+
+ok.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+ok.tasks:
+    summary: run tasks before running a command
+    command: |
+        echo hello world
+    ok: |
+        ok.task.one
+        ok.task.two({{ index .Args 0 }})
+
+fail.task.one:
+    summary: one task
+    command: echo one task
+
+fail.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+fail.tasks:
+    summary: Demonstrate failed tasks
+    command: |
+        ls /tmp/idonotexist
+    fail: |
+        fail.task.one
+        fail.task.two({{ index .Args 0 }})
+
+
+wait:
+  summary: Wait a golang duration before continuing
+  command: |
+    echo "waiting"
+  wait: 10s
+
+every:
+  summary: Run a command every <golang duration>
+  every: "{{ index .Args 0 }}"
+  command: |
+    echo every {{ index .Args 0 }}
+
+task.name:
+    summary: Display the arguments
+    command: |
+        echo The first argument is: {{ index .Args 0 }}
+        echo All of the arguments passed in: {{ .AllArgs }}

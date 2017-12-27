@@ -10,10 +10,7 @@ func TestServeComponent(t *testing.T) {
 	tasks["http.serve"] = Task{
 		Serve: "8088",
 	}
-	context := &Context{
-		Silent: true,
-	}
-
+	context := InitialContext([]string{})
 	go serve(tasks["http.serve"], context, tasks)
 	response, err := http.Get("http://localhost:8088/serve_test.go")
 	if err != nil {

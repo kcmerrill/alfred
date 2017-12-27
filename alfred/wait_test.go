@@ -9,9 +9,7 @@ func TestWaitComponent(t *testing.T) {
 	task := Task{
 		Wait: "2s",
 	}
-	context := &Context{
-		Silent: true,
-	}
+	context := InitialContext([]string{})
 	start := time.Now().Unix()
 	tasks := make(map[string]Task)
 	wait(task, context, tasks)

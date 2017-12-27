@@ -12,11 +12,7 @@ func commands(task Task, context *Context, tasks map[string]Task) {
 	cmds := strings.Split(task.Commands, "\n")
 	for _, cmd := range cmds {
 		// the task component
-		if len(context.Log) != 0 {
-			command(cmd, task, context, tasks)
-		} else {
-			commandBasic(cmd, task, context, tasks)
-		}
+		command(cmd, task, context, tasks)
 		if !context.Ok {
 			// command failed?
 			break

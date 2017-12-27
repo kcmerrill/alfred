@@ -14,6 +14,56 @@ Essentially I was on a team responsible for getting dev environments up and runn
 
 There are a few underlying key concepts throughout Alfred that should be pointed out. [Taskgroups](#taskgroups), [Components](#components), [Arguments](#arguments). We'll go over a few of them here.
 
+## Tasks
+
+### Local tasks
+
+By default, alfred will look in the current directory for an `alfred.yml` file. If it cannot be found, it will continue to go up the directory structure until it reaches the root directry. At this point, if the task provided does not exist, it will exit. 
+
+If your alfred files are getting large, you can break up your files by creating a `.alfred` or `alfred` folder, and inside create new .yml files named `something.alfred.yml`. Each file is then concatonated together, so be sure you do not have any task name collisions. 
+
+All tasks start where the alfred file/folder are located(unless it's a remote task)
+
+### Remote tasks
+
+One bit of functionality that makes alfred so flexible is the ability to have private/remote repositories of alfred files. While this feature is not new to alfred, the way it's invoked is. By using a `/` at the start of the task name, alfred knows to lookup tasks in the newly created repository [kcmerrill/alfred-tasks](https://github.com/kcmerrill/alfred-tasks)
+
+Also, you can use a web address in order to get access to tasks. Of course, if the web address is private, then your tasks are protected.
+
+```sh
+07:52 PM ✔ kcmerrill (v0.2) alfred ] alfred /testing:tdd.go
+[ 0s] (26 Dec 17 19:52 MST) tdd.go started [] Watch .go files and run test.go
+[ 0s] (26 Dec 17 19:52 MST) tdd.go watching ./
+```
+
+```sh
+07:54 PM ✘ kcmerrill (v0.2) alfred ] alfred https://raw.githubusercontent.com/kcmerrill/alfred-tasks/master/testing.yml:tdd.go
+[ 0s] (26 Dec 17 19:54 MST) tdd.go started [] Watch .go files and run test.go
+[ 0s] (26 Dec 17 19:54 MST) tdd.go watching ./
+```
+
+## Arguments
+
+In order to make tasks reusable, you can pass in arguments. This is true for the yaml file configuration along with the CLI. The arguments are positional, so the very first argument after the task to run is location `0`. The next is `1` and so on. You can obtain these variables by using golang templating by putting in the representation. 
+
+```yaml
+task.name:
+    summary: Display the arguments
+    command: |
+        echo The first argument is: {{ index .Args 0 }}
+        echo All of the arguments passed in: {{ .AllArgs }}
+```
+```sh
+07:19 PM ✔ kcmerrill (v0.2) demo ] alfred task.name one two three
+[ 0s] (26 Dec 17 19:19 MST) task.name started [one, two, three] Display the arguments
+[ 0s] (26 Dec 17 19:19 MST) The first argument is: one
+[ 0s] (26 Dec 17 19:19 MST) All of the arguments passed in: one two three
+[ 0s] (26 Dec 17 19:19 MST) task.name ✔ ok [one, two, three] elapsed time '0s'
+07:19 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+You will get an error if the template is unable to find the appropriate arguments
+
 ## Taskgroups
 
 There are several components that call other tasks. These are called TaskGroups. A few example of these components would be [tasks](#tasks--taskgroup), [multitask](#multitask--taskgroup), [setup](#setup--taskgroup) to name a few. 
@@ -47,6 +97,9 @@ taskgroup.mixed:
         task.two
 ```
 
+## Golang Templating
+
+Another flexibile feature of Alfred is the ability to use the go templating language within your yaml files. As demonstrated through the documentation, you can do extra complex things based on this. You can read more about [golang templates here](https://golang.org/pkg/text/template/). Included with the templates is [masterminds/sprig](http://masterminds.github.io/sprig/) which include a ton of extra handy functionality. Setting defaults, uuids, env functions, Date, function among a whole host of other awesome goodies. 
 
 
 ## Components 
@@ -522,4 +575,136 @@ demo.command.three:
 [ 0s] (26 Dec 17 16:25 MST) Notice how I still am displayed?
 [ 0s] (26 Dec 17 16:25 MST) demo.command.two ✔ ok [] elapsed time '0s'
 04:25 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### commands | string
+
+A new line separated string that will be run as a part of `bash -c <command>`. Identical to command, however, use commands component if you need every command to be evaulated for pass/fail. 
+
+### ok | TaskGroup{}
+
+A [taskgroup](#taskgroups) that runs in order the tasks are provided only if the task is ok up to this point(meaning that everything has been OK)
+
+```yaml
+ok.task.one:
+    summary: one task
+    command: echo one task
+
+ok.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+ok.tasks:
+    summary: run tasks before running a command
+    command: |
+        echo hello world
+    ok: |
+        tasks.task.one
+        tasks.task.two({{ index .Args 0 }})
+```
+
+```sh
+06:57 PM ✘ kcmerrill (v0.2) demo ] alfred ok.tasks second.ok.task
+[ 0s] (26 Dec 17 18:58 MST) ok.tasks started [second.ok.task] run tasks before running a command
+[ 0s] (26 Dec 17 18:58 MST) hello world
+[ 0s] (26 Dec 17 18:58 MST) ok.tasks ✔ ok [second.ok.task] elapsed time '0s'
+[ 0s] (26 Dec 17 18:58 MST) ok.tasks ok.tasks ok.task.one, ok.task.two
+[ 0s] (26 Dec 17 18:58 MST) ok.task.one started [] one task
+[ 0s] (26 Dec 17 18:58 MST) one task
+[ 0s] (26 Dec 17 18:58 MST) ok.task.one ✔ ok [] elapsed time '0s'
+[ 0s] (26 Dec 17 18:58 MST) ok.task.two started [second.ok.task] two task
+[ 0s] (26 Dec 17 18:58 MST) two task second.ok.task
+[ 0s] (26 Dec 17 18:58 MST) ok.task.two ✔ ok [second.ok.task] elapsed time '0s'
+06:58 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### fail | TaskGroup{}
+
+A [taskgroup](#taskgroups) that runs in order the tasks are provided only if the task has failed up to this point.
+
+```yaml
+fail.task.one:
+    summary: one task
+    command: echo one task
+
+fail.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+fail.tasks:
+    summary: Demonstrate failed tasks
+    command: |
+        echo hello world
+    fail: |
+        fail.task.one
+        fail.task.two({{ index .Args 0 }})
+```
+
+```sh
+07:00 PM ✔ kcmerrill (v0.2) demo ] alfred fail.tasks second.fail.task
+[ 0s] (26 Dec 17 19:00 MST) fail.tasks started [second.fail.task] Demonstrate failed tasks
+[ 0s] (26 Dec 17 19:00 MST) ls: /tmp/idonotexist: No such file or directory
+[ 0s] (26 Dec 17 19:00 MST) fail.tasks command failed
+[ 0s] (26 Dec 17 19:00 MST) fail.tasks ✘ failed [second.fail.task] elapsed time '0s'
+[ 0s] (26 Dec 17 19:00 MST) fail.tasks fail.tasks fail.task.one, fail.task.two
+[ 0s] (26 Dec 17 19:00 MST) fail.task.one started [] one task
+[ 0s] (26 Dec 17 19:00 MST) one task
+[ 0s] (26 Dec 17 19:00 MST) fail.task.one ✔ ok [] elapsed time '0s'
+[ 0s] (26 Dec 17 19:00 MST) fail.task.two started [second.fail.task] two task
+[ 0s] (26 Dec 17 19:00 MST) two task second.fail.task
+[ 0s] (26 Dec 17 19:00 MST) fail.task.two ✔ ok [second.fail.task] elapsed time '0s'
+07:00 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### wait | duration
+
+Once a task has completed, exits, before running again, you can wait a [golang duration](https://golang.org/pkg/time/#ParseDuration) before the next task runs. 
+
+```yaml
+07:03 PM ✘ kcmerrill (v0.2) demo ] alfred wait
+[ 0s] (26 Dec 17 19:07 MST) wait started [] Wait a golang duration before continuing
+[ 0s] (26 Dec 17 19:07 MST) waiting
+[ 0s] (26 Dec 17 19:07 MST) wait ✔ ok [] elapsed time '0s'
+[ 0s] (26 Dec 17 19:07 MST) wait wait 10s
+07:07 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+```sh
+07:03 PM ✘ kcmerrill (v0.2) demo ] alfred wait
+[ 0s] (26 Dec 17 19:07 MST) wait started [] Wait a golang duration before continuing
+[ 0s] (26 Dec 17 19:07 MST) waiting
+[ 0s] (26 Dec 17 19:07 MST) wait ✔ ok [] elapsed time '0s'
+[ 0s] (26 Dec 17 19:07 MST) wait wait 10s
+07:07 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### every | duration
+
+A lot like the [wait](#wait) component, but instead of exiting, will rerun the same task again.
+
+
+```yaml
+every:
+  summary: Run a command every <golang duration>
+  every: "{{ index .Args 0 }}"
+  command: |
+    echo every {{ index .Args 0 }}
+```
+
+```sh
+07:07 PM ✔ kcmerrill (v0.2) demo ] alfred every 1s
+[ 0s] (26 Dec 17 19:11 MST) every started [1s] Run a command every <golang duration>
+[ 0s] (26 Dec 17 19:11 MST) every 1s
+[ 0s] (26 Dec 17 19:11 MST) every ✔ ok [1s] elapsed time '0s'
+[ 0s] (26 Dec 17 19:11 MST) every every 1s
+[ 1s] (26 Dec 17 19:11 MST) every started [1s] Run a command every <golang duration>
+[ 1s] (26 Dec 17 19:11 MST) every 1s
+[ 1s] (26 Dec 17 19:11 MST) every ✔ ok [1s] elapsed time '1s'
+[ 1s] (26 Dec 17 19:11 MST) every every 1s
+[ 2s] (26 Dec 17 19:11 MST) every started [1s] Run a command every <golang duration>
+[ 2s] (26 Dec 17 19:11 MST) every 1s
+[ 2s] (26 Dec 17 19:11 MST) every ✔ ok [1s] elapsed time '2s'
+[ 2s] (26 Dec 17 19:11 MST) every every 1s
+^C
+07:11 PM ✘ kcmerrill (v0.2) demo ]
 ```

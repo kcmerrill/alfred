@@ -17,7 +17,7 @@ func defaults(task Task, context *Context, tasks map[string]Task) {
 	// ok, so we have some defaults, lets update the context.
 	for idx := len(context.Args); idx < len(task.Defaults); idx++ {
 		// empty? we should bail ...
-		if task.Defaults[idx] == "" {
+		if task.Defaults[idx] == "" || task.Defaults[idx] == " " {
 			outFail("template", "Invalid Argument(s)", context)
 			task.Exit(context, tasks)
 			// if we made it here, then no exit specified, we will exit

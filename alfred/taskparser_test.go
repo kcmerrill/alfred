@@ -27,8 +27,8 @@ func TestDefaultTaskParser(t *testing.T) {
 
 func TestRemoteTaskParser(t *testing.T) {
 	file, task := TaskParser("/remote:new.task", ":list")
-	if file != "https://raw.githubusercontent.com/kcmerrill/alfred/master/remote/remote.yml" {
-		t.Fatalf("A remote task should return the master alfred github repository")
+	if file != "https://raw.githubusercontent.com/kcmerrill/alfred-tasks/master/remote.yml" {
+		t.Fatalf("A remote task should return the master alfred github repository: " + file)
 	}
 
 	if task != "new.task" {
@@ -36,8 +36,8 @@ func TestRemoteTaskParser(t *testing.T) {
 	}
 
 	file, task = TaskParser("/remote", ":default")
-	if file != "https://raw.githubusercontent.com/kcmerrill/alfred/master/remote/remote.yml" {
-		t.Fatalf("A remote task should return the master alfred github repository")
+	if file != "https://raw.githubusercontent.com/kcmerrill/alfred-tasks/master/remote.yml" {
+		t.Fatalf("A remote task should return the master alfred github repository: " + file)
 	}
 
 	if task != ":default" {
