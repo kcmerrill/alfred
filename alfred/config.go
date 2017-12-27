@@ -2,24 +2,28 @@ package alfred
 
 import (
 	"io/ioutil"
-	"os"
 
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
-// Config reads in the user's configuration file stored in $HOME/.alfred/config.yml
-func (a *Alfred) Config() {
-	a.config.Remote = make(map[string]string)
-
-	// os.User is really terrible. Also doesn't work with cross compiling
-	configFile := os.Getenv("HOME") + "/.alfred/config.yml"
-
-	if _, statError := os.Stat(configFile); statError == nil {
-		if contents, readError := ioutil.ReadFile(configFile); readError == nil {
-			if err := yaml.Unmarshal([]byte(contents), &a.config); err != nil {
-				say("error", "loading config")
-				say("config", configFile)
-			}
+func configC(task Task, context *Context, tasks map[string]Task) {
+	// load up the config, if any
+	if task.Config != "" {
+		var yamlFile []byte
+		dir, _ := task.dir(context)
+		if contents, configFileErr := ioutil.ReadFile(translate(task.Config, context)); configFileErr == nil {
+			yamlFile = contents
+		} else {
+			yamlFile = []byte(translate(task.Config, context))
+		}
+		c := make(map[string]string)
+		if configFileUnMarshalErr := yaml.Unmarshal(yamlFile, &c); configFileUnMarshalErr != nil {
+			outFail("config", "{{ .Text.Failure }}"+configFileUnMarshalErr.Error(), context)
+			// TODO: Should we bail if we can't unmarshal? Or leave it up to the task? ... Let me chew on this
+			task.Exit(context, tasks)
+		}
+		for key, value := range c {
+			context.Vars[key] = evaluate(value, dir)
 		}
 	}
 }

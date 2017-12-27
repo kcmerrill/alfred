@@ -9,7 +9,7 @@ build:
     summary: Build alfred
     commands: |
         rm -rf /code/go/bin/alfred
-        go build -ldflags "-X main.Commit=`git rev-parse HEAD` -X main.Version=0.1.`git rev-list --count HEAD`" -o /code/go/bin/alfred
+        go build -ldflags "-X main.Commit=`git rev-parse HEAD` -X main.Version=0.2.`git rev-list --count HEAD`" -o /code/go/bin/alfred
         alfred --version
     exit: 1
 
@@ -22,7 +22,7 @@ tdd:
     summary: TDD alfred style!
     watch: ".*?go$"
     tasks: test
-    
+
 test:
     summary: Testing ...
     command: |
@@ -51,4 +51,11 @@ dockerize:
 
 docker.push:
     summary: Push kcmerrill/alfred to dockerhub
+    usage: repo image
     command: docker push kcmerrill/alfred
+
+tdd.go:
+    summary: Watch .go files and run test.go
+    watch: ".*?go$"
+    every: 1s
+    command: go test $(go list ./... | grep -v /vendor/) --race

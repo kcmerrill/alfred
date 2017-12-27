@@ -1,801 +1,714 @@
-The Manual 
-=================
+# The Manual
 
-   * [What is Alfred?](#what-is-alfred)
-   * [Features](#features)
-   * [Example Use Cases](#example-use-cases)
-      * [Docker-Compose replacement](#docker-compose-replacement)
-      * [Cron Job monitor](#cron-job-monitor)
-      * [HTTP Check](#http-check)
-   * [Tasks](#tasks)
-      * [Naming tasks](#naming-tasks)
-      * [Important tasks](#important-tasks)
-      * [Calling with Parameters](#calling-with-parameters)
-   * [Task components](#task-components)
-      * [Alias](#alias)
-      * [Config](#config)
-      * [Setup](#setup)
-      * [Log](#log)
-      * [Dir](#dir)
-      * [For](#for)
-      * [Watch](#watch)
-      * [Tasks](#tasks-1)
-      * [Modules](#modules)
-      * [Summary](#summary)
-      * [Register](#register)
-      * [Test](#test)
-      * [Retry](#retry)
-      * [Command](#command)
-      * [Commands](#commands)
-      * [Serve](#serve)
-      * [Wait](#wait)
-      * [Fail](#fail)
-      * [Private](#private)
-      * [Skip](#skip)
-      * [Exit](#exit)
-      * [Multitask](#multitask)
-      * [OK](#ok)
-      * [Every](#every)
-   * [Arguments, Variables and Templates Oh My!](#arguments-variables-and-templates-oh-my)
-      * [Date/Time](#datetime)
-      * [UUID](#uuid)
-   * [Alfred files getting too large?](#alfred-files-getting-too-large)
-   * [Tab completion](#tab-completion)
+Alfred tasks can be complex or as simple as you want them to be. The idea is they are small, reusable and can help automate your daily workflow. Each task is made up of [Components](#components). You can think of these components as building blocks to build whatever it is you need. In this manual, we'll go over some classic use cases for alfred, we'll discuss each component in depth, tips and tricks and also ways of structuring your tasks for maximum awesomeness.
 
-# What is Alfred?
-[Alfred](/ "Alfred") is a simple yaml based task runner. It helps automate tedious tasks among many things. I built it primarily as a replacement to `docker-compose` as an evolution to [Yoda](http://github.com/kcmerrill/yoda "Yoda") however it's grown into something a bit bigger. It's been used for all kinds of automated tasks, and has become part of my daily workflow automating tedious tasks I was previously doing by hand. Another reason it's been great is the automation of dev workflows. Setting up configuration files, creating symlinks, running all sorts of commands in the proper order in order to get dev boxes up and running as quickly as possible. 
+If given enough building blocks anything is possible, so alfred really is up to you to choose your own adventure. There are some plugins, and remote tasks available to you, but the power behind alfred is it's flexibility to fit into your specific usecases. I'd like to think so anyways.
 
-# Features
-- Extendable. Common tasks(Private too)
-- Watch files for modifications
-- Retry/Rerun tasks based on failures before giving up
-- Logging
-- Success/Failure decision tree
-- Run tasks asynchronously or synchronously
-- Autocomplete task names
-- Many more!
+## About
 
-# Example Use Cases
-I've used alfred for many things, and as I build commonly run tasks I try to share them via remote modules. Some examples.
+The history of Alfred is a fun one. There is a bit of a [backstory](https://medium.com/@themayor/docker-dev-test-ci-environments-fetch-proxy-and-alfred-oh-my-daed9c41e28e). 
 
-## Docker-Compose replacement
-I like docker and docker-compose, but it was lacking for some of my needs. The inability to pull/build images in parallel was frustrating. Especially in larger build systems. On top of that, docker-compose does one thing and it does it really well. The problem with docker is when it comes to dev box orchestration in my opinion. Setting up symlinks, moving configs here and there. Starting up microservices in just the right order, putting code exactly in differnet spots and coordinating multiple git repos became a nightmare. This is a pretty common example of using alfred to setup a dev env. By pulling, building and running multiple microservices(20+) we were able to take build times and cut them literally in half.
+Essentially I was on a team responsible for getting dev environments up and running quickly. I wrote a tool called [Yoda](https://github.com/kcmerrill/yoda) which was 100% based around docker dev env's, and after a bunch of functionality was added, quickly morphed into `Alfred`. 
 
-![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_benchmark.png "Alfred")
+# Usage
 
-## Cron Job monitor
-By posting metrics on success or failure and setting up alerting we were able to use `alfred` as a cron job monitor. Here is an example file:
-```
-* * 1 * * alfred monitor python somescript.py
-```
+There are a few underlying key concepts throughout Alfred that should be pointed out. [Taskgroups](#taskgroups), [Components](#components), [Arguments](#arguments). We'll go over a few of them here.
 
-```
-monitor:
-    summary: Monitor a specific cron job
-    command: {{ .AllArgs }}
-    ok: success
-    fail: failed
-
-ok:
-    summary: Send ok data point to datadog agent
-    command: |
-        echo "cron.{{ index .Args 1 }}.ok:1|c|#cron" | nc -w 1 -u 0.0.0.0 8125
-    private: true
-
-failed:
-    summary: Send failure data point to datadog agent
-    command: |
-        echo "cron.{{ index .Args 1 }}.failed:1|c|#cron" | nc -w 1 -u 0.0.0.0 8125
-    private: true
-```
-
-## HTTP Check
-By leveraging the common modules, in this case slack, alfred will post into a slack channel letting you know that your website is down.
-
-```
-`alfred /http.slack "kcmerrill.com" "supersecretslackkey"`
-```
-
-```
-http.slack:
-    summary: HTTP Check
-    usage: alfred /http.slack "website" "supersecretkey"
-    dir: /tmp/http/{{ index .Args 0 }}
-    command: wget {{ index .Args 0 }}
-    ok: cleanup
-    fail: send.notification
-    every: 10s
-
-send.notification:
-    dir: /tmp/http/{{ index .Args 0 }}
-    command: test ! -f last_notified || test $(find -amin +{{ index .Args 2 }} | wc -l) -ge "2"
-    private: true
-    ok: notify
-    defaults:
-        - ""
-        - ""
-        - "10"
-
-notify:
-    dir: /tmp/http/{{ index .Args 0 }}
-    summary: Send slack notification
-    notify: slack "{{ index .Args 1 }}" "{{ index .Args 0 }} is down"
-    command: touch last_notified
-
-cleanup:
-    dir: /tmp/http/{{ index .Args 0 }}
-    command: |
-        rm -rf last_notified
-        rm -rf index.html*
-```
-
-# Tasks
-The way I think of tasks are like reusable functions but for shell scripts. They are built using components(just YAML key/value combinations). Your tasks can be anything you need/want them to be, and there isn't any required components. The only requirement is you use at least one. If not at least one, then there isn't a point to a task!
-
-## Naming tasks
-Name the task whatever you'd like. Having built quite a few projects I'd recommend you come up with a naming convention.
-
-While formally, there is no such thing as task groups, using a `.` in the name is a great way of identifying groups of tasks. By "grouping" tasks together using a good naming convention will make it easier for those using your task file to know what's going on. `what.action` is a typical approach.
-
-Examples:
-  - `servicea.build`
-  - `servicea.destroy`
-  - `docker.run.web`
-  - `docker.run.db`
-
-## Important tasks
-Task names with an `*` at the end of it's name denotes it's an "important" task. Important tasks are useful when your `alfred.yml` file gets rather large and you have a bunch of tasks, tasks that can be run from the command line and are not private, but perhaps not as useful as others. These tasks are showed at the bottom of the list output when running `alfred` and tend to stick out more than a normal task.
-
-```
-a.basic.task:
-    summary: I am a basic task
-    command: |
-        echo "hello world"
-important.task*:
-    summary: I am important! I show up at the bottom of the list(which is most visible to devs using me!)
-    command: |
-        echo "I am important I say!"
-```
-
-## Calling with Parameters
-It might help to call your tasks with parameters for example with `tasks`, `setup`, `multitask`, `ok`, `fail` as examples. If we were to rewrite the original demo example using params it would look something like this. 
-
-```yaml
-say:
-    summary: I will say what you send me!
-    usage: alfred say hello
-    command: echo {{ index .Args 0 }}
-
-speak:
-    tasks: say(hello) say(goodbye)
-    
-blurt:
-    multitask: say(hello) say(goodbye)
-```
-
-If you do call a task with params, all tasks that get called must have `()` even if they do *NOT* have params. The reason? I was lazy and didn't come up with a robust solution to fix this. It's either all or nothing. 
-
-# Task components
-Alfred comes with multiple components built in. A task can be as simple or as complex as you want to make it. It's really up to you. A task can have one or many components. Lets go over what's available to you, and more importantly, it's order that it's run within the task. By default, all alfred commands are run at the root level where `alfred.yml` exists.
-
-## Alias
-An alias maps back to the task name. Sometimes it helps to name a task multiple things, without copying the contents of the task. When set it's a space separated string of names
-
-A few things to note:
- - Be careful not to have an alias that matches another task name.
-
-```
-my.task:
-    summary: My task! Woot woot!
-    command: >
-        echo
-        "hello
-        world"
-```
-
-## Config
-A location of a simple yaml key:value pair configuration file. All data overwrites `.Vars` if it was previously set.
-
-A few things to note:
- - You can use templates, meaning you can pass in arguments etc ...
- - Problem unmarshaling the yaml file will throw an error, exiting with a non zero code
-
-```yaml
-# config/prod.yml
-database: production.db.domain.com
-username: produsername
-```
-
-```yaml
-# config/dev.yml
-database: dev.db.local
-username: devusername
-```
-
-```yaml
-example.task: 
-    summary: Load a config file
-    usage: alfred example.task <env>
-    # full path, or local to alfred.yml directory
-    config: config/{{ index .Args 0 }}.yml
-    command: |
-        echo {{ index .Args 0 }}: database={{ index .Vars "database" }}
-```
-
-## Setup
-This component is the first to be called. It's a string of space seperated task names. Useful if you need tasks to run before this task is run.
-```
-run.first:
-    summary: A task to be run before the main task
-
-main.task
-    summary: The main task
-    setup:  run.first
-    command: echo "the task run.first would be run before this task"
-```
-
-## Log
-If set and not an empty string, represents a filename in which stdout will be sent to.
-
-A few things to note:
- - Relative paths are relative to the `alfred.yml` file
- - If the location is not writable, no logs are saved. Make sure all dirs exist and are writeable.
- - Only the command of the given task gets logged. All of it's sub tasks will not be logged.
-
-Example use cases:
- - Show build errors without rerunning entire tasks over again.
-
-```
-mytask:
-    summary: Lets log "hello world!"
-    log: /tmp/hello_world.txt
-    command: |
-        echo "hello world!"
-```
-
-## Dir
-The default starting location for this particular task. If set to a non empty string, will create the directory if not exist.
-
-A few things to note:
- - Relative paths are relative to the `alfred.yml` file.
- - Directories that do not exist will attempt to be created. If unable, the task will fail.
- - Be careful when used in multitask(not guarenteed the dir due to other tasks). Setup your tasks accordingly.
- - Every task starts by default to the location of the alfred, including tasks run after `dir` is set.
- - `dir` is for this task only, and not for any downstream tasks.
-```
-example.task:
-    summary: Will change this task to the specified directory
-    dir: /tmp
-    command: |
-        echo "The current working directory is now /tmp regardless of alfred file!"
-```
-
-## For
-Allows to iterate tasks/multitask without manually defining arguments. A string for either `tasks`, `multitask` that can be a string, or a command(exit 0 will return it's results) that are newline separated.  
-
-A few things to note:
- - Behind the scenes alfred just appends to either `task` or `multitask` with each line as an arg
- - Can do either `tasks` or `multitask`
- - If you have defined `tasks` or `multitask`, ensure they all have `()`'s
- - `task` is required, if not set `for` will be skipped.
-```
-example.task:
-    summary: List superheros or files and echo them out
-    for:
-        task: the.task.name
-        multitask: |
-            batman
-            robin
-            spiderman
-        tasks: |
-            ls -R -1
-
-the.task.name:
-    summary: Echo text
-    command: |
-        echo {{ index .Args 0 }}
-```
-
-## Watch
-If set to a non empty string, will watch for file modifications times to change. The string given should be a regular expression of file patterns to match against.
-
-
-Example use cases:
- - TDD, when files change, build, run tests
- - Minify, lint or format code changes upon file changes
-
-A few things to note:
- - This will override the `every` component to `1s`, and will check file changes with a `1s` pause.
- - `watch` halts execution of the task, and when a file modification is found, continues on.
- - Is relative to the `dir` component. If `dir` is not set, relative to `alfred.yml` file.
-```
-test:
-   summary: Testing ...
-   command: |
-       go test -v
-
-tdd:
-   summary: Watch for code changes and run tests when .go files are modified
-   watch: "*.go$"
-   tasks: test
-```
+To see a list of tasks, simply invoke `alfred`. Any task that is deemed important by the tasks creator(read: any task that has a summary) will be displayed here.
 
 ## Tasks
-A string separated list of tasks to be run *in order* provided. Each task is run in order as if it were it's own standalone task. If no exits, will return accordingly.  Can be used instead of `setup` if no `setup` tasks are required.
 
+### Local tasks
 
-```
-task.one:
-    summary: Task One!
-    command: echo "task one!"
+By default, alfred will look in the current directory for an `alfred.yml` file. If it cannot be found, it will continue to go up the directory structure until it reaches the root directry. At this point, if the task provided does not exist, it will exit. 
 
-task.two:
-    summary: Task Two!
-    command: echo "task two!"
+If your alfred files are getting large, you can break up your files by creating a `.alfred` or `alfred` folder, and inside create new .yml files named `something.alfred.yml`. Each file is then concatonated together, so be sure you do not have any task name collisions. 
 
-task.three:
-    summary: The third and final act!
-    tasks: task.one task.two
-    command: echo "task three!"
-```
+All tasks start where the alfred file/folder are located(unless it's a remote task)
 
-## Modules
-Alfred's way of extending it's functionality, modules, are key value yaml pairs that repesent a github `username/project: task`. The project should contain a valid `alfred.yml` file or configuration at it's root level. So lets say you have a github project with an alfred file, you can interact with that alfred file without actually having it on your machine. Simply put, remote modules are remote alfred.yml files. 
+### Remote tasks
 
-Example use cases:
- - Create a number of reusable components that you can make private or shared.
- - Extend alfred and make it extensible.
- - Setup github projects with one command. `alfred /project kcmerrill/yoda`
- - Create common tasks with your team with one centralized location
+One bit of functionality that makes alfred so flexible is the ability to have private/remote repositories of alfred files. While this feature is not new to alfred, the way it's invoked is. By using a `/` at the start of the task name, alfred knows to lookup tasks in the newly created repository [kcmerrill/alfred-tasks](https://github.com/kcmerrill/alfred-tasks)
 
-A few things to note:
- - You can add additional repositories, not just github. See below.
- - Alfred comes with a built in webserver to serve up your own remote modules.
- - The convention is `username/project`, by default alfred points to itself(on github). `github.com/kcmerrill/alfred/tree/master/modules`.
- - *This _does_ execute remote code so be careful and be sure to trust the source!*
- - Remote modules are _not_ cached, which has it's pros and cons. With great power comes great responsibility.
+Also, you can use a web address in order to get access to tasks. Of course, if the web address is private, then your tasks are protected.
 
-![Alfred](https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_slack.png "Alfred")
+Notice the `:` which distinguishes the URL from the taskname. Without a taskname, alfred will list the available tasks.
 
-This is the `notify` module in action. `alfred /notify slack ...`
-
- ```
- # Used to self update itself. See the `self` folder in modules for additional information
- $ alfred /self update
- # Used to install a github repo and run `alfred install` inside
- $ alfred kcmerrill/yoda
- ```
-
-```
-start.container:
-    docker: kill.remove mycontainer
-    command: |
-        docker run -P -d mycontainer
+```sh
+07:52 PM ✔ kcmerrill (v0.2) alfred ] alfred /testing:tdd.go
+[ 0s] (26 Dec 17 19:52 MST) tdd.go started [] Watch .go files and run test.go
+[ 0s] (26 Dec 17 19:52 MST) tdd.go watching ./
 ```
 
-If a remote isn't found, alfred will default to github as described above. If you have alfred files that you'd like to keep private, but you'd like to share with your team, you can simply start a static webserver(alfred comes built in with one). `alfred --serve --dir . --port 80` Where directory is the files to serve, and port is the posrt to listen on. 
-
-To allow alfred to access these files, you'll need to create a configuration file located here: `$HOME/.alfred/config.yml`. Contained within this config file, is a key `repos` which will container a key value pair. The key will be something you define. So walk through an example. We will pretend your using these private repos for work, and you work for `companyxyz`. 
-
-```
-$ cd /tmp
-$ mkdir companyxyzalfredfiles
-# start a static webserver here.
-$ alfred --serve --port 8080
-# lets create a few folders to organize our alfred files(this is required).
-$ mkdir projectX
-$ touch projectX/alfred.yml
-# inside projectX/alfred.yml, is your standard alfred file with tasks in it.
-$ mkdir projectY
-$ touch projectY/alfred.yml, is your standard alfred file with tasks in it.
+```sh
+07:54 PM ✘ kcmerrill (v0.2) alfred ] alfred https://raw.githubusercontent.com/kcmerrill/alfred-tasks/master/testing.yml:tdd.go
+[ 0s] (26 Dec 17 19:54 MST) tdd.go started [] Watch .go files and run test.go
+[ 0s] (26 Dec 17 19:54 MST) tdd.go watching ./
 ```
 
-Ok, now that you have a location of private alfred files with a static webserver running on port `8080`, lets add it to the repos section to your `$HOME/.alfred/config.yml`
+## Arguments
 
-```
-remote:
-    companyxyz: http://localhost:8080/
-```
-
-Now, `companyxyz` is the key ... and we know we have `projectX` and `projectY` located at `http://localhost:8080`.
-
-To use the remote module you'd simply do:
-`alfred companyxyz/projectX <taskname>`
-
-or to list out the tasks located under `projectX` simply do:
-`alfred companyxyz/projectX`
-
-Of course, you can use whatever else is situated there as well, so you can also do something like this:
-`alfred companyxyz/projectY`
-
-etc etc ...
-
-In order to ensure these are _really_ private, make sure `http://localhost:8080` can only be accessible by those whom you are ok reading in the `.alfred` files and it's tasks. 
-
-I was using `localhost` as an example, but note that you can replace `localhost` with whatever url the static webserver is located.
-
-
-## Summary
-A brief text descrption to let the end user know what the general idea of the task is. Visible when listing out the tasks
-
-```
-my.simple.task:
-    summary: I will echo out everytime I'm run!
-```
-
-## Register
-A string representation of a string variable to be stored for later use by other tasks.  The variable that is stored is the stderr/stdout from `command` component.
+In order to make tasks reusable, you can pass in arguments. This is true for the yaml file configuration along with the CLI. The arguments are positional, so the very first argument after the task to run is location `0`. The next is `1` and so on. You can obtain these variables by using golang templating by putting in the representation. 
 
 ```yaml
-fourty.one:
-    summary: Register a variable
-    register: my.new.var
+task.name:
+    summary: Display the arguments
     command: |
-        echo "5678"
-
-fourty.two:
-    setup: fourty.one
-    summary: Retrieve a registered variable
-    command: |
-        echo The variable is {{ index .Vars "my.new.var"}}
+        echo The first argument is: {{ index .Args 0 }}
+        echo All of the arguments passed in: {{ .AllArgs }}
+```
+```sh
+07:19 PM ✔ kcmerrill (v0.2) demo ] alfred task.name one two three
+[ 0s] (26 Dec 17 19:19 MST) task.name started [one, two, three] Display the arguments
+[ 0s] (26 Dec 17 19:19 MST) The first argument is: one
+[ 0s] (26 Dec 17 19:19 MST) All of the arguments passed in: one two three
+[ 0s] (26 Dec 17 19:19 MST) task.name ✔ ok [one, two, three] elapsed time '0s'
+07:19 PM ✔ kcmerrill (v0.2) demo ]
 ```
 
-Example use cases:
- - Use to store changing information per alfred run, but needed throughout all tasks
+You will get an error if the template is unable to find the appropriate arguments
 
-A few things to note:
- - Either stderr or stdout will be saved
- - If you define `alfred.vars`, be careful the names you choose, as you _can_ overwrite a previously defined variable.
+## Taskgroups
 
+There are several components that call other tasks. These are called TaskGroups. A few example of these components would be [tasks](#tasks--taskgroup), [multitask](#multitask--taskgroup), [setup](#setup--taskgroup) to name a few. 
 
-## Test
-A shell command that should return a proper exit code before continuing. Should it fail, the task will fail and will continue on to the `fail` tasks, then to `exit` or `skip` depending on whatever was set.
+You can define a task group in multiple ways. For task groups that do not need to call paramaters, you can simply put them on a single space delimited line. 
 
-Example use cases:
- - Before running a task that interacts with a file, check it's existance first without needing to create another task.
- - Test to see if certain things are installed. Using `wget`? `unzip`? Verify it's insalled first.
+If your task requires arguments, or a mix of no arguments and arguments, put the tasks on new lines. This way you can mix and match the type of tasks that need and don't need arguments. This also helps task readability.
 
-A few things to note:
- - It's currently a shell command. It's exit code determines if the task fails or not.
- - It's silent, meaning it's output is not shown to the end user. This can make initial debugging harder but it keeps the `alfred.yml` file tidy.
-
- ```
- download.url:
-    summary: Lets download google.com's page
-    test: which wget
-    fail: install.wget
-    command: |
-        wget http://www.google.com
- ```
-
-
-## Retry
-An integer value, if set to a non zero value will retry the `command` component X number of times before giving up.
-
-```
-pesky.task:
-   summary: This task may/may not run on the first time. Try at least 10 times before all hope is lost
-   command: |
-       python pesky.script.py
-   retry: 10
-```
-
-## Command
-A string that gets sent to `bash -c`. Based upon it's error code, will determine if the task is succesful or fails.
-
-A few things to note:
- - By using the `|` in yaml, you can have multiple commands, however, the success/failure is only the last command run.
- - By using the `>` in yaml, you can have a multiline command. Yaml converts newlines to spaces. Useful for a really long command without needing to use `\`.
- - Without exit codes, Checking out muliple git repos.
- - You can call alfred from here need be.
- - Omitting `command` or by supplying an empty string will always be skipped and marked as succesful, continuing the task.
-
-```
-dont.care.about.exit.codes:
-    summary: Lets checkout some repositories. Who cares about exit codes, probably already checked out!
-    command: |
-        git clone git@github.com/username/projectA
-        # regardless of exit code, continue ...
-        git clone git@github.com/username/projectB
-        # regardless of exit code, continue ...
-        git clone git@github.com/username/projectC
-        # regardless of exit code, continue ...
-        git clone git@github.com/username/projectD
-        # note, the last command to be run, it's exit code determines exit/skip/ok/fail components if they are set.
-
-a.really.long.cmd:
-summary: This is a really long command, lets say a long docker run command.
-command: >
-    docker run
-    -d
-    -P
-    --name mycontainer
-    username/image:tag
-```
-
-## Commands
-Nearly identical to `command` however, each line is evaluated independantly based upon it's success/failure. Meaning each line and each command is interpreted as if it were it's own `command` and alfred will respond accordingly.
-
-A few things to note:
-  - Omitting `commands` or by supplying an empty string will always be skipped and marked as succesful, continuing the task.
-
-```
-checkout.repos:
-    summary: Checkout repositories, fail if any do not exist
-    commands: |
-        git clone git@github.com/username/projectA
-        # projectA must _NOT_ have been checked out already, or do not continue
-        git clone git@github.com/username/projectB
-        git clone git@github.com/username/projectC
-        git clone git@github.com/username/projectD
-        # We can only make it here if all the commands, or each line representing a command exited properly.
-```
-
-## Serve
-If not an empty string, will be the port number in which to serve a static webserver.
-
-Example use cases:
-  - JS programming
-  - Get a dev/api sandbox up and running quickly(just serve json endpoints)
-
-A few things to note:
-  - When alfred exits, the server will exit
-  - If you need a long running server _without_ running other tasks use `wait` and a long duration
-  - No need to multitask, simply serve and continue on ...
-  - By default, serve's documentroot will be relative to the `alfred.yml` file unless the `dir` component is set
-
-```
-static.webserver:
-    summary: Start a static webserver on port 8000
-    serve: 8000
-```
-
-## Wait
-If not an empty string, `wait` takes a golang string time duration. So `1h`, `1s` etc ...  See golang time duration documentation for more information.
-
-Example use cases:
- - Check service every few seconds to make sure it comes online before running the next task.
-
-A few things to note:
- - If duration is not able to be parsed properly, it will be skipped as if it were not set.
- - If `watch` is enabled, this will be overwritten with `1s`
-
- ```
- say.hello:
-    summary: Lets say hello every 5 seconds!
-    wait: 5s
-    every: 0s
-    command: |
-        echo "Hello $USER!"
-```
-
-## Fail
-A string which is a space separated list of tasks to run if the task has failed up to this point. Identical to `ok`.
-
-Example use cases:
- - When a `command` completes with an error, perform other actions such as cleanup, monitoring etc ...
- - Halt the build process, or cleanup running processes for the task's next run.
- - HTTP/Service check. If failure, send metrics indicating so.
-
- A few things to note:
-  - Tasks continue on to the next task in the list unless the exit is provoked at which point the process stops
-
-```
-http.check
-    summary: HTTP check -> Data dog
-    test: which wget
-    command: |
-        wget echo -n "custom_metric:60|g|#shell" >/dev/udp/localhost/8125
-    every: 1h
-    ok: up.metric
-    fail: down.metric
-
-up.metric:
-    summary: Sending in an up metric! Woot!
-    command: |
-        echo -n "http.check.up:60|g|#shell" >/dev/udp/localhost/8125
-    private: true
-
-down.metric:
-    summary: Sending a down metric! #sadpanda
-    command: |
-        echo -n "http.check.down:60|g|#shell" >/dev/udp/localhost/8125
-    private: true
-```
-
-## Private
-A boolean, which if set to `true` will be omitted from the listing of tasks. Private tasks can only be run from other tasks from within alfred, and _cannot_ be run from the command line.
-
-Example use cases:
-    - Some tasks are dependant on other tasks to be setup, etc ... make sure they cannot be run
-    - Hide tasks from the list of tasks
-
-A few things to note:
-    - tasks cannot be run from the command line.  They can only be called from other tasks within alfred.
-    - tasks will not be shown when `alfred` is called in list mode.
-
-```
-example.task:
-    summary: This task does a bunch of stuff
-    command: |
-        # do a bunch of stuff, that _must_ be done before the next task can be run.
-    ok: next.task
-
-next.task
-    summary: I cannot be run without example.task to be run ...
-    command: |
-        echo "I am doing something important, but cannot be a standalone task!"
-    private: true
-```
-
-## Skip
-Haults the entire task. If you're running `ok`, or `fail` tasks, the only way to stop continuation is to exit. If you do not wish to exit, this will continue onto the next task.
-
-A few things to note:
-    - Identical to `exit`, without actually exiting. Just continues on to the next task.
-
-```
+```yaml
 task.one:
-    summary: Task one!
+    command: echo task.one
 
 task.two:
-    summary: Task two!
+    command: echo task.two
 
 task.three:
-    summary:
-
-on.failure:
-   summary: Stop processing this task, but continue on!
-   command: |
-    ls /doesnotexist #to simulate a failure
-   skip: true
-```
-
-## Exit
-A number, which if is not 0, haults the entire process if the task should fail. A bad `command`, `commands` etc ... exiting with the value given
-
-Example use cases:
- - If tests fail within a build, exit the application with a non zero exit code haulting deployment.
- - Processes should stop if certain things are done incorrectly, or if applications are not installed.
-
-A few things to note:
- - This haults the entire application. No further action is taken.
-
-```
-bad.task:
-    summary: This task will fail
-    command:  |
-        echo "Goodbye world :(" && false
-    exit: 10
-```
-
-## Multitask
-A space separated list of task names that can be run in parallel. 
-
-Example use cases:
- - Pulling/Building/Deleting docker images
- - Setting up multiple dev projects at once
- 
-A few things to note:
- - Avoid changing directories or using the `dir` key as this might impact your other tasks
- - The logging will appear different. It will be taskname | taskoutput
- - A lot of applications use stdout as a way to filter debuggign information, `alfred` shows this as `taskname:error` even though it might not be an error.
- 
- ```
-run.many.tasks
-    summary: This task will call a bunch of other tasks at the SAME time
-    multitask: taska taskb taskc taskd
-```
-
-## OK
-A string which is space separated list of tasks to be run if the task was succesful to this point.
-
-Example use cases:
- - When a `command` completes succesfully, perform other actions such as cleanup, monitoring etc ...
- - A continuation of a build process if tests passed. Deploy for example.
- - HTTP/Service check. If ok, send metrics indicating so. Same thing with fail.
-
-A few things to note:
-  - Tasks continue on to the next task in the list unless the exit is provoked at which point the process stops
-
-```
-http.check
-    summary: HTTP check -> Data dog
-    test: which wget
-    command: |
-        wget echo -n "custom_metric:60|g|#shell" >/dev/udp/localhost/8125
-    every: 1h
-    ok: up.metric
-    fail: down.metric
-
-up.metric:
-    summary: Sending in an up metric! Woot!
-    command: |
-        echo -n "http.check.up:60|g|#shell" >/dev/udp/localhost/8125
-    private: true
-
-down.metric:
-    summary: Sending a down metric! #sadpanda
-    command: |
-        echo -n "http.check.down:60|g|#shell" >/dev/udp/localhost/8125
-    private: true
-```
-
-## Every
-A golang string duration representing how often this task should run. A task with `every: 10s` will run every ten seconds.
-
-Example use cases:
-  - HTTP checks
-  - File System checks
-  - Monitoring
-
-A few things to note:
-  - `skip` and `exit` will invalidate `every`.
-  - When `every` is set, it's an infinite loop and will need to be cancelled manually, or through `exit` or `skip`
-
-```
-say.hello:
-    summary: Saying hello every second!
-    every: 1s
-```
-
-# Arguments, Variables and Templates Oh My!
-Alfred allows the use of variables and arguments to be passed in. This allows tasks to be reusable bits of code.  Using `alfred task.name zero one two three etc` as our example, the argument immediately following the task.name start at index zero. Knowing this, you can then inject this into a wide variety of task components. By using the `defaults` task component, you can set the defaults too.
-
-```
-do.you.know:
-    summary: Do you know?
-    command: |
-        echo "Do you know {{ index .Args 0 }}
+    command: echo {{ index .Args 0 }}
     defaults:
-        - The muffin man
+        - "arg0"
+        - "arg1"
+        - "arg2"
+
+taskgroup.inline:
+    setup: task.one task.two task.three
+    command: echo all finished
+
+taskgroup.mixed:
+    setup: |
+        task.one
+        task.three({{ index .Args 0 }}, second.arg, third.arg)
+        task.two
 ```
 
+## Golang Templating
+
+Another flexibile feature of Alfred is the ability to use the go templating language within your yaml files. As demonstrated through the documentation, you can do extra complex things based on this. You can read more about [golang templates here](https://golang.org/pkg/text/template/). Included with the templates is [masterminds/sprig](http://masterminds.github.io/sprig/) which include a ton of extra handy functionality. Setting defaults, uuids, env functions, Date, function among a whole host of other awesome goodies. 
+
+
+## Components 
+
+The components here will be listed in order in which they are executed within Alfred. With the way golang's maps work, [they are randomized](https://github.com/golang/go/issues/2630) to prevent DOS attacks. The reason this is important? Your components within your tasks can be ordered however you'd like, but they will be executed in a specific order. 
+
+
+### log | string
+
+The raw output of commands will be sent to the specified filename appended. If the file does not exist it will attempt to be created.
+
+A quick note, multiple tasks can call different logs, which means that any parent tasks will also have the output sent to said log file. 
+
+```yaml
+log.task:
+  summary: Demo of the 'log' component
+  log: /tmp/log.demo.txt
+  command: |
+    echo "This should be in the log /tmp/log.demo.txt"
 ```
-$ alfred do.you.know
-// Do you know The muffin man
+
+```sh
+09:09 PM ✔ kcmerrill (v0.2) demo ] alfred log
+[ 0s] (25 Dec 17 21:09 MST) log started [] Demo of the 'log' component
+[ 0s] (25 Dec 17 21:09 MST) This should be in the log /tmp/log.demo.txt
+[ 0s] (25 Dec 17 21:09 MST) log ✔ ok [] elapsed time '0s'
+09:09 PM ✔ kcmerrill (v0.2) demo ] cat /tmp/log.demo.txt
+This should be in the log /tmp/log.demo.txt
+09:09 PM ✔ kcmerrill (v0.2) demo ]
 ```
 
-If you do not specify defaults, alfred will exit due to insufficient arguments passed in.
+### defaults | []string
 
-## Templates
+When passing in arguments, it's possible to set default arguments. If a given value is an empty string, it will still be required. A use case would be accepting three arguments. This is so you can set the default value to the third argument, making the first two required. 
 
-For the cases where you might want to add some simple logic, alfred comes fully baked with golang templates. Furthermore, we make use of [Masterminds](https://github.com/Masterminds/sprig) for increased functionality. `.Args` and `.Vars` are the two defaults that you can use to access what was passed into the application as arguments or as variables. 
-
-## Variables
-Variables are ways you can manage alfred tasks. Some use cases might be updating version numbers, env variables etc. 
-
-```
-alfred.vars:
-    varname: varvalue
-
-taskname:
-    summary: My task that users a variable!
+```yaml
+arguments.task:
+    summary: Demo of arguments
     command: |
-        echo {{ index .Vars "varname" }}
+        echo {{ index .Args 0 }}
+        echo {{ index .Args 1 }}
+        echo {{ index .Args 2 }}
+    defaults:
+        - "" #arg0 is required
+        - "" #arg1 is required
+        - I am a default
 ```
 
-## Date/Time
-Every task is injected with the time that the particular task started. You can use it in your task by using `{{ .Time }}`
+```sh
+09:17 PM ✔ kcmerrill (v0.2) demo ] alfred arguments.task one
+[ 0s] (25 Dec 17 21:17 MST) arguments.task template Invalid Argument(s)
+[ 0s] (25 Dec 17 21:17 MST) arguments.task ✘ failed [one] elapsed time '0s'
+09:17 PM ✘ kcmerrill (v0.2) demo ] alfred arguments.task one two
+[ 0s] (25 Dec 17 21:17 MST) arguments.task started [one, two, I am a default] Demo of arguments
+[ 0s] (25 Dec 17 21:17 MST) one
+[ 0s] (25 Dec 17 21:17 MST) two
+[ 0s] (25 Dec 17 21:17 MST) I am a default
+[ 0s] (25 Dec 17 21:17 MST) arguments.task ✔ ok [one, two, I am a default] elapsed time '0s'
+09:17 PM ✔ kcmerrill (v0.2) demo ]
 ```
-task.name:
-    summary: Another task!
+
+### summary | string
+
+The task can be described by it's summary. When performing a list of the tasks, or when the task is started, the summary will be displayed.
+
+```yaml
+show.summary:
+  summary: This is the summary. 
+```
+
+```sh
+09:17 PM ✔ kcmerrill (v0.2) demo ] alfred show.summary
+[ 0s] (25 Dec 17 21:21 MST) show.summary started [] This is the summary.
+[ 0s] (25 Dec 17 21:21 MST) show.summary ✔ ok [] elapsed time '0s'
+09:21 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### dir | string(dir, command)
+
+Set the directory to where the task should be run. Any component or command run will be relative to `dir`. The string will be `evaluated` and if a valid exit code is returned, will be the value set. By default, the directory is set to where the alfred files are found.
+
+One thing to note. Be careful when using dir with `multitask`, as the order is not guarenteed to be run.
+
+```yaml
+dir:
+    summary: Lets display the directory
+    dir: "{{ index .Args 0 }}"
+    command: pwd
+```
+
+```sh
+09:59 PM ✔ kcmerrill (v0.2) demo ] alfred dir
+[ 0s] (25 Dec 17 21:59 MST) dir started [] Lets display the directory
+[ 0s] (25 Dec 17 21:59 MST) /private/tmp/does/not/exist
+[ 0s] (25 Dec 17 21:59 MST) dir ✔ ok [] elapsed time '0s'
+09:59 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### config | string(filename, yaml)
+
+A valid filepath that contains a `yaml` unmarshable string of `key: value` pairs. These pairs will then be set as a [variable](#variable). If the filepath does not exist, then the string set itself will be unmarshed as `key: value` pairs and will also be set as variables. The values will then be `evaluated` as a command, and if a valid exit code of zero is returned, the `CombinedOutput()` will be the new value. 
+
+```yaml
+configuration:
+    summary: This task will show how to use config
+    config: |
+        user: whoami
+        email: "kcmerrill@gmail.com"
     command: |
-        echo "The date/time object you can play with can be found here: {{ .Time }}"
-        echo "The epoch time is: {{ .Time.Unix }}
-```
-
-## UUID
-Every task is injected with a UUID4 string. You can use it in your task by using `{{ .UUID }}`
-```
-another.task:
-    summary: Woot! Another task
+        echo "The current user is {{ .Vars.user }}"
+        echo "The current user's email address is {{ .Vars.email }}"
+        echo "The user twitter handle is {{ default "is not set" .Vars.twitter }}"
+    
+configuration.file:
+    summary: This will show a configuration with a valid yaml file
+    config: /tmp/file.that.exists.yml
     command: |
-        echo The UUID is {{ .UUID }}
+        echo "The current user is {{ .Vars.user }}"
+        echo "The current user's email address is {{ .Vars.email }}"
+        echo "The user twitter handle is {{ default "is not set" .Vars.twitter }}"
+    
+
 ```
 
-# Alfred files getting too large?
-You can break up your alfred files in multiple ways. The following are glob patterns that can be used:`/alfred.yml`, `/.alfred/*alfred.yml`, `/alfred/*alfred.yml`. As an example, you can create a directory called `alfred` or `.alfred` or just create mutliple alfred files.
+```sh
+09:34 PM ✔ kcmerrill (v0.2) demo ] alfred configuration
+[ 0s] (25 Dec 17 21:34 MST) configuration started [] This task will show how to use config
+[ 0s] (25 Dec 17 21:34 MST) The current user is kcmerrill
+[ 0s] (25 Dec 17 21:34 MST) The current user's email address is kcmerrill@gmail.com
+[ 0s] (25 Dec 17 21:34 MST) The user twitter handle is is not set
+[ 0s] (25 Dec 17 21:34 MST) configuration ✔ ok [] elapsed time '0s'
+```
 
-# Tab completion
-Copy the included `alfred.completion.sh` to `/etc/bash_completion.d/`, or source it in your `~/.profile` file.
+### register | map[string]string 
+
+Based on `key: value` pairs, will register the pairs as [variables](#variables). The value is then `evaluated` when a zero exit code is shown, the `CombinedOutput()` is the resulting value. 
+
+```yaml
+09:43 PM ✔ kcmerrill (v0.2) demo ] alfred register
+[ 0s] (25 Dec 17 21:43 MST) register started [] Demonstrate the registration of variables
+[ 0s] (25 Dec 17 21:43 MST) register registered user kcmerrill
+[ 0s] (25 Dec 17 21:43 MST) register registered twitter @themayor
+[ 0s] (25 Dec 17 21:43 MST) kcmerrill
+[ 0s] (25 Dec 17 21:43 MST) @themayor
+[ 0s] (25 Dec 17 21:43 MST) register ✔ ok [] elapsed time '0s'
+09:43 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+```sh
+register:
+    summary: Demonstrate the registration of variables
+    register:
+        user: whoami
+        twitter: "@themayor"
+    command: |
+      echo "{{ index .Vars "user" }}"
+      echo "{{ .Vars.twitter }}"
+```
+
+### env | map[string]string
+
+Setting env variables is a lot like the `register` component, and the `config` component as well, however the difference is the variables will be available as ENV variables on the CLI. 
+
+```yaml
+env:
+  summary: Lets set some env variables!
+  env: 
+    WHO: whoami
+    TWITTER: "{{ index .Args 0 }}"
+  command: |
+    echo twitter:$TWITTER
+    echo who:$WHO
+```
+
+```sh
+09:53 PM ✔ kcmerrill (v0.2) alfred ] cd demo/
+09:53 PM ✔ kcmerrill (v0.2) demo ] alfred env @themayor
+[ 0s] (25 Dec 17 21:54 MST) env started [@themayor] Lets set some env variables!
+[ 0s] (25 Dec 17 21:54 MST) env set $WHO kcmerrill
+[ 0s] (25 Dec 17 21:54 MST) env set $TWITTER @themayor
+[ 0s] (25 Dec 17 21:54 MST) twitter:@themayor
+[ 0s] (25 Dec 17 21:54 MST) who:kcmerrill
+[ 0s] (25 Dec 17 21:54 MST) env ✔ ok [@themayor] elapsed time '0s'
+09:54 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### serve | string(port)
+
+This component will allow you to serve static context based on `dir`. The string provided will be the port, and the server will only last for as long as tasks are running. 
+
+```yaml
+static.web.server:
+    summary: Lets start up a static web server
+    serve: 8091
+    command: |
+      curl --verbose http://localhost:8091/myfile.txt
+```
+
+```sh
+10:12 PM ✔ kcmerrill (v0.2) demo ] echo "myfile" > myfile.txt
+10:12 PM ✔ kcmerrill (v0.2) demo ] alfred static.web.server
+[ 0s] (25 Dec 17 22:13 MST) static.web.server started [] Lets start up a static web server
+[ 0s] (25 Dec 17 22:13 MST) static.web.server serving ./ 0.0.0.0:8091
+[ 0s] (25 Dec 17 22:13 MST)   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+[ 0s] (25 Dec 17 22:13 MST)                                  Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying ::1...
+[ 0s] (25 Dec 17 22:13 MST) * TCP_NODELAY set
+[ 0s] (25 Dec 17 22:13 MST) * Connected to localhost (::1) port 8091 (#0)
+[ 0s] (25 Dec 17 22:13 MST) > GET /myfile.txt HTTP/1.1
+[ 0s] (25 Dec 17 22:13 MST) > Host: localhost:8091
+[ 0s] (25 Dec 17 22:13 MST) > User-Agent: curl/7.54.0
+[ 0s] (25 Dec 17 22:13 MST) > Accept: */*
+[ 0s] (25 Dec 17 22:13 MST) >
+[ 0s] (25 Dec 17 22:13 MST) < HTTP/1.1 200 OK
+[ 0s] (25 Dec 17 22:13 MST) < Accept-Ranges: bytes
+[ 0s] (25 Dec 17 22:13 MST) myfile
+[ 0s] (25 Dec 17 22:13 MST) < Content-Length: 7
+[ 0s] (25 Dec 17 22:13 MST) < Content-Type: text/plain; charset=utf-8
+[ 0s] (25 Dec 17 22:13 MST) < Last-Modified: Tue, 26 Dec 2017 05:12:41 GMT
+[ 0s] (25 Dec 17 22:13 MST) < Date: Tue, 26 Dec 2017 05:13:52 GMT
+[ 0s] (25 Dec 17 22:13 MST) <
+[ 0s] (25 Dec 17 22:13 MST) { [7 bytes data]
+100     7  100     7    0     0    197      0 --:--:-- --:--:-- --:--:--   200
+[ 0s] (25 Dec 17 22:13 MST) * Connection #0 to host localhost left intact
+[ 0s] (25 Dec 17 22:13 MST) static.web.server ✔ ok [] elapsed time '0s'
+10:13 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### setup | TaskGroup{}
+
+A [taskgroup](#taskgroups) that gets run at the start of a task. The given tasks are run in the order they are provided.
+
+```yaml
+setup.task.one:
+    summary: one task
+    command: echo one task
+
+setup.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+setup.task:
+    summary: This is the main task
+    setup: |
+        setup.task.one
+        setup.task.two({{ index .Args 0 }})
+```
+
+```sh
+10:24 PM ✘ kcmerrill (v0.2) demo ] alfred setup.task arg.one
+[ 0s] (25 Dec 17 22:24 MST) setup.task started [arg.one] This is the main task
+[ 0s] (25 Dec 17 22:24 MST) setup.task setup setup.task.one, setup.task.two
+[ 0s] (25 Dec 17 22:24 MST) setup.task.one started [] one task
+[ 0s] (25 Dec 17 22:24 MST) one task
+[ 0s] (25 Dec 17 22:24 MST) setup.task.one ✔ ok [] elapsed time '0s'
+[ 0s] (25 Dec 17 22:24 MST) setup.task.two started [arg.one] two task
+[ 0s] (25 Dec 17 22:24 MST) two task arg.one
+[ 0s] (25 Dec 17 22:24 MST) setup.task.two ✔ ok [arg.one] elapsed time '0s'
+[ 0s] (25 Dec 17 22:24 MST) setup.task ✔ ok [arg.one] elapsed time '0s'
+10:24 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### multitask | TaskGroup{}
+
+A [taskgroup](#taskgroups) that gets run concurrently. 
+
+Please note, do due it's concurrency, do not rely on arguments that maybe be updated or relied upon in other multitask tasks. Also, careful with the `dir` component in the given multitasks as you might get odd results of directories switching unexpectedly. 
+
+```yaml
+multi.task.one:
+    summary: one task
+    command: echo one task
+
+multi.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+multi.task:
+    summary: Run tasks concurrently
+    multitask: |
+        multi.task.one
+        multi.task.two({{ index .Args 0 }})
+```
+
+```sh
+03:01 PM ✘ kcmerrill (v0.2) demo ] alfred multi.task another.task
+[ 0s] (26 Dec 17 15:01 MST) multi.task started [another.task] Run tasks concurrently
+[ 0s] (26 Dec 17 15:01 MST) multi.task multitasks multi.task.one, multi.task.two
+[ 0s] (26 Dec 17 15:01 MST) multi.task.one started [] one task
+[ 0s] (26 Dec 17 15:01 MST) multi.task.two started [another.task] two task
+[ 0s] (26 Dec 17 15:01 MST) two task another.task
+[ 0s] (26 Dec 17 15:01 MST) multi.task.two ✔ ok [another.task] elapsed time '0s'
+[ 1s] (26 Dec 17 15:01 MST) one task
+[ 1s] (26 Dec 17 15:01 MST) multi.task.one ✔ ok [] elapsed time '1s'
+[ 1s] (26 Dec 17 15:01 MST) multi.task ✔ ok [another.task] elapsed time '1s'
+```
+
+### tasks | TaskGroup{}
+
+A [taskgroup](#taskgroups) that runs in order the tasks are provided.
+
+If you are not using `multitask`, this component and `setup` are essentially the same and you can use either. 
+
+```yaml
+tasks.task.one:
+    summary: one task
+    command: echo one task
+
+tasks.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+tasks:
+    summary: Run tasks before running a command
+    tasks: |
+        tasks.task.one
+        tasks.task.two({{ index .Args 0 }})
+```
+
+```sh
+03:05 PM ✘ kcmerrill (v0.2) demo ] alfred tasks another.task
+[ 0s] (26 Dec 17 15:06 MST) tasks started [another.task] Run tasks before running a command
+[ 0s] (26 Dec 17 15:06 MST) tasks tasks tasks.task.one, tasks.task.two
+[ 0s] (26 Dec 17 15:06 MST) tasks.task.one started [] one task
+[ 0s] (26 Dec 17 15:06 MST) one task
+[ 0s] (26 Dec 17 15:06 MST) tasks.task.one ✔ ok [] elapsed time '0s'
+[ 0s] (26 Dec 17 15:06 MST) tasks.task.two started [another.task] two task
+[ 0s] (26 Dec 17 15:06 MST) two task another.task
+[ 0s] (26 Dec 17 15:06 MST) tasks.task.two ✔ ok [another.task] elapsed time '0s'
+[ 0s] (26 Dec 17 15:06 MST) tasks ✔ ok [another.task] elapsed time '0s'
+03:06 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### watch | string(regExp)
+
+When set, will pause the task and look at modified times every second for the given regular expression. Given the regular expression `.*?go$` will pause and wait for any file that ends with `.go` to be modified, before continuing on. 
+
+```yaml
+tdd.go:
+    summary: Watch .go files and run test.go
+    watch: ".*?go$"
+    command: go test $(go list ./... | grep -v /vendor/) --race
+    # will only run once, set every: <duration> to repeat
+    #every: 1s
+```
+
+```sh
+03:20 PM ✔ kcmerrill (v0.2) alfred ] alfred tdd.go
+[ 0s] (26 Dec 17 15:21 MST) tdd.go started [] Watch .go files and run test.go
+[ 0s] (26 Dec 17 15:21 MST) tdd.go watching ./
+[ 3s] (26 Dec 17 15:21 MST) tdd.go modified alfred/every.go
+[ 6s] (26 Dec 17 15:21 MST) ?        github.com/kcmerrill/alfred     [no test files]
+[10s] (26 Dec 17 15:21 MST) ok          github.com/kcmerrill/alfred/alfred      4.250s
+[11s] (26 Dec 17 15:21 MST) tdd.go ✔ ok [] elapsed time '11s'
+03:21 PM ✔ kcmerrill (v0.2) alfred ] alfred tdd.go
+[ 0s] (26 Dec 17 15:22 MST) tdd.go started [] Watch .go files and run test.go
+[ 0s] (26 Dec 17 15:22 MST) tdd.go watching ./
+[ 3s] (26 Dec 17 15:22 MST) tdd.go modified alfred/command.go
+[ 6s] (26 Dec 17 15:22 MST) ?        github.com/kcmerrill/alfred     [no test files]
+[10s] (26 Dec 17 15:22 MST) ok          github.com/kcmerrill/alfred/alfred      4.145s
+[10s] (26 Dec 17 15:22 MST) tdd.go ✔ ok [] elapsed time '10s'
+[10s] (26 Dec 17 15:22 MST) tdd.go every 1s
+[11s] (26 Dec 17 15:22 MST) tdd.go started [] Watch .go files and run test.go
+[11s] (26 Dec 17 15:22 MST) tdd.go watching ./
+```
+
+### for | map[string]string
+
+A simple looping component containing the following keys: `tasks`, `multitask` and `args`. 
+
+#### tasks | TaskGroup{}
+
+A list of tasks that will be run in order, with each new line of `args` provided as the first argument.
+
+#### multitask | TaskGroup{}
+
+A list of tasks that will be run concurrently, with each new line of `args` provided as the first argument.
+
+#### args | string(command, text)
+
+The string is evaluated as a command, and if the result is a non zero exit code will be the resulting value. 
+
+If the string is not a valid command, it will be consumed as a regular string. 
+
+The resulting string should contain new lines which will be passed through as the first argument to the given `task` or `multitask` provided.
+
+```yaml
+for.loop.one:
+    summary: Demo our for loop with plain text
+    for:
+      args: |
+          batman
+          robin
+          spiderman
+      tasks: |
+          for.loop.echo
+
+for.loop.two:
+    summary: Demo our for loop as a command with arguments
+    for:
+      args: |
+        ls -R -1
+      tasks: |
+        for.loop.echo
+```
+
+```sh
+03:44 PM ✔ kcmerrill (v0.2) demo ] alfred for.loop.one
+[ 0s] (26 Dec 17 15:44 MST) for.loop.one started [] Demo our for loop
+[ 0s] (26 Dec 17 15:44 MST) for.loop.echo started [batman] A simple task that echos the first argument
+[ 0s] (26 Dec 17 15:44 MST) batman
+[ 0s] (26 Dec 17 15:44 MST) for.loop.echo ✔ ok [batman] elapsed time '0s'
+[ 0s] (26 Dec 17 15:44 MST) for.loop.echo started [robin] A simple task that echos the first argument
+[ 0s] (26 Dec 17 15:44 MST) robin
+[ 0s] (26 Dec 17 15:44 MST) for.loop.echo ✔ ok [robin] elapsed time '0s'
+[ 0s] (26 Dec 17 15:44 MST) for.loop.echo started [spiderman] A simple task that echos the first argument
+[ 0s] (26 Dec 17 15:44 MST) spiderman
+[ 0s] (26 Dec 17 15:44 MST) for.loop.echo ✔ ok [spiderman] elapsed time '0s'
+[ 0s] (26 Dec 17 15:44 MST) for.loop.one ✔ ok [] elapsed time '0s'
+03:44 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+```sh
+03:44 PM ✔ kcmerrill (v0.2) demo ] alfred for.loop.two
+[ 0s] (26 Dec 17 15:46 MST) for.loop.two started [] Demo our for loop as a command with arguments
+[ 0s] (26 Dec 17 15:46 MST) for.loop.echo started [alfred.yml] A simple task that echos the first argument
+[ 0s] (26 Dec 17 15:46 MST) alfred.yml
+[ 0s] (26 Dec 17 15:46 MST) for.loop.echo ✔ ok [alfred.yml] elapsed time '0s'
+[ 0s] (26 Dec 17 15:46 MST) for.loop.echo started [myfile.txt] A simple task that echos the first argument
+[ 0s] (26 Dec 17 15:46 MST) myfile.txt
+[ 0s] (26 Dec 17 15:46 MST) for.loop.echo ✔ ok [myfile.txt] elapsed time '0s'
+[ 0s] (26 Dec 17 15:46 MST) for.loop.two ✔ ok [] elapsed time '0s'
+```
+
+### command | string
+
+A string that will be run as a part of `bash -c <command>`. 
+
+If the command fails, the task will fail and the flow throughout the rest of the components if required. 
+
+Please note, failed commands do _NOT_ fail the task. You will still get a `0` exit code from alfred. If you do need to immediately fail, see [exit](#exit) component.
+
+Also, command _CAN_ take in multiple lines but only the last line of the command is evaluated with it's exit code if it's not part of a larger command. You'll need to try a few sample out to get a feel for it. If you need _EVERY_ line evaluated as it's own command, please refer to the [commands](#commands) component.
+
+```yaml
+demo.command:
+  summary: This is a single line command
+  command: echo "hello world!"
+
+demo.command.two:
+  summary: This is a multi line command with a failure(notice |)
+  command: |
+    echo I will fail on purpose && false
+    echo "Notice how I still am displayed?"
+demo.command.three:
+    summary: Because YAML is awesome, you can do this too!(notice >)
+    command: >
+        docker
+        run
+        -ti
+        --rm
+        ubuntu
+```
+
+```sh
+04:24 PM ✔ kcmerrill (v0.2) demo ] alfred demo.command
+[ 0s] (26 Dec 17 16:24 MST) demo.command started [] This is a single line command
+[ 0s] (26 Dec 17 16:24 MST) hello world!
+[ 0s] (26 Dec 17 16:24 MST) demo.command ✔ ok [] elapsed time '0s'
+04:24 PM ✔ kcmerrill (v0.2) demo ] alfred demo.command.two
+[ 0s] (26 Dec 17 16:25 MST) demo.command.two started [] This is a multi line command with a failure
+[ 0s] (26 Dec 17 16:25 MST) I will fail on purpose
+[ 0s] (26 Dec 17 16:25 MST) Notice how I still am displayed?
+[ 0s] (26 Dec 17 16:25 MST) demo.command.two ✔ ok [] elapsed time '0s'
+04:25 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### commands | string
+
+A new line separated string that will be run as a part of `bash -c <command>`. Identical to command, however, use commands component if you need every command to be evaulated for pass/fail. 
+
+### ok | TaskGroup{}
+
+A [taskgroup](#taskgroups) that runs in order the tasks are provided only if the task is ok up to this point(meaning that everything has been OK)
+
+```yaml
+ok.task.one:
+    summary: one task
+    command: echo one task
+
+ok.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+ok.tasks:
+    summary: run tasks before running a command
+    command: |
+        echo hello world
+    ok: |
+        tasks.task.one
+        tasks.task.two({{ index .Args 0 }})
+```
+
+```sh
+06:57 PM ✘ kcmerrill (v0.2) demo ] alfred ok.tasks second.ok.task
+[ 0s] (26 Dec 17 18:58 MST) ok.tasks started [second.ok.task] run tasks before running a command
+[ 0s] (26 Dec 17 18:58 MST) hello world
+[ 0s] (26 Dec 17 18:58 MST) ok.tasks ✔ ok [second.ok.task] elapsed time '0s'
+[ 0s] (26 Dec 17 18:58 MST) ok.tasks ok.tasks ok.task.one, ok.task.two
+[ 0s] (26 Dec 17 18:58 MST) ok.task.one started [] one task
+[ 0s] (26 Dec 17 18:58 MST) one task
+[ 0s] (26 Dec 17 18:58 MST) ok.task.one ✔ ok [] elapsed time '0s'
+[ 0s] (26 Dec 17 18:58 MST) ok.task.two started [second.ok.task] two task
+[ 0s] (26 Dec 17 18:58 MST) two task second.ok.task
+[ 0s] (26 Dec 17 18:58 MST) ok.task.two ✔ ok [second.ok.task] elapsed time '0s'
+06:58 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### fail | TaskGroup{}
+
+A [taskgroup](#taskgroups) that runs in order the tasks are provided only if the task has failed up to this point.
+
+```yaml
+fail.task.one:
+    summary: one task
+    command: echo one task
+
+fail.task.two:
+    summary: two task
+    command: echo two task {{ index .Args 0 }}
+
+fail.tasks:
+    summary: Demonstrate failed tasks
+    command: |
+        echo hello world
+    fail: |
+        fail.task.one
+        fail.task.two({{ index .Args 0 }})
+```
+
+```sh
+07:00 PM ✔ kcmerrill (v0.2) demo ] alfred fail.tasks second.fail.task
+[ 0s] (26 Dec 17 19:00 MST) fail.tasks started [second.fail.task] Demonstrate failed tasks
+[ 0s] (26 Dec 17 19:00 MST) ls: /tmp/idonotexist: No such file or directory
+[ 0s] (26 Dec 17 19:00 MST) fail.tasks command failed
+[ 0s] (26 Dec 17 19:00 MST) fail.tasks ✘ failed [second.fail.task] elapsed time '0s'
+[ 0s] (26 Dec 17 19:00 MST) fail.tasks fail.tasks fail.task.one, fail.task.two
+[ 0s] (26 Dec 17 19:00 MST) fail.task.one started [] one task
+[ 0s] (26 Dec 17 19:00 MST) one task
+[ 0s] (26 Dec 17 19:00 MST) fail.task.one ✔ ok [] elapsed time '0s'
+[ 0s] (26 Dec 17 19:00 MST) fail.task.two started [second.fail.task] two task
+[ 0s] (26 Dec 17 19:00 MST) two task second.fail.task
+[ 0s] (26 Dec 17 19:00 MST) fail.task.two ✔ ok [second.fail.task] elapsed time '0s'
+07:00 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### wait | duration
+
+Once a task has completed, exits, before running again, you can wait a [golang duration](https://golang.org/pkg/time/#ParseDuration) before the next task runs. 
+
+```yaml
+07:03 PM ✘ kcmerrill (v0.2) demo ] alfred wait
+[ 0s] (26 Dec 17 19:07 MST) wait started [] Wait a golang duration before continuing
+[ 0s] (26 Dec 17 19:07 MST) waiting
+[ 0s] (26 Dec 17 19:07 MST) wait ✔ ok [] elapsed time '0s'
+[ 0s] (26 Dec 17 19:07 MST) wait wait 10s
+07:07 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+```sh
+07:03 PM ✘ kcmerrill (v0.2) demo ] alfred wait
+[ 0s] (26 Dec 17 19:07 MST) wait started [] Wait a golang duration before continuing
+[ 0s] (26 Dec 17 19:07 MST) waiting
+[ 0s] (26 Dec 17 19:07 MST) wait ✔ ok [] elapsed time '0s'
+[ 0s] (26 Dec 17 19:07 MST) wait wait 10s
+07:07 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### every | duration
+
+A lot like the [wait](#wait) component, but instead of exiting, will rerun the same task again.
+
+
+```yaml
+every:
+  summary: Run a command every <golang duration>
+  every: "{{ index .Args 0 }}"
+  command: |
+    echo every {{ index .Args 0 }}
+```
+
+```sh
+07:07 PM ✔ kcmerrill (v0.2) demo ] alfred every 1s
+[ 0s] (26 Dec 17 19:11 MST) every started [1s] Run a command every <golang duration>
+[ 0s] (26 Dec 17 19:11 MST) every 1s
+[ 0s] (26 Dec 17 19:11 MST) every ✔ ok [1s] elapsed time '0s'
+[ 0s] (26 Dec 17 19:11 MST) every every 1s
+[ 1s] (26 Dec 17 19:11 MST) every started [1s] Run a command every <golang duration>
+[ 1s] (26 Dec 17 19:11 MST) every 1s
+[ 1s] (26 Dec 17 19:11 MST) every ✔ ok [1s] elapsed time '1s'
+[ 1s] (26 Dec 17 19:11 MST) every every 1s
+[ 2s] (26 Dec 17 19:11 MST) every started [1s] Run a command every <golang duration>
+[ 2s] (26 Dec 17 19:11 MST) every 1s
+[ 2s] (26 Dec 17 19:11 MST) every ✔ ok [1s] elapsed time '2s'
+[ 2s] (26 Dec 17 19:11 MST) every every 1s
+^C
+07:11 PM ✘ kcmerrill (v0.2) demo ]
+```

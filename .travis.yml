@@ -1,10 +1,10 @@
 language: go
 
 go:
-    - 1.6.2
+    - 1.9
 
 install:
     - go get
     - go install github.com/kcmerrill/alfred/
 
-script: go test
+script: go test $(go list ./... | grep -v /vendor/)

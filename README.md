@@ -1,40 +1,31 @@
-# alfred
 
-Because even Batman needs a little help.
 
 [![Build Status](https://travis-ci.org/kcmerrill/alfred.svg?branch=master)](https://travis-ci.org/kcmerrill/alfred) [![Join the chat at https://gitter.im/kcmerrill/alfred](https://badges.gitter.im/kcmerrill/alfred.svg)](https://gitter.im/kcmerrill/alfred?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-![Alfred](assets/alfred.jpg "Alfred")
+![Alfred](assets/alfred29.jpg "Alfred")
 
-## What is it
+> Even Batman needs a little help.
 
-A simple go/yaml powered make file/task runner with a bit of a twist.
+# alfred
 
-## Binaries || Installation
-
-[![MacOSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX")](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64) [![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux")](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
-
-via go:
-
-`$ go get -u github.com/kcmerrill/alfred`
-
-via docker:
-
-`$ docker run -v $PWD:$PWD -w $PWD kcmerrill/alfred`
+A simple go/yaml powered make file/task runner with a bit of a twist and a ton of flexibility.
 
 ## Features
 
-- Extendable. Common tasks(Private too)
+- Extendable + Plugins
 - Watch files for modifications
 - Retry/Rerun tasks based on failures before giving up
 - Logging
 - Success/Failure decision tree
 - Run tasks asynchronously or synchronously
-- Autocomplete task names
+- Arguments
+- Loops
 - Static webserver
 - Many more!
 
-## Usage
+For more information [RTFM](TFM.md "additional documentation").
+
+## Sample Usage
 
 Create a file named: `alfred.yml`
 
@@ -71,10 +62,6 @@ Then, anywhere in the top-level or child directories to the `alfred.yml` file:
 
 `alfred blurt` will perform both tasks at the same time
 
-## Quick Walkthrough
-
-To see a comprehensive list of features and functionality please [RTFM](TFM.md "additional documentation").
-
 ## Screencast/Demo
 
 [![asciicast](assets/demo.png)](https://asciinema.org/a/103711)
@@ -87,16 +74,14 @@ To see a comprehensive list of features and functionality please [RTFM](TFM.md "
 - Monitor crons(alert on failures, update endpoints etc ... )
 - Watch for file modifications to run tests->builds
 
-## Tab completion
+## Binaries || Installation
 
-Copy the included `alfred.completion.sh` to `/etc/bash_completion.d/`.
+[![MacOSX](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/apple_logo.png "Mac OSX")](http://go-dist.kcmerrill.com/kcmerrill/alfred/mac/amd64) [![Linux](https://raw.githubusercontent.com/kcmerrill/go-dist/master/assets/linux_logo.png "Linux")](http://go-dist.kcmerrill.com/kcmerrill/alfred/linux/amd64)
 
-Or source it in your `~/.profile` file.
+via go:
 
-Or `alfred /self tab.completion`
+`$ go get -u github.com/kcmerrill/alfred`
 
-## Testing
+via docker:
 
-You might say I've cheated the testing route by only scraping the output. You'd be right.
-
-"I live with a wizard. I cheat" ~ Mouse
+`$ docker run -v $PWD:$PWD -w $PWD kcmerrill/alfred`
