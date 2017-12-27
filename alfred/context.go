@@ -13,6 +13,7 @@ import (
 type Context struct {
 	TaskName  string
 	TaskFile  string
+	Stdin     string
 	Started   time.Time
 	Log       map[string]*os.File
 	Args      []string

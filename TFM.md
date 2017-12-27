@@ -101,10 +101,53 @@ taskgroup.mixed:
         task.two
 ```
 
+
 ## Golang Templating
 
 Another flexibile feature of Alfred is the ability to use the go templating language within your yaml files. As demonstrated through the documentation, you can do extra complex things based on this. You can read more about [golang templates here](https://golang.org/pkg/text/template/). Included with the templates is [masterminds/sprig](http://masterminds.github.io/sprig/) which include a ton of extra handy functionality. Setting defaults, uuids, env functions, Date, function among a whole host of other awesome goodies. 
 
+### Vars
+
+You can register vars many different ways through various components. You can access these vars via the `.Vars` object in your templates. `{{ .Vars.varname }}`
+
+### Stdin
+
+Stdin can be accessed through the variable `{{ .Stdin }}`. This can be handy if you need to pipe text into commands. You can also loop over standard in by giving it to the `for` component for example. 
+
+A quick usecase.
+
+```yaml
+superheros:
+    summary: Show the superheros!
+    for:
+        args: "{{ .Stdin }}"
+        tasks: echo.superhero
+
+echo.superhero:
+    summary: Echo the superhero name
+    command: |
+        echo "Superhero {{ index .Args 0 }}"
+```
+
+```sh
+02:48 PM ✔ kcmerrill  tmp ] cat superheros.txt
+superman
+batman
+spiderman
+02:48 PM ✔ kcmerrill  tmp ] cat superheros.txt | alfred superheros
+[    0s] (27 Dec 17 14:48 MST) superheros started [] Show the superheros!
+[    0s] (27 Dec 17 14:48 MST) echo.superhero started [superman] Echo the superhero name
+[    0s] (27 Dec 17 14:48 MST) Superhero superman
+[    0s] (27 Dec 17 14:48 MST) echo.superhero ✔ ok [superman] elapsed time '0s'
+[    0s] (27 Dec 17 14:48 MST) echo.superhero started [batman] Echo the superhero name
+[    0s] (27 Dec 17 14:48 MST) Superhero batman
+[    0s] (27 Dec 17 14:48 MST) echo.superhero ✔ ok [batman] elapsed time '0s'
+[    0s] (27 Dec 17 14:48 MST) echo.superhero started [spiderman] Echo the superhero name
+[    0s] (27 Dec 17 14:48 MST) Superhero spiderman
+[    0s] (27 Dec 17 14:48 MST) echo.superhero ✔ ok [spiderman] elapsed time '0s'
+[    0s] (27 Dec 17 14:48 MST) superheros ✔ ok [] elapsed time '0s'
+02:48 PM ✔ kcmerrill  tmp ]
+```
 
 ## Components 
 
