@@ -143,3 +143,9 @@ demo.command.three:
     command: |
         docker pull kcmerrill/automagicproxy
         docker run --rm -ti ubuntu
+
+vim:
+    command: |
+        echo "hello world"
+        vim /tmp/whatever.txt
+        echo "done"

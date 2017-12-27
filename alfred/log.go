@@ -30,6 +30,6 @@ func logger(text string, context *Context) {
 	// strip away all the color
 	c.Text = TextConfig{}
 	for _, f := range context.Log {
-		f.WriteString(translate(text, context) + "\n")
+		f.WriteString(translate(text, context))
 	}
 }
