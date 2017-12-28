@@ -30,13 +30,13 @@ func outPrefix(color, component, text string, context *Context) string {
 func output(color, component, text string, context *Context) {
 	out := outPrefix(color, component, text, context)
 	t := translate(out, context)
-	fmt.Println(t)
+	fmt.Fprintln(context.Out, t)
 }
 
 func outputPrompt(color, component, text string, context *Context) {
 	out := outPrefix(color, component, text, context)
 	t := translate(out, context)
-	fmt.Print(t)
+	fmt.Fprintln(context.Out, t)
 }
 
 func cmdOK(text string, context *Context) {
@@ -49,16 +49,16 @@ func cmdFail(text string, context *Context) {
 
 func outputCommand(color, component, text string, context *Context) {
 	if text == "\r\n" || text == "\n" || text == "\r" || text == "" {
-		formatting := "\033[1000D\033[K"
+		formatting := "{{ .Text.TerminalNewLineReset }}"
 		if text == "\r" {
-			formatting = "\033[1000D"
+			formatting = "{{ .Text.TerminalNewLine }}"
 		}
 		date := "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }}"
 		out := text + formatting + elapsed(context) + date + " {{ .Text." + color + " }}"
 		t := translate(out, context)
-		fmt.Print(t)
+		fmt.Fprint(context.Out, t)
 	} else {
-		fmt.Print(text)
+		fmt.Fprint(context.Out, text)
 	}
 	logger(text, context)
 }

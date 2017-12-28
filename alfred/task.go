@@ -39,6 +39,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"for", forC},
 		Component{"command", commandC},
 		Component{"commands", commands},
+		Component{"httptasks", httptasks},
 		Component{"result", result},
 		Component{"ok", ok},
 		Component{"fail", fail},
@@ -71,6 +72,10 @@ type Task struct {
 		MultiTask string
 		Args      string
 	}
+	HTTPTasks struct {
+		Port     string
+		Password string
+	} `yaml:"http.tasks"`
 	Config    string
 	Log       string
 	Every     string

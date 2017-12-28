@@ -59,3 +59,15 @@ tdd.go:
     watch: ".*?go$"
     every: 1s
     command: go test $(go list ./... | grep -v /vendor/) --race
+
+http.task:
+    summary: HTTP Task runner
+    http.tasks:
+        port: 8093
+        password: hi
+
+echo:
+    summary: echo out some shit
+    command: |
+        echo args: {{ index .Args 0 }}
+        echo stdin: {{ .Stdin }}

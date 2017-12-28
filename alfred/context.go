@@ -1,6 +1,7 @@
 package alfred
 
 import (
+	"io"
 	"os"
 	"strings"
 	"sync"
@@ -26,19 +27,22 @@ type Context struct {
 	Component string
 	Vars      map[string]string
 	Lock      *sync.Mutex
+	Out       io.Writer
 }
 
 // TextConfig contains configuration needed to display text
 type TextConfig struct {
-	Success     string
-	SuccessIcon string
-	Failure     string
-	FailureIcon string
-	Task        string
-	Warning     string
-	Args        string
-	Command     string
-	Reset       string
+	Success              string
+	SuccessIcon          string
+	Failure              string
+	FailureIcon          string
+	Task                 string
+	Warning              string
+	Args                 string
+	Command              string
+	Reset                string
+	TerminalNewLineReset string
+	TerminalNewLine      string
 
 	// color codes
 	Grey   string
@@ -78,17 +82,20 @@ func InitialContext(args []string) *Context {
 		Status:   "",
 		Vars:     make(map[string]string, 0),
 		Lock:     &sync.Mutex{},
+		Out:      os.Stdout,
 		Text: TextConfig{
 			// TODO: I don't like this, let me chew on this a bit more
-			Success:     ansi.ColorCode("green"),
-			SuccessIcon: "✔",
-			Failure:     ansi.ColorCode("9"),
-			FailureIcon: "✘",
-			Task:        ansi.ColorCode("33"),
-			Warning:     ansi.ColorCode("185"),
-			Command:     ansi.ColorCode("reset"),
-			Args:        ansi.ColorCode("162"),
-			Reset:       ansi.ColorCode("reset"),
+			Success:              ansi.ColorCode("green"),
+			SuccessIcon:          "✔",
+			Failure:              ansi.ColorCode("9"),
+			FailureIcon:          "✘",
+			Task:                 ansi.ColorCode("33"),
+			Warning:              ansi.ColorCode("185"),
+			Command:              ansi.ColorCode("reset"),
+			Args:                 ansi.ColorCode("162"),
+			Reset:                ansi.ColorCode("reset"),
+			TerminalNewLineReset: "\033[1000D\033[K",
+			TerminalNewLine:      "\033[1000D",
 
 			// Color codes
 			Grey:   ansi.ColorCode("238"),

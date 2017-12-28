@@ -8,7 +8,7 @@ import (
 // TaskParser returns a url and a task(default if necessary)
 func TaskParser(task, defaultTask string) (string, string) {
 	// does it start with http?
-	if strings.HasPrefix(task, "http") {
+	if strings.HasPrefix(task, "http") && strings.Contains(task, "://") {
 		// we have to get the http: colon out of the way :(
 		bits := strings.SplitN(task, ":", 3)
 		url := strings.Join(bits[0:2], ":")

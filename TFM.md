@@ -697,6 +697,36 @@ ok.tasks:
 06:58 PM ✔ kcmerrill (v0.2) demo ]
 ```
 
+### http.tasks | map[string]string
+
+Baked in is the ability to run tasks via HTTP requests. Specify the `port` and if necessary `password`. The password field will be translated and evaluated, so feel free to use env vars, scripts etc. The output will be sent to the http response instead of stdout. If you want to see what is happening, you can always log the output as well. 
+
+```yaml
+http.task:
+    summary: HTTP Task runner
+    http.tasks:
+        port: 8093
+        password: password
+```
+
+```sh
+01:15 AM ✔ kcmerrill (master) alfred ] alfred http.task
+[    0s] (28 Dec 17 01:15 MST) http.task started [] HTTP Task runner
+[    0s] (28 Dec 17 01:15 MST) http.task serving ./ 0.0.0.0:8093
+[    4s] (28 Dec 17 01:15 MST) http.task build started [one, two, three]
+```
+
+```sh
+01:21 AM ✘ kcmerrill  tmp ] curl -u "password:" -X POST -d "body.of.msg" http://localhost:8093/echo/alfredwashere
+[ 1m40s] (28 Dec 17 01:21 MST) echo started [alfredwashere] echo out some shit
+[ 1m40s] (28 Dec 17 01:21 MST) args: alfredwashere
+[ 1m40s] (28 Dec 17 01:21 MST) stdin: body.of.msg
+[ 1m40s] (28 Dec 17 01:21 MST) echo  ok [alfredwashere] elapsed time '1m40s'
+01:21 AM ✔ kcmerrill  tmp ] curl -X POST -d "body.of.msg" http://localhost:8093/echo/alfredwashere
+{"error": "unauthorized"}
+01:21 AM ✔ kcmerrill  tmp ]
+```
+
 ### fail | TaskGroup{}
 
 A [taskgroup](#taskgroups) that runs in order the tasks are provided only if the task has failed up to this point.
