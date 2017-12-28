@@ -22,7 +22,7 @@ func translate(raw string, context *Context) string {
 		return raw
 	}
 	fmap := sprig.TxtFuncMap()
-	te := template.Must(template.New("template").Funcs(fmap).Parse(raw))
+	te := template.Must(template.New("template." + context.TaskName).Funcs(fmap).Parse(raw))
 	var b bytes.Buffer
 	context.Lock.Lock()
 	err := te.Execute(&b, context)

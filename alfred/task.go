@@ -27,6 +27,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"log", log},
 		Component{"defaults", defaults},
 		Component{"summary", summary},
+		Component{"pipe", pipe},
 		Component{"config", configC},
 		Component{"prompt", prompt},
 		Component{"register", register},
@@ -77,6 +78,7 @@ type Task struct {
 		Password string
 	} `yaml:"http.tasks"`
 	Config    string
+	Pipe      string
 	Log       string
 	Every     string
 	Command   string
