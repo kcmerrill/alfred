@@ -4,6 +4,41 @@ Alfred tasks can be complex or as simple as you want them to be. The idea is the
 
 If given enough building blocks anything is possible, so alfred really is up to you to choose your own adventure. There are some plugins, and remote tasks available to you, but the power behind alfred is it's flexibility to fit into your specific usecases. I'd like to think so anyways.
 
+* [Usage](#usage)
+  * [Tasks](#tasks)
+    * [Local tasks](#local-tasks)
+    * [Remote tasks](#remote-tasks)
+  * [Arguments](#arguments)
+  * [Taskgroups](#taskgroups)
+  * [Golang Templating](#golang-templating)
+    * [Vars](#vars)
+    * [Stdin](#stdin)
+  * [Components](#components)
+    * [log | string](#log--string)
+    * [defaults | []string](#defaults--string)
+    * [summary | string](#summary--string)
+    * [dir | string(dir, command)](#dir--stringdir-command)
+    * [config | string(filename, yaml)](#config--stringfilename-yaml)
+    * [prompt | map[string]string](#prompt--mapstringstring)
+    * [register | map[string]string](#register--mapstringstring)
+    * [env | map[string]string](#env--mapstringstring)
+    * [serve | string(port)](#serve--stringport)
+    * [setup | TaskGroup\{\}](#setup--taskgroup)
+    * [multitask | TaskGroup\{\}](#multitask--taskgroup)
+    * [tasks | TaskGroup\{\}](#tasks--taskgroup)
+    * [watch | string(regExp)](#watch--stringregexp)
+    * [for | map[string]string](#for--mapstringstring)
+      * [tasks | TaskGroup\{\}](#tasks--taskgroup-1)
+      * [multitask | TaskGroup\{\}](#multitask--taskgroup-1)
+      * [args | string(command, text)](#args--stringcommand-text)
+    * [command | string](#command--string)
+    * [commands | string](#commands--string)
+    * [ok | TaskGroup\{\}](#ok--taskgroup)
+    * [http\.tasks | map[string]string](#httptasks--mapstringstring)
+    * [fail | TaskGroup\{\}](#fail--taskgroup)
+    * [wait | duration](#wait--duration)
+    * [every | duration](#every--duration)
+
 ## About
 
 The history of Alfred is a fun one. There is a bit of a [backstory](https://medium.com/@themayor/docker-dev-test-ci-environments-fetch-proxy-and-alfred-oh-my-daed9c41e28e). 
