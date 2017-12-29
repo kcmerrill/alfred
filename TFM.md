@@ -4,46 +4,68 @@ Alfred tasks can be complex or as simple as you want them to be. The idea is the
 
 If given enough building blocks anything is possible, so alfred really is up to you to choose your own adventure. There are some plugins, and remote tasks available to you, but the power behind alfred is it's flexibility to fit into your specific usecases. I'd like to think so anyways.
 
-* [Usage](#usage)
-  * [Tasks](#tasks)
-    * [Local tasks](#local-tasks)
-    * [Remote tasks](#remote-tasks)
-  * [Arguments](#arguments)
-  * [Taskgroups](#taskgroups)
-  * [Golang Templating](#golang-templating)
-    * [Vars](#vars)
-    * [Stdin](#stdin)
-  * [Components](#components)
-    * [log | string](#log--string)
-    * [defaults | []string](#defaults--string)
-    * [summary | string](#summary--string)
-    * [dir | string(dir, command)](#dir--stringdir-command)
-    * [config | string(filename, yaml)](#config--stringfilename-yaml)
-    * [prompt | map[string]string](#prompt--mapstringstring)
-    * [register | map[string]string](#register--mapstringstring)
-    * [env | map[string]string](#env--mapstringstring)
-    * [serve | string(port)](#serve--stringport)
-    * [setup | TaskGroup\{\}](#setup--taskgroup)
-    * [multitask | TaskGroup\{\}](#multitask--taskgroup)
-    * [tasks | TaskGroup\{\}](#tasks--taskgroup)
-    * [watch | string(regExp)](#watch--stringregexp)
-    * [for | map[string]string](#for--mapstringstring)
-      * [tasks | TaskGroup\{\}](#tasks--taskgroup-1)
-      * [multitask | TaskGroup\{\}](#multitask--taskgroup-1)
-      * [args | string(command, text)](#args--stringcommand-text)
-    * [command | string](#command--string)
-    * [commands | string](#commands--string)
-    * [ok | TaskGroup\{\}](#ok--taskgroup)
-    * [http\.tasks | map[string]string](#httptasks--mapstringstring)
-    * [fail | TaskGroup\{\}](#fail--taskgroup)
-    * [wait | duration](#wait--duration)
-    * [every | duration](#every--duration)
+# Tips and Tricks
 
-## About
+Here are some tips and tricks that are regularly used, or things that have replaced functionality in previous versions of Alfred.
 
-The history of Alfred is a fun one. There is a bit of a [backstory](https://medium.com/@themayor/docker-dev-test-ci-environments-fetch-proxy-and-alfred-oh-my-daed9c41e28e). 
+### Aliases
 
-Essentially I was on a team responsible for getting dev environments up and running quickly. I wrote a tool called [Yoda](https://github.com/kcmerrill/yoda) which was 100% based around docker dev env's, and after a bunch of functionality was added, quickly morphed into `Alfred`. 
+Lets say you have a task and want it named a few different ways. There are a ton of reasons why you might want to do that. In previous versions of alfred, you'd use an `alias` component, but it added extra complexity that wasn't needed. You can do this quite simply with [YAML Anchors](https://en.wikipedia.org/wiki/YAML#Advanced_components).
+
+```yaml
+hello.world:
+    summary: I will say hello world!
+    command: |
+        echo hello world!
+
+task.original: &task_original
+    summary: Original task
+    setup: hello.world
+    command: |
+        echo I am the original task.
+
+task.alias: *task_original
+```
+
+### Task Inheritance 
+
+Lets say you've created a rather large and complex task. Sure, you could copy it, but if you change one you might need to change them both. Not ideal solution. You can use [YAML Anchors](https://en.wikipedia.org/wiki/YAML#Advanced_components).
+
+In the example below, any `key` below `<<: *task_original` will inherit from the original task, and `command` component will override the `task_original` command. 
+
+As a side note, YAML is not a huge fan of dots(`.`) in anchor names which is why I used underscores(`_`) in the anchor name.
+
+```yaml
+hello.world:
+    summary: I will say hello world!
+    command: |
+        echo hello world!
+
+task.original: &task_original
+    summary: Original task
+    setup: hello.world
+    command: |
+        echo I am the original task.
+
+task.alias:
+    <<: *task_original
+    command: |
+        echo "I am the alias"
+```
+
+### Run a task X times
+
+If you've taken a peek at the `for` component, you'll find that it allows tasks to iterate over data. Sometimes you just need to do something `x` times. Load testing, batching etc. To do that, you can use the for loop built in, along with golang templates to create a numerical loop by supplying a `range` in the `for` component, like so: `{{range $i, $e := until 5}}{{$i}}\n{{end}}`. You can read more about it at [masterminds/sprig](https://github.com/Masterminds/sprig).
+
+```yaml
+echo:
+    command: echo {{ index .Args 0 }}
+range:
+    summary: Iterate X number of times
+    for:
+        args: "{{range $i, $e := until 5}}{{$i}}\n{{end}}"
+        tasks: echo
+```
 
 # Usage
 
@@ -136,6 +158,8 @@ taskgroup.mixed:
         task.two
 ```
 
+
+###
 
 ## Golang Templating
 
