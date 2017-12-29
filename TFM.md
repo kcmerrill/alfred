@@ -147,7 +147,7 @@ You can register vars many different ways through various components. You can ac
 
 ### Stdin
 
-Stdin can be accessed through the variable `{{ .Stdin }}`. This can be handy if you need to pipe text into commands. You can also loop over standard in by giving it to the `for` component for example. 
+Stdin can be accessed through the variable `{{ .Stdin }}`. This can be handy if you need to pipe text into commands. You can also loop over standard in by giving it to the `for` component for example. Take a peek at the [stdin](#stdin) component for more functionality.
 
 A quick usecase.
 
@@ -257,6 +257,35 @@ show.summary:
 [ 0s] (25 Dec 17 21:21 MST) show.summary started [] This is the summary.
 [ 0s] (25 Dec 17 21:21 MST) show.summary ✔ ok [] elapsed time '0s'
 09:21 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### stdin | string(text, command)
+
+Using the stdin component will allow you to chain tasks. `stdin` component will be evaulated as a command, and if a non zero code is returned, the result of the string will be stored in stdin, and will then be sent to each subsequent command down stream. If the text of `stdin` is not a valid command, resulting in a non zero exit code, will be left as regular text and sent to eachh subsequent command down stream. 
+
+```yaml
+pipe:
+    summary: Add to pipe
+    stdin: "helloworld"
+    ok: md5
+
+md5:
+    command: |
+        md5
+```
+
+```sh
+11:07 PM ✔ kcmerrill  tmp ] alfred pipe
+[    0s] (28 Dec 17 23:07 MST) pipe started [] Add to pipe
+[    0s] (28 Dec 17 23:07 MST) pipe ✔ ok [] elapsed time '0s'
+[    0s] (28 Dec 17 23:07 MST) pipe ok.tasks md5
+[    0s] (28 Dec 17 23:07 MST) md5 started []
+[    0s] (28 Dec 17 23:07 MST) fc5e038d38a57032085441e7fe7010b0
+[    0s] (28 Dec 17 23:07 MST) md5 ✔ ok [] elapsed time '0s'
+11:07 PM ✔ kcmerrill  tmp ] printf "helloworld" | alfred md5
+[    0s] (28 Dec 17 23:07 MST) md5 started []
+[    0s] (28 Dec 17 23:07 MST) fc5e038d38a57032085441e7fe7010b0
+[    0s] (28 Dec 17 23:07 MST) md5 ✔ ok [] elapsed time '0s'
 ```
 
 ### dir | string(dir, command)

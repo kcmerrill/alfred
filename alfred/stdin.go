@@ -6,10 +6,6 @@ func stdin(task Task, context *Context, tasks map[string]Task) {
 	}
 
 	dir, _ := task.dir(context)
-	results, err := execute(translate(task.Stdin, context), dir)
-	if err == false {
-		context.Stdin = results
-	} else {
-		task.Exit(context, tasks)
-	}
+	results := evaluate(translate(task.Stdin, context), dir)
+	context.Stdin = results
 }

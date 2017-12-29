@@ -51,7 +51,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// cycle through our components ...
 	event.Trigger("task.started", t, &c, tasks)
 	for _, component := range components {
-		context.Component = component.Name
+		c.Component = component.Name
 		event.Trigger("before."+component.Name, t, &c, tasks)
 		component.F(t, &c, tasks)
 		event.Trigger("after."+component.Name, t, &c, tasks)
