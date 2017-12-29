@@ -2,6 +2,7 @@ package alfred
 
 import (
 	"bufio"
+	"bytes"
 	"os"
 	"os/exec"
 	"sync"
@@ -44,7 +45,11 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 
 	for retry := 0; retry <= task.Retry; retry++ {
 		cmd := exec.Command("bash", "-c", translate(commandStr, context))
-		cmd.Stdin = os.Stdin
+		if context.Stdin != "" {
+			cmd.Stdin = bytes.NewBufferString(context.Stdin)
+		} else {
+			cmd.Stdin = os.Stdin
+		}
 
 		// set the directory where to run
 		cmd.Dir, _ = task.dir(context)

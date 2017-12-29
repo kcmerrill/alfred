@@ -10,6 +10,9 @@ func forC(task Task, context *Context, tasks map[string]Task) {
 	}
 
 	if task.For.Tasks == "" && task.For.MultiTask == "" {
+		// probably a typo ... lets error out
+		outFail("for", "'args' set but missing 'tasks' or 'multitask'", context)
+		task.Exit(context, tasks)
 		return
 	}
 

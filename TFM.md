@@ -4,11 +4,44 @@ Alfred tasks can be complex or as simple as you want them to be. The idea is the
 
 If given enough building blocks anything is possible, so alfred really is up to you to choose your own adventure. There are some plugins, and remote tasks available to you, but the power behind alfred is it's flexibility to fit into your specific usecases. I'd like to think so anyways.
 
-## About
-
-The history of Alfred is a fun one. There is a bit of a [backstory](https://medium.com/@themayor/docker-dev-test-ci-environments-fetch-proxy-and-alfred-oh-my-daed9c41e28e). 
-
-Essentially I was on a team responsible for getting dev environments up and running quickly. I wrote a tool called [Yoda](https://github.com/kcmerrill/yoda) which was 100% based around docker dev env's, and after a bunch of functionality was added, quickly morphed into `Alfred`. 
+* [Usage](#usage)
+  * [Tasks](#tasks)
+    * [Local tasks](#local-tasks)
+    * [Remote tasks](#remote-tasks)
+  * [Arguments](#arguments)
+  * [Taskgroups](#taskgroups)
+  * [Golang Templating](#golang-templating)
+    * [Vars](#vars)
+    * [Stdin](#stdin)
+  * [Components](#components)
+    * [log | string](#log--string)
+    * [defaults | []string](#defaults--string)
+    * [summary | string](#summary--string)
+    * [dir | string(dir, command)](#dir--stringdir-command)
+    * [config | string(filename, yaml)](#config--stringfilename-yaml)
+    * [prompt | map[string]string](#prompt--mapstringstring)
+    * [register | map[string]string](#register--mapstringstring)
+    * [env | map[string]string](#env--mapstringstring)
+    * [serve | string(port)](#serve--stringport)
+    * [setup | TaskGroup\{\}](#setup--taskgroup)
+    * [multitask | TaskGroup\{\}](#multitask--taskgroup)
+    * [tasks | TaskGroup\{\}](#tasks--taskgroup)
+    * [watch | string(regExp)](#watch--stringregexp)
+    * [for | map[string]string](#for--mapstringstring)
+      * [tasks | TaskGroup\{\}](#tasks--taskgroup-1)
+      * [multitask | TaskGroup\{\}](#multitask--taskgroup-1)
+      * [args | string(command, text)](#args--stringcommand-text)
+    * [command | string](#command--string)
+    * [commands | string](#commands--string)
+    * [ok | TaskGroup\{\}](#ok--taskgroup)
+    * [http\.tasks | map[string]string](#httptasks--mapstringstring)
+    * [fail | TaskGroup\{\}](#fail--taskgroup)
+    * [wait | duration](#wait--duration)
+    * [every | duration](#every--duration)
+* [Tips and Tricks](#tips-and-tricks)
+    * [Aliases](#aliases)
+    * [Task Inheritance](#task-inheritance)
+    * [Run a task X times](#run-a-task-x-times)
 
 # Usage
 
@@ -102,6 +135,8 @@ taskgroup.mixed:
 ```
 
 
+###
+
 ## Golang Templating
 
 Another flexibile feature of Alfred is the ability to use the go templating language within your yaml files. As demonstrated through the documentation, you can do extra complex things based on this. You can read more about [golang templates here](https://golang.org/pkg/text/template/). Included with the templates is [masterminds/sprig](http://masterminds.github.io/sprig/) which include a ton of extra handy functionality. Setting defaults, uuids, env functions, Date, function among a whole host of other awesome goodies. 
@@ -112,7 +147,7 @@ You can register vars many different ways through various components. You can ac
 
 ### Stdin
 
-Stdin can be accessed through the variable `{{ .Stdin }}`. This can be handy if you need to pipe text into commands. You can also loop over standard in by giving it to the `for` component for example. 
+Stdin can be accessed through the variable `{{ .Stdin }}`. This can be handy if you need to pipe text into commands. You can also loop over standard in by giving it to the `for` component for example. Take a peek at the [stdin](#stdin) component for more functionality.
 
 A quick usecase.
 
@@ -222,6 +257,35 @@ show.summary:
 [ 0s] (25 Dec 17 21:21 MST) show.summary started [] This is the summary.
 [ 0s] (25 Dec 17 21:21 MST) show.summary ✔ ok [] elapsed time '0s'
 09:21 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### stdin | string(text, command)
+
+Using the stdin component will allow you to chain tasks. `stdin` component will be evaulated as a command, and if a non zero code is returned, the result of the string will be stored in stdin, and will then be sent to each subsequent command down stream. If the text of `stdin` is not a valid command, resulting in a non zero exit code, will be left as regular text and sent to eachh subsequent command down stream. 
+
+```yaml
+pipe:
+    summary: Add to pipe
+    stdin: "helloworld"
+    ok: md5
+
+md5:
+    command: |
+        md5
+```
+
+```sh
+11:07 PM ✔ kcmerrill  tmp ] alfred pipe
+[    0s] (28 Dec 17 23:07 MST) pipe started [] Add to pipe
+[    0s] (28 Dec 17 23:07 MST) pipe ✔ ok [] elapsed time '0s'
+[    0s] (28 Dec 17 23:07 MST) pipe ok.tasks md5
+[    0s] (28 Dec 17 23:07 MST) md5 started []
+[    0s] (28 Dec 17 23:07 MST) fc5e038d38a57032085441e7fe7010b0
+[    0s] (28 Dec 17 23:07 MST) md5 ✔ ok [] elapsed time '0s'
+11:07 PM ✔ kcmerrill  tmp ] printf "helloworld" | alfred md5
+[    0s] (28 Dec 17 23:07 MST) md5 started []
+[    0s] (28 Dec 17 23:07 MST) fc5e038d38a57032085441e7fe7010b0
+[    0s] (28 Dec 17 23:07 MST) md5 ✔ ok [] elapsed time '0s'
 ```
 
 ### dir | string(dir, command)
@@ -816,4 +880,67 @@ every:
 [ 2s] (26 Dec 17 19:11 MST) every every 1s
 ^C
 07:11 PM ✘ kcmerrill (v0.2) demo ]
+```
+
+# Tips and Tricks
+
+Here are some tips and tricks that are regularly used, or things that have replaced functionality in previous versions of Alfred.
+
+### Aliases
+
+Lets say you have a task and want it named a few different ways. There are a ton of reasons why you might want to do that. In previous versions of alfred, you'd use an `alias` component, but it added extra complexity that wasn't needed. You can do this quite simply with [YAML Anchors](https://en.wikipedia.org/wiki/YAML#Advanced_components).
+
+```yaml
+hello.world:
+    summary: I will say hello world!
+    command: |
+        echo hello world!
+
+task.original: &task_original
+    summary: Original task
+    setup: hello.world
+    command: |
+        echo I am the original task.
+
+task.alias: *task_original
+```
+
+### Task Inheritance 
+
+Lets say you've created a rather large and complex task. Sure, you could copy it, but if you change one you might need to change them both. Not ideal solution. You can use [YAML Anchors](https://en.wikipedia.org/wiki/YAML#Advanced_components).
+
+In the example below, any `key` below `<<: *task_original` will inherit from the original task, and `command` component will override the `task_original` command. 
+
+As a side note, YAML is not a huge fan of dots(`.`) in anchor names which is why I used underscores(`_`) in the anchor name.
+
+```yaml
+hello.world:
+    summary: I will say hello world!
+    command: |
+        echo hello world!
+
+task.original: &task_original
+    summary: Original task
+    setup: hello.world
+    command: |
+        echo I am the original task.
+
+task.alias:
+    <<: *task_original
+    command: |
+        echo "I am the alias"
+```
+
+### Run a task X times
+
+If you've taken a peek at the `for` component, you'll find that it allows tasks to iterate over data. Sometimes you just need to do something `x` times. Load testing, batching etc. To do that, you can use the for loop built in, along with golang templates to create a numerical loop by supplying a `range` in the `for` component, like so: `{{range $i, $e := until 5}}{{$i}}\n{{end}}`. You can read more about it at [masterminds/sprig](https://github.com/Masterminds/sprig).
+
+```yaml
+echo:
+    command: echo {{ index .Args 0 }}
+range:
+    summary: Iterate X number of times
+    for:
+        args: "{{range $i, $e := until 5}}{{$i}}\n{{end}}"
+        tasks: echo
 ```

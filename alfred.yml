@@ -66,8 +66,6 @@ http.task:
         port: 8093
         password: hi
 
-echo:
-    summary: echo out some shit
-    command: |
-        echo args: {{ index .Args 0 }}
-        echo stdin: {{ .Stdin }}
+producer.task:
+    summary: We are going to produce a file
+    pipe: cat main.go
