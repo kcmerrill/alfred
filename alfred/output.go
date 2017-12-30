@@ -28,6 +28,9 @@ func outPrefix(color, component, text string, context *Context) string {
 }
 
 func output(color, component, text string, context *Context) {
+	if context.Text.DisableFormatting {
+		return
+	}
 	out := outPrefix(color, component, text, context)
 	t := translate(out, context)
 	fmt.Fprintln(context.Out, t)
@@ -48,7 +51,7 @@ func cmdFail(text string, context *Context) {
 }
 
 func outputCommand(color, component, text string, context *Context) {
-	if text == "\r\n" || text == "\n" || text == "\r" || text == "" {
+	if !context.Text.DisableFormatting && (text == "\r\n" || text == "\n" || text == "\r" || text == "") {
 		formatting := "{{ .Text.TerminalNewLineReset }}"
 		if text == "\r" {
 			formatting = "{{ .Text.TerminalNewLine }}"

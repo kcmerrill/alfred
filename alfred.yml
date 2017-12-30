@@ -69,3 +69,13 @@ http.task:
 producer.task:
     summary: We are going to produce a file
     pipe: cat main.go
+
+
+tester:
+    summary: i will echo something
+    command: echo hello world
+
+tasker:
+    summary: Tasker! HTTP Style
+    http.tasks:
+        port: 8090

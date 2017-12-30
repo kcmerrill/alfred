@@ -19,7 +19,8 @@ var (
 
 func main() {
 	version := flag.Bool("version", false, "Alfred's version number")
-	disableColors := flag.Bool("disable-colors", false, "Disable colors")
+	disableColors := flag.Bool("no-colors", false, "Disable colors")
+	disableFormatting := flag.Bool("no-formatting", false, "Show only raw command output")
 	log := flag.String("log", "", "Log all tasks to <file>")
 	flag.Parse()
 
@@ -50,6 +51,10 @@ func main() {
 
 	if *log != "" {
 		Log(*log, context)
+	}
+
+	if *disableFormatting {
+		context.Text.DisableFormatting = *disableFormatting
 	}
 
 	// anything from stdin?

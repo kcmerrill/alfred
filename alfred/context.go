@@ -32,6 +32,7 @@ type Context struct {
 
 // TextConfig contains configuration needed to display text
 type TextConfig struct {
+	DisableFormatting    bool
 	Success              string
 	SuccessIcon          string
 	Failure              string

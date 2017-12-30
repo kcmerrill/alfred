@@ -1,8 +1,12 @@
 package alfred
 
 import (
+	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -17,14 +21,32 @@ type HTTPTask struct {
 
 func (h *HTTPTask) runner(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	c := h.context
-	c.Args = strings.Split(vars["args"], "/")
-	outOK(vars["task"]+" started ["+strings.Join(c.Args, ", ")+"]", "", c)
-	stdin, _ := ioutil.ReadAll(req.Body)
-	c.Stdin = strings.TrimSpace(string(stdin))
-	c.Out = resp
-	c.Text = TextConfig{}
-	NewTask(vars["task"], c, h.tasks)
+
+	if vars["task"] == "favicon.ico" {
+		return
+	}
+
+	url, name := TaskParser(vars["task"], ":default")
+	if url != ":local" || name == ":default" {
+		resp.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(resp, "'"+vars["task"]+"' is invalid.")
+		return
+	}
+
+	args := strings.Split(vars["args"], "/")
+	outOK(vars["task"]+" started ["+strings.Join(args, ", ")+"]", "", h.context)
+	stdin, _ := ioutil.ReadAll(req.Body) //trimspace
+	cmd := exec.Command(os.Args[0], "--no-formatting", vars["task"])
+	cmdOutput, error := cmd.CombinedOutput()
+	cmd.Stdin = bytes.NewBuffer(stdin)
+
+	if error != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(resp, "'"+vars["task"]+"' is invalid.")
+	} else {
+		resp.WriteHeader(http.StatusOK)
+		fmt.Fprintf(resp, string(cmdOutput))
+	}
 }
 
 func httptasks(task Task, context *Context, tasks map[string]Task) {
