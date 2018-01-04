@@ -15,7 +15,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	os.Chdir(dir)
 
 	// copy our context
-	c := *context
+	c := copyContex(context, context.Args)
 
 	// innocent until proven guilty
 	c.Ok = true
@@ -49,14 +49,14 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	}
 
 	// cycle through our components ...
-	event.Trigger("task.started", t, &c, tasks)
+	event.Trigger("task.started", t, c, tasks)
 	for _, component := range components {
 		c.Component = component.Name
-		event.Trigger("before."+component.Name, t, &c, tasks)
-		component.F(t, &c, tasks)
-		event.Trigger("after."+component.Name, t, &c, tasks)
+		event.Trigger("before."+component.Name, t, c, tasks)
+		component.F(t, c, tasks)
+		event.Trigger("after."+component.Name, t, c, tasks)
 	}
-	event.Trigger("task.completed", t, &c, tasks)
+	event.Trigger("task.completed", t, c, tasks)
 }
 
 // Task holds all of our task components

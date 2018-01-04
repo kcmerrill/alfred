@@ -104,3 +104,29 @@ func InitialContext(args []string) *Context {
 			Green:  ansi.ColorCode("green"),
 		}}
 }
+
+func copyContex(context *Context, args []string) (c *Context) {
+	// silly maps, pointers are for kids
+	c = context
+	c.Args = args
+
+	vars := make(map[string]string)
+	for k, v := range c.Vars {
+		vars[k] = v
+	}
+	c.Vars = vars
+
+	logs := make(map[string]*os.File)
+	for k, v := range c.Log {
+		logs[k] = v
+	}
+	c.Log = logs
+
+	regs := make(map[string]string)
+	for k, v := range c.Register {
+		regs[k] = v
+	}
+	c.Register = regs
+
+	return c
+}
