@@ -52,9 +52,8 @@ func (t *Task) ParseTaskGroup(group string) []TaskGroup {
 
 func execTaskGroup(taskGroups []TaskGroup, task Task, context *Context, tasks map[string]Task) {
 	for _, tg := range taskGroups {
-		c := *context
-		c.Args = translateArgs(tg.Args, context)
-		NewTask(tg.Name, &c, tasks)
+		c := copyContex(context, translateArgs(tg.Args, context))
+		NewTask(tg.Name, c, tasks)
 	}
 }
 
@@ -63,9 +62,8 @@ func goExecTaskGroup(taskGroups []TaskGroup, task Task, context *Context, tasks 
 	for _, tg := range taskGroups {
 		wg.Add(1)
 		go func(tg TaskGroup) {
-			c := *context
-			c.Args = translateArgs(tg.Args, context)
-			NewTask(tg.Name, &c, tasks)
+			c := copyContex(context, translateArgs(tg.Args, context))
+			NewTask(tg.Name, c, tasks)
 			wg.Done()
 		}(tg)
 	}
