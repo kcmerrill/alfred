@@ -15,7 +15,6 @@ func commandC(task Task, context *Context, tasks map[string]Task) {
 		return
 	}
 	command(task.Command, task, context, tasks)
-	//commandBasic(task.Command, task, context, tasks)
 }
 
 func commandBasic(commandStr string, task Task, context *Context, tasks map[string]Task) {

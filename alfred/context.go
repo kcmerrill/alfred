@@ -105,10 +105,32 @@ func InitialContext(args []string) *Context {
 		}}
 }
 
-func copyContex(context *Context, args []string) (c *Context) {
+func copyContex(context *Context, args []string) Context {
+	context.Lock.Lock()
+	defer context.Lock.Unlock()
+
 	// silly maps, pointers are for kids
-	c = context
-	c.Args = args
+	c := *context
+
+	regs := make(map[string]string)
+	for k, v := range c.Register {
+		regs[k] = v
+	}
+	c.Register = regs
+
+	a := make([]string, 0)
+	for x := 0; x < len(c.Args); x++ {
+		a = append(a, c.Args[x])
+	}
+	c.Args = a
+
+	for idx, v := range args {
+		if idx < len(c.Args) {
+			c.Args[idx] = v
+		} else {
+			c.Args = append(c.Args, v)
+		}
+	}
 
 	vars := make(map[string]string)
 	for k, v := range c.Vars {
@@ -121,12 +143,6 @@ func copyContex(context *Context, args []string) (c *Context) {
 		logs[k] = v
 	}
 	c.Log = logs
-
-	regs := make(map[string]string)
-	for k, v := range c.Register {
-		regs[k] = v
-	}
-	c.Register = regs
 
 	return c
 }

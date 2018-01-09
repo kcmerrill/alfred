@@ -14,8 +14,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// switch the directory
 	os.Chdir(dir)
 
-	// copy our context
-	c := copyContex(context, context.Args)
+	c := context
 
 	// innocent until proven guilty
 	c.Ok = true
@@ -95,6 +94,7 @@ type Task struct {
 	Fail      string
 	Wait      string
 	Watch     string
+	Private   bool
 	ExitCode  int `yaml:"exit"`
 }
 
@@ -112,9 +112,10 @@ func (t *Task) IsPrivate() bool {
 	// I like the idea of not needing to put an astrick next to a task
 	// ... Descriptions automagically qualify for "important tasks"
 	// No descriptions means it's filler, or private
-	if t.Summary != "" {
-		return false
+	// Summaries WITH private: true are private
+	if t.Summary == "" || t.Private {
+		return true
 	}
 
-	return true
+	return false
 }

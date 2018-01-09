@@ -46,7 +46,7 @@ func list(context *Context, tasks map[string]Task) {
 	// signifigant tasks
 	for _, label := range labels {
 		task := tasks[label]
-		if task.Summary != "" {
+		if !task.IsPrivate() {
 			fmt.Print(translate(" {{ .Text.Task }}"+padRight(label, maxLabel, " "), context))
 			fmt.Println(translate("{{ .Text.Grey }} | {{ .Text.Reset }}"+padRight(task.Summary, maxSummary, " "), context))
 		}

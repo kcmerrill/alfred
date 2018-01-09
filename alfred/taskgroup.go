@@ -52,22 +52,21 @@ func (t *Task) ParseTaskGroup(group string) []TaskGroup {
 
 func execTaskGroup(taskGroups []TaskGroup, task Task, context *Context, tasks map[string]Task) {
 	for _, tg := range taskGroups {
-		c := *context
-		c.Args = translateArgs(tg.Args, context)
+		c := copyContex(context, translateArgs(tg.Args, context))
 		NewTask(tg.Name, &c, tasks)
 	}
 }
 
 func goExecTaskGroup(taskGroups []TaskGroup, task Task, context *Context, tasks map[string]Task) {
+	c := copyContex(context, []string{})
 	var wg sync.WaitGroup
 	for _, tg := range taskGroups {
 		wg.Add(1)
-		go func(tg TaskGroup) {
-			c := *context
-			c.Args = translateArgs(tg.Args, context)
-			NewTask(tg.Name, &c, tasks)
+		go func(theTG TaskGroup, stableContext Context, tasks map[string]Task) {
+			copyOfContext := copyContex(&stableContext, translateArgs(theTG.Args, &stableContext))
+			NewTask(theTG.Name, &copyOfContext, tasks)
 			wg.Done()
-		}(tg)
+		}(tg, c, tasks)
 	}
 	wg.Wait()
 }

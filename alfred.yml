@@ -79,3 +79,9 @@ tasker:
     summary: Tasker! HTTP Style
     http.tasks:
         port: 8090
+
+compile:
+    summary: Compile on file changes
+    watch: ".*?go$"
+    command: go install
+    every: 1s
