@@ -1,6 +1,7 @@
 package alfred
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 )
