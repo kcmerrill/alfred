@@ -3,6 +3,7 @@ package alfred
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"sync"
@@ -39,6 +40,12 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		return
 	}
 
+	scanner := bufio.ScanLines
+	if context.Interactive {
+		scanner = bufio.ScanBytes
+	}
+	fmt.Println("scanner:", context.Interactive)
+
 	// hack
 	cmdOK("", context)
 
@@ -57,7 +64,7 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		var wg sync.WaitGroup
 		cmdReaderStdOut, _ := cmd.StdoutPipe()
 		scannerStdOut := bufio.NewScanner(cmdReaderStdOut)
-		scannerStdOut.Split(bufio.ScanBytes)
+		scannerStdOut.Split(scanner)
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
@@ -68,7 +75,7 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 
 		cmdReaderStdErr, _ := cmd.StderrPipe()
 		scannerStdErr := bufio.NewScanner(cmdReaderStdErr)
-		scannerStdErr.Split(bufio.ScanBytes)
+		scannerStdErr.Split(scanner)
 		go func() {
 			wg.Add(1)
 			defer wg.Done()

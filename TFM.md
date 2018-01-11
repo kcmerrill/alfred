@@ -15,9 +15,10 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [Stdin](#stdin)
   * [Components](#components)
     * [log | string](#log--string)
+    * [interactive | bool](#interactive--bool)
     * [defaults | []string](#defaults--string)
     * [summary | string](#summary--string)
-    * [stdin | string(text, command)](#stdin--stringtext-command) 
+    * [stdin | string(text, command)](#stdin--stringtext-command)
     * [dir | string(dir, command)](#dir--stringdir-command)
     * [config | string(filename, yaml)](#config--stringfilename-yaml)
     * [prompt | map[string]string](#prompt--mapstringstring)
@@ -189,6 +190,11 @@ spiderman
 
 The components here will be listed in order in which they are executed within Alfred. With the way golang's maps work, [they are randomized](https://github.com/golang/go/issues/2630) to prevent DOS attacks. The reason this is important? Your components within your tasks can be ordered however you'd like, but they will be executed in a specific order. 
 
+### interactive | bool
+
+By default, all commands run through alfred are done so via a buffer that is flushed via new lines delimiters. However, this doesn't work so well when you need the command to be interactive such as shelling into docker container, running vim, etc ...
+
+This component, when set to true will read and flush the buffer byte by byte. Why not do this all the time? Depending if multi tasks are running the buffers might cross streams(a bug? perhaps ...). 
 
 ### log | string
 
