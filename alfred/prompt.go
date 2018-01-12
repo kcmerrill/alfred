@@ -11,8 +11,6 @@ func prompt(task Task, context *Context, tasks map[string]Task) {
 		return
 	}
 
-	context.Interactive = true
-
 	for v, phrase := range task.Prompt {
 		reader := bufio.NewReader(os.Stdin)
 		outputPrompt("Success", "prompt", phrase+" ", context)

@@ -19,9 +19,6 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// innocent until proven guilty
 	c.Ok = true
 
-	// Interactive?
-	c.Interactive = t.Interactive
-
 	// set our taskname
 	c.TaskFile, c.TaskName = TaskParser(task, ":default")
 
@@ -79,27 +76,26 @@ type Task struct {
 		Port     string
 		Password string
 	} `yaml:"http.tasks"`
-	Config      string
-	Log         string
-	Every       string
-	Command     string
-	Interactive bool
-	Retry       int
-	Register    map[string]string
-	Env         map[string]string
-	Commands    string
-	Serve       string
-	Script      string
-	Stdin       string
-	Prompt      map[string]string
-	Tasks       string
-	MultiTask   string
-	Ok          string
-	Fail        string
-	Wait        string
-	Watch       string
-	Private     bool
-	ExitCode    int `yaml:"exit"`
+	Config    string
+	Log       string
+	Every     string
+	Command   string
+	Retry     int
+	Register  map[string]string
+	Env       map[string]string
+	Commands  string
+	Serve     string
+	Script    string
+	Stdin     string
+	Prompt    map[string]string
+	Tasks     string
+	MultiTask string
+	Ok        string
+	Fail      string
+	Wait      string
+	Watch     string
+	Private   bool
+	ExitCode  int `yaml:"exit"`
 }
 
 // Exit determins whether a task should exit or not
