@@ -132,12 +132,6 @@ func copyContex(context *Context, args []string) Context {
 		}
 	}
 
-	vars := make(map[string]string)
-	for k, v := range c.Vars {
-		vars[k] = v
-	}
-	c.Vars = vars
-
 	logs := make(map[string]*os.File)
 	for k, v := range c.Log {
 		logs[k] = v
