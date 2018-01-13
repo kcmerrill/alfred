@@ -58,6 +58,14 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		return "", t, tasks
 	}
 
+	if task == "__init" {
+		return "__init", Task{skip: true}, tasks
+	}
+
+	if task == "__exit" {
+		return "__exit", Task{skip: true}, tasks
+	}
+
 	if task == ":list" {
 		list(context, tasks)
 		os.Exit(0)

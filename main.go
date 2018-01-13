@@ -64,5 +64,6 @@ func main() {
 		context.Stdin = strings.TrimSpace(string(stdinContent))
 	}
 
+	NewTask("__init", context, tasks)
 	NewTask(task, context, tasks)
 }

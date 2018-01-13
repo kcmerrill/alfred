@@ -11,16 +11,19 @@ import (
 func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	dir, t, tasks := FetchTask(task, context, loadedTasks)
 
+	// Skip the task, if we need to skip
+	if t.skip {
+		return
+	}
+
 	// switch the directory
 	os.Chdir(dir)
 
-	c := context
-
 	// innocent until proven guilty
-	c.Ok = true
+	context.Ok = true
 
 	// set our taskname
-	c.TaskFile, c.TaskName = TaskParser(task, ":default")
+	context.TaskFile, context.TaskName = TaskParser(task, ":default")
 
 	components := []Component{
 		Component{"log", log},
@@ -48,14 +51,14 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	}
 
 	// cycle through our components ...
-	event.Trigger("task.started", t, c, tasks)
+	event.Trigger("task.started", t, context, tasks)
 	for _, component := range components {
-		c.Component = component.Name
-		event.Trigger("before."+component.Name, t, c, tasks)
-		component.F(t, c, tasks)
-		event.Trigger("after."+component.Name, t, c, tasks)
+		context.Component = component.Name
+		event.Trigger("before."+component.Name, t, context, tasks)
+		component.F(t, context, tasks)
+		event.Trigger("after."+component.Name, t, context, tasks)
 	}
-	event.Trigger("task.completed", t, c, tasks)
+	event.Trigger("task.completed", t, context, tasks)
 }
 
 // Task holds all of our task components
@@ -96,6 +99,7 @@ type Task struct {
 	Watch     string
 	Private   bool
 	ExitCode  int `yaml:"exit"`
+	skip      bool
 }
 
 // Exit determins whether a task should exit or not
@@ -103,6 +107,7 @@ func (t *Task) Exit(context *Context, tasks map[string]Task) {
 	context.Ok = false
 	if t.ExitCode != 0 {
 		outFail("["+strings.Join(context.Args, ", ")+"]", "{{ .Text.Failure }}{{ .Text.FailureIcon }} exiting ...", context)
+		NewTask("__exit", context, tasks)
 		os.Exit(t.ExitCode)
 	}
 }
