@@ -8,6 +8,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
   * [Tasks](#tasks)
     * [Local tasks](#local-tasks)
     * [Remote tasks](#remote-tasks)
+    * [Magic Tasks](#magic-tasks)
   * [Arguments](#arguments)
   * [Taskgroups](#taskgroups)
   * [Golang Templating](#golang-templating)
@@ -79,6 +80,12 @@ Notice the `:` which distinguishes the URL from the taskname. Without a taskname
 [ 0s] (26 Dec 17 19:54 MST) tdd.go started [] Watch .go files and run test.go
 [ 0s] (26 Dec 17 19:54 MST) tdd.go watching ./
 ```
+
+### Magic tasks
+
+Sometimes you might need a task to run before any other task runs, regardless of the entrypoint. A good use case for this would be registering global variables. Sure, you could call in your `setup` taskgroup a `register.vars` task each time, but that can be tedious, and if the use case is rare enough it might add extra processing time. 
+
+To avoid such scenarios, we've introduced `magic` tasks. The two current magic tasks are `__init` and `__exit`. `__init` will be run once when alfred loads(if it exists) and `__exit` will be run if a task exits for whatever reason. `__exit` will be run when a task exits. Useful for cleanup or shutdown tasks that need to happen regardless of the task.
 
 ## Arguments
 
