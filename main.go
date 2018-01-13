@@ -66,4 +66,5 @@ func main() {
 
 	NewTask("__init", context, tasks)
 	NewTask(task, context, tasks)
+	NewTask("__exit", context, tasks)
 }
