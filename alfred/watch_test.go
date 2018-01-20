@@ -24,4 +24,6 @@ func TestWatchComponent(t *testing.T) {
 		// timeout ... boo!
 		t.Fatalf("Watch failed ...")
 	}
+
+	<-time.After(time.Second * 3)
 }

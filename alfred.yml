@@ -58,7 +58,7 @@ tdd.go:
     summary: Watch .go files and run test.go
     watch: ".*?go$"
     every: 1s
-    command: go test $(go list ./... | grep -v /vendor/) --race
+    command: go test $(go list ./... | grep -v /vendor/)
 
 http.task:
     summary: HTTP Task runner
