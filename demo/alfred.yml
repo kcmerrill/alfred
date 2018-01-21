@@ -28,14 +28,9 @@ config.text:
         echo hello:val-{{ .Vars.hello }}
         echo kc:val-{{ .Vars.kc }}
 
-
-
-
-
-
 md5_helper:
     command: |
-        md5
+        md5sum || md5
 
 ls:
     summary: List a directory
