@@ -31,3 +31,15 @@ func TestExecute(t *testing.T) {
 		t.Fatalf("Should not have resulted in an error.")
 	}
 }
+
+func TestPadding(t *testing.T) {
+	paddedRight := padRight("a", 5, "-")
+	if paddedRight != "a----" {
+		t.Fatalf("PadRight broken" + paddedRight)
+	}
+
+	paddedLeft := padLeft("a", 5, "-")
+	if paddedLeft != "----a" {
+		t.Fatalf("PadLeft broken" + paddedLeft)
+	}
+}

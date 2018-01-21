@@ -1,202 +1,44 @@
-static.web.server:
-    summary: Lets start up a static web server
-    serve: 127.0.0.1:8091
-    command: |
-      curl --verbose http://localhost:8091/myfile.txt
-dir:
-    summary: Lets display the directory
-    dir: "{{ index .Args 0 }}"
-    command: pwd
+summary:
+    summary: Testing out the summary
 
-log.task:
-  summary: Demo of the 'log' component
-  log: /tmp/log.demo.txt
-  command: |
-    echo "This should be in the log /tmp/log.demo.txt"
-
-arguments.task:
-    summary: Demo of arguments
+arguments:
+    summary: Testing out arguments
     command: |
-        echo {{ index .Args 0 }}
-        echo {{ index .Args 1 }}
-        echo {{ index .Args 2 }}
+        echo args:{{ index .Args 0 }} {{ index .Args 1 }}
+
+defaults:
+    summary: Testing out default arguments
+    command: |
+        echo defaults:{{ index .Args 0 }} {{ index .Args 1 }}
     defaults:
         - ""
-        - ""
-        - I am a default
+        - "world"
 
-show.summary:
-    summary: This is the summary.
+stdin:
+    summary: Testing out stdin
+    stdin: "echo kcmerrill"
+    ok: md5_helper
 
-configuration:
-    summary: This task will show how to use config
+config.text: 
+    summary: Testing out config with raw text
     config: |
-        user: whoami
-        email: "kcmerrill@gmail.com"
+        hello: world
+        kc: merrill
     command: |
-        echo "The current user is {{ .Vars.user }}"
-        echo "The current user's email address is {{ .Vars.email }}"
-        echo "The user twitter handle is {{ default "is not set" .Vars.twitter }}"
+        echo hello:val-{{ .Vars.hello }}
+        echo kc:val-{{ .Vars.kc }}
 
-register:
-    summary: Demonstrate the registration of variables
-    register:
-        user: whoami
-        twitter: "@themayor"
+
+
+
+
+
+md5_helper:
     command: |
-      echo "{{ index .Vars "user" }}"
-      echo "{{ .Vars.twitter }}"
+        md5
 
-env:
-  summary: Lets set some env variables!
-  env:
-    WHO: whoami
-    TWITTER: "{{ index .Args 0 }}"
-  command: |
-    echo twitter:$TWITTER
-    echo who:$WHO
-
-setup.task.one:
-    summary: one task
-    command: echo one task
-
-setup.task.two:
-    summary: two task
-    command: echo two task {{ index .Args 0 }}
-
-setup.task:
-    summary: This is the main task
-    setup: |
-        setup.task.one
-        setup.task.two({{ index .Args 0 }})
-
-multi.task.one:
-    summary: one task
-    commands: |
-      sleep 1
-      echo one task
-
-multi.task.two:
-    summary: two task
-    command: echo two task {{ index .Args 0 }}
-
-multi.task:
-    summary: Run tasks concurrently
-    multitask: |
-        multi.task.one
-        multi.task.two({{ index .Args 0 }})
-
-tasks.task.one:
-    summary: one task
-    command: echo one task
-
-tasks.task.two:
-    summary: two task
-    command: echo two task {{ index .Args 0 }}
-
-tasks:
-    summary: Run tasks before running a command
-    tasks: |
-        tasks.task.one
-        tasks.task.two({{ index .Args 0 }})
-
-tdd.go:
-    summary: Watch .go files and run test.go
-    watch: ".*?go$"
-    command: go test $(go list ./... | grep -v /vendor/) --race
-
-for.loop.echo:
-    summary: A simple task that echos the first argument
+ls:
+    summary: List a directory
+    dir: "{{ index .Args 0 }}"
     command: |
-      echo {{ index .Args 0 }}
-
-for.loop.one:
-    summary: Demo our for loop
-    for:
-      args: |
-          batman
-          robin
-          spiderman
-      tasks: |
-          for.loop.echo
-
-for.loop.two:
-    summary: Demo our for loop as a command with arguments
-    for:
-      args: |
-        ls -R -1
-      tasks: |
-        for.loop.echo
-
-demo.command:
-  summary: This is a single line command
-  command: echo "hello world!"
-
-demo.command.two:
-  summary: This is a multi line command with a failure
-  command: |
-    echo I will fail on purpose && false
-    echo "Notice how I still am displayed?"
-
-demo.command.three:
-    summary: Because YAML is awesome, you can do this too!(notice >)
-    command: |
-        docker pull kcmerrill/automagicproxy
-        docker run --rm -ti ubuntu
-
-vim:
-    command: |
-        echo "hello world"
-        vim /tmp/whatever.txt
-        echo "done"
-
-ok.task.one:
-    summary: one task
-    command: echo one task
-
-ok.task.two:
-    summary: two task
-    command: echo two task {{ index .Args 0 }}
-
-ok.tasks:
-    summary: run tasks before running a command
-    command: |
-        echo hello world
-    ok: |
-        ok.task.one
-        ok.task.two({{ index .Args 0 }})
-
-fail.task.one:
-    summary: one task
-    command: echo one task
-
-fail.task.two:
-    summary: two task
-    command: echo two task {{ index .Args 0 }}
-
-fail.tasks:
-    summary: Demonstrate failed tasks
-    command: |
-        ls /tmp/idonotexist
-    fail: |
-        fail.task.one
-        fail.task.two({{ index .Args 0 }})
-
-
-wait:
-  summary: Wait a golang duration before continuing
-  command: |
-    echo "waiting"
-  wait: 10s
-
-every:
-  summary: Run a command every <golang duration>
-  every: "{{ index .Args 0 }}"
-  command: |
-    echo every {{ index .Args 0 }}
-
-task.name:
-    summary: Display the arguments
-    command: |
-        echo The first argument is: {{ index .Args 0 }}
-        echo All of the arguments passed in: {{ .AllArgs }}
+        ls -alh .

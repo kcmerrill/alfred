@@ -67,5 +67,5 @@ func outputCommand(color, component, text string, context *Context) {
 }
 
 func elapsed(context *Context) string {
-	return "{{ .Text.Grey }}[{{ .Text.Success }}" + padLeft(time.Since(context.Started).Round(time.Second).String(), 6, " ") + "{{ .Text.Grey }}] "
+	return "{{ .Text.Grey }}[{{ .Text.Success }}" + padLeft(time.Since(context.Started).Round(time.Second).String(), 8, " ") + "{{ .Text.Grey }}] "
 }
