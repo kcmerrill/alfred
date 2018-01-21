@@ -3,6 +3,10 @@ language: go
 go:
     - 1.9
 
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y md5
+
 install:
     - go get
     - go install github.com/kcmerrill/alfred/
