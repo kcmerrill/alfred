@@ -83,9 +83,11 @@ Notice the `:` which distinguishes the URL from the taskname. Without a taskname
 
 ### Magic tasks
 
-Sometimes you might need a task to run before any other task runs, regardless of the entrypoint. A good use case for this would be registering global variables. Sure, you could call in your `setup` taskgroup a `register.vars` task each time, but that can be tedious, and if the use case is rare enough it might add extra processing time. 
+There are a few 'magic' tasks that have special functionality just by giving it a specific task name. If the tasks do not exist, they will simply be skipped with no notice to the end user. 
 
-To avoid such scenarios, we've introduced `magic` tasks. The two current magic tasks are `__init` and `__exit`. `__init` will be run once when alfred loads(if it exists) and `__exit` will be run if a task exits for whatever reason. `__exit` will be run when a task exits. Useful for cleanup or shutdown tasks that need to happen regardless of the task.
+1. `__init` gets run at the very start of alfred processing. This is really useful if you have multiple tasks that require specific things to be setup before running. A great example would be registering variables for all the tasks to use. Sure, you could call a `register.vars` setup task before _each_ task, but that can get tiresome, and also, if you don't need it for every task it could be time/process heavy.
+
+1. `__exit` gets called whenever a task exits(the only exception being invalid templates). So the two scenarios the task `__exit` will be called is when the `exit` component is set, and at the very end of a succesful alfred run. This can be useful for cleaning up your tasks or processing shutdown procedures. 
 
 ## Arguments
 

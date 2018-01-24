@@ -64,7 +64,16 @@ func main() {
 		context.Stdin = strings.TrimSpace(string(stdinContent))
 	}
 
-	NewTask("__init", context, tasks)
+	// don't do this if they are :listing
+	if len(os.Args) >= 2 {
+		NewTask("__init", context, tasks)
+	}
+
+	// start the task
 	NewTask(task, context, tasks)
-	NewTask("__exit", context, tasks)
+
+	// don't do this if they are :listing
+	if len(os.Args) >= 2 {
+		NewTask("__exit", context, tasks)
+	}
 }
