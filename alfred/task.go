@@ -79,27 +79,28 @@ type Task struct {
 		Port     string
 		Password string
 	} `yaml:"http.tasks"`
-	Config    string
-	Log       string
-	Every     string
-	Command   string
-	Retry     int
-	Register  map[string]string
-	Env       map[string]string
-	Commands  string
-	Serve     string
-	Script    string
-	Stdin     string
-	Prompt    map[string]string
-	Tasks     string
-	MultiTask string
-	Ok        string
-	Fail      string
-	Wait      string
-	Watch     string
-	Private   bool
-	ExitCode  int `yaml:"exit"`
-	skip      bool
+	Config      string
+	Log         string
+	Every       string
+	Command     string
+	Retry       int
+	Register    map[string]string
+	Env         map[string]string
+	Commands    string
+	Serve       string
+	Script      string
+	Stdin       string
+	Prompt      map[string]string
+	Tasks       string
+	MultiTask   string
+	Ok          string
+	Fail        string
+	Wait        string
+	Watch       string
+	Private     bool
+	ExitCode    int `yaml:"exit"`
+	skip        bool
+	Interactive bool
 }
 
 // Exit determins whether a task should exit or not

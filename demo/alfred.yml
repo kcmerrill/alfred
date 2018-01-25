@@ -36,4 +36,5 @@ ls:
     summary: List a directory
     dir: "{{ index .Args 0 }}"
     command: |
+        pwd
         ls -alh .

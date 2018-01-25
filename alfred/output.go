@@ -33,6 +33,7 @@ func output(color, component, text string, context *Context) {
 	}
 	out := outPrefix(color, component, text, context)
 	t := translate(out, context)
+
 	fmt.Fprintln(context.Out, t)
 }
 
@@ -63,6 +64,7 @@ func outputCommand(color, component, text string, context *Context) {
 	} else {
 		fmt.Fprint(context.Out, text)
 	}
+
 	logger(text, context)
 }
 
