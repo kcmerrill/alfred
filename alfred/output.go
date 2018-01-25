@@ -34,10 +34,6 @@ func output(color, component, text string, context *Context) {
 	out := outPrefix(color, component, text, context)
 	t := translate(out, context)
 
-	if !context.Interactive {
-		t += "\r\n"
-	}
-
 	fmt.Fprintln(context.Out, t)
 }
 
