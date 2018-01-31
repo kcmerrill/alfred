@@ -1,14 +1,14 @@
 hash: 84fbdff1808e07610833ac19bda154d7a774a5743791b17565fa4f76385533c5
-updated: 2017-12-24T21:29:56.8404-07:00
+updated: 2018-01-30T22:31:30.518802-07:00
 imports:
 - name: github.com/aokoli/goutils
-  version: 9c37978a95bd5c709a15883b6242714ea6709e64
+  version: 3391d3790d23d03408670993e957e8f408993c34
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
-  version: 7f08801859139f86dfafd1c296e2cba9a80d292e
+  version: 53c1911da2b537f792e7cafcb446b05ffe33b996
 - name: github.com/huandu/xstrings
-  version: 3959339b333561bf62a38b424fd41517c2c90f40
+  version: 37469d0c81a7910b49d64a0d308ded4823e90937
 - name: github.com/imdario/mergo
   version: 7fe0c75c13abdee74b09fcacef5ea1c6bba6a874
 - name: github.com/kcmerrill/common.go
@@ -17,40 +17,40 @@ imports:
   - config
   - file
 - name: github.com/kcmerrill/hook
-  version: 24e50f31a4f1184f590f057d0feb049e0b542acf
+  version: 466c7d9ef386ae38055e7f3995a62fe59f98ea3c
 - name: github.com/Masterminds/semver
   version: 59c29afe1a994eacb71c833025ca7acf874bb1da
 - name: github.com/Masterminds/sprig
   version: b217b9c388de2cacde4354c536e520c52c055563
 - name: github.com/mattn/go-colorable
-  version: 5411d3eea5978e6cdc258b30de592b60df6aba96
+  version: 6cc8b475d4682021d75d2cbe2bc481bec4ce98e5
 - name: github.com/mattn/go-isatty
-  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
+  version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
 - name: github.com/mgutz/ansi
   version: 9520e82c474b0a04dd04f8a40959027271bab992
 - name: github.com/satori/go.uuid
-  version: 879c5887cd475cd7864858769793b2ceb0d44feb
+  version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 - name: golang.org/x/crypto
-  version: d172538b2cfce0c13cee31e647d0367aa8cd2486
+  version: 1875d0a70c90e57f11972aefd42276df65e895b9
   subpackages:
   - pbkdf2
   - scrypt
 - name: golang.org/x/sys
-  version: 83801418e1b59fb1880e363299581ee543af32ca
+  version: 3dbebcf8efb6a5011a60c2b4591c1022a759af8a
   subpackages:
   - unix
 - name: gopkg.in/yaml.v2
-  version: 287cf08546ab5e7e37d55a84f7ed3fd1db036de5
+  version: d670f9405373e636a5a2765eea47fac0c9bc91a4
 testImports:
 - name: github.com/davecgh/go-spew
-  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  version: db69d09d2c587e9b9677f991dfcab1fc24d9086e
   subpackages:
   - spew
 - name: github.com/pmezard/go-difflib
-  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
   subpackages:
   - difflib
 - name: github.com/stretchr/testify
-  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  version: b91bfb9ebec76498946beb6af7c0230c7cc7ba6c
   subpackages:
   - assert

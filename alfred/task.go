@@ -10,6 +10,11 @@ import (
 // NewTask will execute a task
 func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	dir, t, tasks := FetchTask(task, context, loadedTasks)
+	// register plugins ...
+	plugin(t, context, tasks)
+	event.Trigger("dir", &dir)
+	event.Trigger("t", &t)
+	event.Trigger("tasks", &tasks)
 
 	// Skip the task, if we need to skip
 	if t.skip {
@@ -54,11 +59,11 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	event.Trigger("task.started", t, context, tasks)
 	for _, component := range components {
 		context.Component = component.Name
-		event.Trigger("before."+component.Name, t, context, tasks)
+		event.Trigger("before."+component.Name, context)
 		component.F(t, context, tasks)
-		event.Trigger("after."+component.Name, t, context, tasks)
+		event.Trigger("after."+component.Name, context)
 	}
-	event.Trigger("task.completed", t, context, tasks)
+	event.Trigger("task.completed", context)
 }
 
 // Task holds all of our task components
@@ -101,6 +106,7 @@ type Task struct {
 	ExitCode    int `yaml:"exit"`
 	skip        bool
 	Interactive bool
+	Plugin      map[string]string
 }
 
 // Exit determins whether a task should exit or not

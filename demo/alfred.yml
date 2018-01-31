@@ -19,7 +19,7 @@ stdin:
     stdin: "echo kcmerrill"
     ok: md5_helper
 
-config.text: 
+config.text:
     summary: Testing out config with raw text
     config: |
         hello: world
@@ -27,6 +27,13 @@ config.text:
     command: |
         echo hello:val-{{ .Vars.hello }}
         echo kc:val-{{ .Vars.kc }}
+
+plugins:
+    summary: Lets register a plugin
+    plugin:
+        dir: python dir.py
+    command: |
+        pwd #should be /tmp/
 
 md5_helper:
     command: |

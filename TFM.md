@@ -199,6 +199,24 @@ spiderman
 The components here will be listed in order in which they are executed within Alfred. With the way golang's maps work, [they are randomized](https://github.com/golang/go/issues/2630) to prevent DOS attacks. The reason this is important? Your components within your tasks can be ordered however you'd like, but they will be executed in a specific order. 
 
 
+### plugins | map[string]string
+
+A way to extend alfred is by use of plugins by way of filters and hooks. There are numerous hooks you can attach to. Here are a few:
+
+- dir  
+- t (for task)
+- tasks 
+- task.started
+- before.<component>
+- after.<component>
+- task.completed
+
+The idea is that context object is passed into your external program as a valid json representation. You can then change it's contents, and as long as it returns a valid `context` object, or depending on the type of data passed in, the hook will pass. 
+
+This will allow you to add default tasks, change tasks, add defaults to tasks, or anything you can think of.
+
+If you're curious, a quick example can be found under `/demos/`.
+
 ### log | string
 
 The raw output of commands will be sent to the specified filename appended. If the file does not exist it will attempt to be created.

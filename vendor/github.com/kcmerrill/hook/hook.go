@@ -3,7 +3,6 @@ package hook
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"os/exec"
 	"reflect"
 	"sync"
@@ -52,7 +51,6 @@ func Register(trigger string, args ...interface{}) {
 			cmd.Stdin = in
 
 			if results, err := cmd.Output(); err == nil {
-				fmt.Println("results", string(results))
 				json.Unmarshal(results, &i)
 			}
 		}
