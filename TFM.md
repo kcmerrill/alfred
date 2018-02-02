@@ -44,6 +44,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [Aliases](#aliases)
     * [Task Inheritance](#task-inheritance)
     * [Run a task X times](#run-a-task-x-times)
+    * [Shorthand Tasks](#shorthand-tasks)
 
 # Usage
 
@@ -973,4 +974,41 @@ range:
     for:
         args: "{{range $i, $e := until 5}}{{$i}}\n{{end}}"
         tasks: echo
+```
+
+### Shorthand tasks
+
+Sometimes you just need to run a simple bash command, but you might not need the full power of a task. To do so ... in your task group simply prepend your shell command with a bang `!`. You can use all of the variables, etc as you normally would inside your command without needing define a whole new task. Listed is a contrived example.
+
+```yaml
+
+shorthand.tasks:
+    summary: This will display a simple shorthanded task.
+    setup: |
+        !echo hello {{ index .Args 0 }}
+        !echo another {{ index .Args 0 }}
+    command: |
+        echo "Should have echoed a few things"
+
+# same as doing:
+shorthand.tasks:
+    summary: This will display a simple shorthanded task.
+    setup: hello another
+    command: |
+        echo "Should have echoed a few things"
+
+hello:
+    summary: Executing Command
+    command: |
+        echo hello {{ index .Args 0 }}
+    exit: 42
+
+another:
+    summary: Executing Command
+    command: |
+        echo another {{ index .Args 0 }}
+    exit: 42
+
+
+
 ```

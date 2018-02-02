@@ -3,6 +3,7 @@ package alfred
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/kcmerrill/common.go/config"
 	"github.com/kcmerrill/common.go/file"
@@ -13,6 +14,11 @@ import (
 func FetchTask(task string, context *Context, tasks map[string]Task) (string, Task, map[string]Task) {
 	if t, exists := tasks[task]; exists {
 		return "./", t, tasks
+	}
+
+	if strings.HasPrefix(task, "!") {
+		context.TaskName = "exec.command"
+		return "./", Task{Summary: "Executing Command", Command: task[1:len(task)], ExitCode: 42}, tasks
 	}
 
 	var fetched map[string]Task
