@@ -31,13 +31,13 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	context.TaskFile, context.TaskName = TaskParser(task, ":default")
 
 	components := []Component{
+		Component{"register", register},
 		Component{"log", log},
 		Component{"defaults", defaults},
 		Component{"summary", summary},
 		Component{"stdin", stdin},
 		Component{"config", configC},
 		Component{"prompt", prompt},
-		Component{"register", register},
 		Component{"env", env},
 		Component{"serve", serve},
 		Component{"setup", setup},

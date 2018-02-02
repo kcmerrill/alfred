@@ -15,14 +15,14 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [Vars](#vars)
     * [Stdin](#stdin)
   * [Components](#components)
+    * [register | map[string]string](#register--mapstringstring)
     * [log | string](#log--string)
     * [defaults | []string](#defaults--string)
     * [summary | string](#summary--string)
-    * [stdin | string(text, command)](#stdin--stringtext-command) 
+    * [stdin | string(text, command)](#stdin--stringtext-command)
     * [dir | string(dir, command)](#dir--stringdir-command)
     * [config | string(filename, yaml)](#config--stringfilename-yaml)
     * [prompt | map[string]string](#prompt--mapstringstring)
-    * [register | map[string]string](#register--mapstringstring)
     * [env | map[string]string](#env--mapstringstring)
     * [serve | string(port)](#serve--stringport)
     * [setup | TaskGroup\{\}](#setup--taskgroup)
@@ -55,9 +55,9 @@ To see a list of tasks, simply invoke `alfred`. Any task that is deemed importan
 
 ### Local tasks
 
-By default, alfred will look in the current directory for an `alfred.yml` file. If it cannot be found, it will continue to go up the directory structure until it reaches the root directry. At this point, if the task provided does not exist, it will exit. 
+By default, alfred will look in the current directory for an `alfred.yml` file. If it cannot be found, it will continue to go up the directory structure until it reaches the root directry. At this point, if the task provided does not exist, it will exit.
 
-If your alfred files are getting large, you can break up your files by creating a `.alfred` or `alfred` folder, and inside create new .yml files named `something.alfred.yml`. Each file is then concatonated together, so be sure you do not have any task name collisions. 
+If your alfred files are getting large, you can break up your files by creating a `.alfred` or `alfred` folder, and inside create new .yml files named `something.alfred.yml`. Each file is then concatonated together, so be sure you do not have any task name collisions.
 
 All tasks start where the alfred file/folder are located(unless it's a remote task)
 
@@ -83,15 +83,15 @@ Notice the `:` which distinguishes the URL from the taskname. Without a taskname
 
 ### Magic tasks
 
-There are a few 'magic' tasks that have special functionality just by giving it a specific task name. If the tasks do not exist, they will simply be skipped with no notice to the end user. 
+There are a few 'magic' tasks that have special functionality just by giving it a specific task name. If the tasks do not exist, they will simply be skipped with no notice to the end user.
 
 1. `__init` gets run at the very start of alfred processing. This is really useful if you have multiple tasks that require specific things to be setup before running. A great example would be registering variables for all the tasks to use. Sure, you could call a `register.vars` setup task before _each_ task, but that can get tiresome, and also, if you don't need it for every task it could be time/process heavy.
 
-1. `__exit` gets called whenever a task exits(the only exception being invalid templates). So the two scenarios the task `__exit` will be called is when the `exit` component is set, and at the very end of a succesful alfred run. This can be useful for cleaning up your tasks or processing shutdown procedures. 
+1. `__exit` gets called whenever a task exits(the only exception being invalid templates). So the two scenarios the task `__exit` will be called is when the `exit` component is set, and at the very end of a succesful alfred run. This can be useful for cleaning up your tasks or processing shutdown procedures.
 
 ## Arguments
 
-In order to make tasks reusable, you can pass in arguments. This is true for the yaml file configuration along with the CLI. The arguments are positional, so the very first argument after the task to run is location `0`. The next is `1` and so on. You can obtain these variables by using golang templating by putting in the representation. 
+In order to make tasks reusable, you can pass in arguments. This is true for the yaml file configuration along with the CLI. The arguments are positional, so the very first argument after the task to run is location `0`. The next is `1` and so on. You can obtain these variables by using golang templating by putting in the representation.
 
 ```yaml
 task.name:
@@ -113,9 +113,9 @@ You will get an error if the template is unable to find the appropriate argument
 
 ## Taskgroups
 
-There are several components that call other tasks. These are called TaskGroups. A few example of these components would be [tasks](#tasks--taskgroup), [multitask](#multitask--taskgroup), [setup](#setup--taskgroup) to name a few. 
+There are several components that call other tasks. These are called TaskGroups. A few example of these components would be [tasks](#tasks--taskgroup), [multitask](#multitask--taskgroup), [setup](#setup--taskgroup) to name a few.
 
-You can define a task group in multiple ways. For task groups that do not need to call paramaters, you can simply put them on a single space delimited line. 
+You can define a task group in multiple ways. For task groups that do not need to call paramaters, you can simply put them on a single space delimited line.
 
 If your task requires arguments, or a mix of no arguments and arguments, put the tasks on new lines. This way you can mix and match the type of tasks that need and don't need arguments. This also helps task readability.
 
@@ -149,7 +149,7 @@ taskgroup.mixed:
 
 ## Golang Templating
 
-Another flexibile feature of Alfred is the ability to use the go templating language within your yaml files. As demonstrated through the documentation, you can do extra complex things based on this. You can read more about [golang templates here](https://golang.org/pkg/text/template/). Included with the templates is [masterminds/sprig](http://masterminds.github.io/sprig/) which include a ton of extra handy functionality. Setting defaults, uuids, env functions, Date, function among a whole host of other awesome goodies. 
+Another flexibile feature of Alfred is the ability to use the go templating language within your yaml files. As demonstrated through the documentation, you can do extra complex things based on this. You can read more about [golang templates here](https://golang.org/pkg/text/template/). Included with the templates is [masterminds/sprig](http://masterminds.github.io/sprig/) which include a ton of extra handy functionality. Setting defaults, uuids, env functions, Date, function among a whole host of other awesome goodies.
 
 ### Vars
 
@@ -194,34 +194,62 @@ spiderman
 02:48 PM ✔ kcmerrill  tmp ]
 ```
 
-## Components 
+## Components
 
-The components here will be listed in order in which they are executed within Alfred. With the way golang's maps work, [they are randomized](https://github.com/golang/go/issues/2630) to prevent DOS attacks. The reason this is important? Your components within your tasks can be ordered however you'd like, but they will be executed in a specific order. 
+The components here will be listed in order in which they are executed within Alfred. With the way golang's maps work, [they are randomized](https://github.com/golang/go/issues/2630) to prevent DOS attacks. The reason this is important? Your components within your tasks can be ordered however you'd like, but they will be executed in a specific order.
 
 
 ### plugins | map[string]string
 
 A way to extend alfred is by use of plugins by way of filters and hooks. There are numerous hooks you can attach to. Here are a few:
 
-- dir  
+- dir
 - t (for task)
-- tasks 
+- tasks
 - task.started
 - before.<component>
 - after.<component>
 - task.completed
 
-The idea is that context object is passed into your external program as a valid json representation. You can then change it's contents, and as long as it returns a valid `context` object, or depending on the type of data passed in, the hook will pass. 
+The idea is that context object is passed into your external program as a valid json representation. You can then change it's contents, and as long as it returns a valid `context` object, or depending on the type of data passed in, the hook will pass.
 
 This will allow you to add default tasks, change tasks, add defaults to tasks, or anything you can think of.
 
 If you're curious, a quick example can be found under `/demos/`.
 
+
+### register | map[string]string
+
+Based on `key: value` pairs, will register the pairs as [variables](#variables). The value is then `evaluated` when a zero exit code is shown, the `CombinedOutput()` is the resulting value.
+
+```yaml
+register:
+    summary: Demonstrate the registration of variables
+    register:
+        user: whoami
+        twitter: "@themayor"
+    command: |
+      echo "{{ index .Vars "user" }}"
+      echo "{{ .Vars.twitter }}"
+```
+
+```sh
+09:43 PM ✔ kcmerrill (v0.2) demo ] alfred register
+[ 0s] (25 Dec 17 21:43 MST) register started [] Demonstrate the registration of variables
+[ 0s] (25 Dec 17 21:43 MST) register registered user kcmerrill
+[ 0s] (25 Dec 17 21:43 MST) register registered twitter @themayor
+[ 0s] (25 Dec 17 21:43 MST) kcmerrill
+[ 0s] (25 Dec 17 21:43 MST) @themayor
+[ 0s] (25 Dec 17 21:43 MST) register ✔ ok [] elapsed time '0s'
+09:43 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+
 ### log | string
 
 The raw output of commands will be sent to the specified filename appended. If the file does not exist it will attempt to be created.
 
-A quick note, multiple tasks can call different logs, which means that any parent tasks will also have the output sent to said log file. 
+A quick note, multiple tasks can call different logs, which means that any parent tasks will also have the output sent to said log file.
 
 ```yaml
 log.task:
@@ -243,7 +271,7 @@ This should be in the log /tmp/log.demo.txt
 
 ### defaults | []string
 
-When passing in arguments, it's possible to set default arguments. If a given value is an empty string, it will still be required. A use case would be accepting three arguments. This is so you can set the default value to the third argument, making the first two required. 
+When passing in arguments, it's possible to set default arguments. If a given value is an empty string, it will still be required. A use case would be accepting three arguments. This is so you can set the default value to the third argument, making the first two required.
 
 ```yaml
 arguments.task:
@@ -277,7 +305,7 @@ The task can be described by it's summary. When performing a list of the tasks, 
 
 ```yaml
 show.summary:
-  summary: This is the summary. 
+  summary: This is the summary.
 ```
 
 ```sh
@@ -289,7 +317,7 @@ show.summary:
 
 ### stdin | string(text, command)
 
-Using the stdin component will allow you to chain tasks. `stdin` component will be evaulated as a command, and if a non zero code is returned, the result of the string will be stored in stdin, and will then be sent to each subsequent command down stream. If the text of `stdin` is not a valid command, resulting in a non zero exit code, will be left as regular text and sent to eachh subsequent command down stream. 
+Using the stdin component will allow you to chain tasks. `stdin` component will be evaulated as a command, and if a non zero code is returned, the result of the string will be stored in stdin, and will then be sent to each subsequent command down stream. If the text of `stdin` is not a valid command, resulting in a non zero exit code, will be left as regular text and sent to eachh subsequent command down stream.
 
 ```yaml
 pipe:
@@ -339,7 +367,7 @@ dir:
 
 ### config | string(filename, yaml)
 
-A valid filepath that contains a `yaml` unmarshable string of `key: value` pairs. These pairs will then be set as a [variable](#variable). If the filepath does not exist, then the string set itself will be unmarshed as `key: value` pairs and will also be set as variables. The values will then be `evaluated` as a command, and if a valid exit code of zero is returned, the `CombinedOutput()` will be the new value. 
+A valid filepath that contains a `yaml` unmarshable string of `key: value` pairs. These pairs will then be set as a [variable](#variable). If the filepath does not exist, then the string set itself will be unmarshed as `key: value` pairs and will also be set as variables. The values will then be `evaluated` as a command, and if a valid exit code of zero is returned, the `CombinedOutput()` will be the new value.
 
 ```yaml
 configuration:
@@ -351,7 +379,7 @@ configuration:
         echo "The current user is {{ .Vars.user }}"
         echo "The current user's email address is {{ .Vars.email }}"
         echo "The user twitter handle is {{ default "is not set" .Vars.twitter }}"
-    
+
 configuration.file:
     summary: This will show a configuration with a valid yaml file
     config: /tmp/file.that.exists.yml
@@ -359,7 +387,7 @@ configuration.file:
         echo "The current user is {{ .Vars.user }}"
         echo "The current user's email address is {{ .Vars.email }}"
         echo "The user twitter handle is {{ default "is not set" .Vars.twitter }}"
-    
+
 
 ```
 
@@ -382,7 +410,7 @@ The values can then be access via `{{ .Vars.<key>}}`
 prompt:
     summary: lets ask some questions
     prompt:
-        fav: What is your favorite color? 
+        fav: What is your favorite color?
         car: Whatis your favorite car?
     command: |
         echo Your favorite car is {{ .Vars.car }}
@@ -402,40 +430,14 @@ prompt:
 02:05 PM ✔ kcmerrill (master) alfred ]
 ```
 
-### register | map[string]string 
-
-Based on `key: value` pairs, will register the pairs as [variables](#variables). The value is then `evaluated` when a zero exit code is shown, the `CombinedOutput()` is the resulting value. 
-
-```yaml
-register:
-    summary: Demonstrate the registration of variables
-    register:
-        user: whoami
-        twitter: "@themayor"
-    command: |
-      echo "{{ index .Vars "user" }}"
-      echo "{{ .Vars.twitter }}"
-```
-
-```sh
-09:43 PM ✔ kcmerrill (v0.2) demo ] alfred register
-[ 0s] (25 Dec 17 21:43 MST) register started [] Demonstrate the registration of variables
-[ 0s] (25 Dec 17 21:43 MST) register registered user kcmerrill
-[ 0s] (25 Dec 17 21:43 MST) register registered twitter @themayor
-[ 0s] (25 Dec 17 21:43 MST) kcmerrill
-[ 0s] (25 Dec 17 21:43 MST) @themayor
-[ 0s] (25 Dec 17 21:43 MST) register ✔ ok [] elapsed time '0s'
-09:43 PM ✔ kcmerrill (v0.2) demo ]
-```
-
 ### env | map[string]string
 
-Setting env variables is a lot like the `register` component, and the `config` component as well, however the difference is the variables will be available as ENV variables on the CLI. 
+Setting env variables is a lot like the `register` component, and the `config` component as well, however the difference is the variables will be available as ENV variables on the CLI.
 
 ```yaml
 env:
   summary: Lets set some env variables!
-  env: 
+  env:
     WHO: whoami
     TWITTER: "{{ index .Args 0 }}"
   command: |
@@ -457,7 +459,7 @@ env:
 
 ### serve | string(port)
 
-This component will allow you to serve static context based on `dir`. The string provided will be the port, and the server will only last for as long as tasks are running. 
+This component will allow you to serve static context based on `dir`. The string provided will be the port, and the server will only last for as long as tasks are running.
 
 By default, the server will bind to `0.0.0.0:<port>`, however, you can change this by using `127.0.0.1:<port>` where `127.0.0.1` is what you want bound.
 
@@ -535,9 +537,9 @@ setup.task:
 
 ### multitask | TaskGroup{}
 
-A [taskgroup](#taskgroups) that gets run concurrently. 
+A [taskgroup](#taskgroups) that gets run concurrently.
 
-Please note, do due it's concurrency, do not rely on arguments that maybe be updated or relied upon in other multitask tasks. Also, careful with the `dir` component in the given multitasks as you might get odd results of directories switching unexpectedly. 
+Please note, do due it's concurrency, do not rely on arguments that maybe be updated or relied upon in other multitask tasks. Also, careful with the `dir` component in the given multitasks as you might get odd results of directories switching unexpectedly.
 
 ```yaml
 multi.task.one:
@@ -572,7 +574,7 @@ multi.task:
 
 A [taskgroup](#taskgroups) that runs in order the tasks are provided.
 
-If you are not using `multitask`, this component and `setup` are essentially the same and you can use either. 
+If you are not using `multitask`, this component and `setup` are essentially the same and you can use either.
 
 ```yaml
 tasks.task.one:
@@ -606,7 +608,7 @@ tasks:
 
 ### watch | string(regExp)
 
-When set, will pause the task and look at modified times every second for the given regular expression. Given the regular expression `.*?go$` will pause and wait for any file that ends with `.go` to be modified, before continuing on. 
+When set, will pause the task and look at modified times every second for the given regular expression. Given the regular expression `.*?go$` will pause and wait for any file that ends with `.go` to be modified, before continuing on.
 
 ```yaml
 tdd.go:
@@ -639,7 +641,7 @@ tdd.go:
 
 ### for | map[string]string
 
-A simple looping component containing the following keys: `tasks`, `multitask` and `args`. 
+A simple looping component containing the following keys: `tasks`, `multitask` and `args`.
 
 #### tasks | TaskGroup{}
 
@@ -651,9 +653,9 @@ A list of tasks that will be run concurrently, with each new line of `args` prov
 
 #### args | string(command, text)
 
-The string is evaluated as a command, and if the result is a non zero exit code will be the resulting value. 
+The string is evaluated as a command, and if the result is a non zero exit code will be the resulting value.
 
-If the string is not a valid command, it will be consumed as a regular string. 
+If the string is not a valid command, it will be consumed as a regular string.
 
 The resulting string should contain new lines which will be passed through as the first argument to the given `task` or `multitask` provided.
 
@@ -707,9 +709,9 @@ for.loop.two:
 
 ### command | string
 
-A string that will be run as a part of `bash -c <command>`. 
+A string that will be run as a part of `bash -c <command>`.
 
-If the command fails, the task will fail and the flow throughout the rest of the components if required. 
+If the command fails, the task will fail and the flow throughout the rest of the components if required.
 
 Please note, failed commands do _NOT_ fail the task. You will still get a `0` exit code from alfred. If you do need to immediately fail, see [exit](#exit) component.
 
@@ -750,7 +752,7 @@ demo.command.three:
 
 ### commands | string
 
-A new line separated string that will be run as a part of `bash -c <command>`. Identical to command, however, use commands component if you need every command to be evaulated for pass/fail. 
+A new line separated string that will be run as a part of `bash -c <command>`. Identical to command, however, use commands component if you need every command to be evaulated for pass/fail.
 
 ### ok | TaskGroup{}
 
@@ -791,7 +793,7 @@ ok.tasks:
 
 ### http.tasks | map[string]string
 
-Baked in is the ability to run tasks via HTTP requests. Specify the `port` and if necessary `password`. The password field will be translated and evaluated, so feel free to use env vars, scripts etc. The output will be sent to the http response instead of stdout. If you want to see what is happening, you can always log the output as well. 
+Baked in is the ability to run tasks via HTTP requests. Specify the `port` and if necessary `password`. The password field will be translated and evaluated, so feel free to use env vars, scripts etc. The output will be sent to the http response instead of stdout. If you want to see what is happening, you can always log the output as well.
 
 ```yaml
 http.task:
@@ -859,7 +861,7 @@ fail.tasks:
 
 ### wait | duration
 
-Once a task has completed, exits, before running again, you can wait a [golang duration](https://golang.org/pkg/time/#ParseDuration) before the next task runs. 
+Once a task has completed, exits, before running again, you can wait a [golang duration](https://golang.org/pkg/time/#ParseDuration) before the next task runs.
 
 ```yaml
 07:03 PM ✘ kcmerrill (v0.2) demo ] alfred wait
@@ -933,11 +935,11 @@ task.original: &task_original
 task.alias: *task_original
 ```
 
-### Task Inheritance 
+### Task Inheritance
 
 Lets say you've created a rather large and complex task. Sure, you could copy it, but if you change one you might need to change them both. Not ideal solution. You can use [YAML Anchors](https://en.wikipedia.org/wiki/YAML#Advanced_components).
 
-In the example below, any `key` below `<<: *task_original` will inherit from the original task, and `command` component will override the `task_original` command. 
+In the example below, any `key` below `<<: *task_original` will inherit from the original task, and `command` component will override the `task_original` command.
 
 As a side note, YAML is not a huge fan of dots(`.`) in anchor names which is why I used underscores(`_`) in the anchor name.
 
