@@ -37,7 +37,7 @@ func main() {
 		}
 		fmt.Println()
 		fmt.Println("---")
-		fmt.Println("Made with " + ansi.ColorCode("red") + "<3" + ansi.ColorCode("reset") + " by kcmerrill")
+		fmt.Println("Made with " + ansi.ColorCode("red") + "<3" + ansi.ColorCode("reset") + " by @kcmerrill")
 		fmt.Println()
 		return
 	}
