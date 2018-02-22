@@ -28,7 +28,7 @@ type Context struct {
 	Vars        map[string]string
 	Lock        *sync.Mutex
 	Out         io.Writer
-	DryRun      bool
+	Debug       bool
 	Interactive bool
 }
 

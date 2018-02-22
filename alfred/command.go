@@ -10,10 +10,6 @@ import (
 
 // the task component
 func commandC(task Task, context *Context, tasks map[string]Task) {
-	if len(context.Log) != 0 {
-		command(task.Command, task, context, tasks)
-		return
-	}
 	command(task.Command, task, context, tasks)
 }
 
@@ -42,8 +38,15 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 	// hack
 	cmdOK("", context)
 
+	translatedCMD := translate(commandStr, context)
+
+	if context.Debug {
+		cmdOK(translatedCMD, context)
+		return
+	}
+
 	for retry := 0; retry <= task.Retry; retry++ {
-		cmd := exec.Command("bash", "-c", translate(commandStr, context))
+		cmd := exec.Command("bash", "-c", translatedCMD)
 		if context.Stdin != "" {
 			cmd.Stdin = bytes.NewBufferString(context.Stdin)
 		} else {
