@@ -13,7 +13,7 @@ func commandC(task Task, context *Context, tasks map[string]Task) {
 	command(task.Command, task, context, tasks)
 }
 
-func commandBasic(commandStr string, task Task, context *Context, tasks map[string]Task) {
+func commandInteractive(commandStr string, task Task, context *Context, tasks map[string]Task) {
 	if commandStr == "" {
 		return
 	}
@@ -35,9 +35,6 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		return
 	}
 
-	// hack
-	cmdOK("", context)
-
 	translatedCMD := translate(commandStr, context)
 
 	if context.Debug {
@@ -45,12 +42,16 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		return
 	}
 
+	// skip the beautification
+	if context.Interactive {
+		commandInteractive(commandStr, task, context, tasks)
+		return
+	}
+
 	for retry := 0; retry <= task.Retry; retry++ {
 		cmd := exec.Command("bash", "-c", translatedCMD)
 		if context.Stdin != "" {
 			cmd.Stdin = bytes.NewBufferString(context.Stdin)
-		} else {
-			cmd.Stdin = os.Stdin
 		}
 
 		// set the directory where to run
@@ -60,7 +61,7 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 		var wg sync.WaitGroup
 		cmdReaderStdOut, _ := cmd.StdoutPipe()
 		scannerStdOut := bufio.NewScanner(cmdReaderStdOut)
-		scannerStdOut.Split(bufio.ScanBytes)
+		scannerStdOut.Split(bufio.ScanLines)
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
@@ -71,7 +72,7 @@ func command(commandStr string, task Task, context *Context, tasks map[string]Ta
 
 		cmdReaderStdErr, _ := cmd.StderrPipe()
 		scannerStdErr := bufio.NewScanner(cmdReaderStdErr)
-		scannerStdErr.Split(bufio.ScanBytes)
+		scannerStdErr.Split(bufio.ScanLines)
 		go func() {
 			wg.Add(1)
 			defer wg.Done()

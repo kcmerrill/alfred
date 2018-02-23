@@ -34,18 +34,16 @@ type Context struct {
 
 // TextConfig contains configuration needed to display text
 type TextConfig struct {
-	DisableFormatting    bool
-	Success              string
-	SuccessIcon          string
-	Failure              string
-	FailureIcon          string
-	Task                 string
-	Warning              string
-	Args                 string
-	Command              string
-	Reset                string
-	TerminalNewLineReset string
-	TerminalNewLine      string
+	DisableFormatting bool
+	Success           string
+	SuccessIcon       string
+	Failure           string
+	FailureIcon       string
+	Task              string
+	Warning           string
+	Args              string
+	Command           string
+	Reset             string
 
 	// color codes
 	Grey   string
@@ -88,17 +86,15 @@ func InitialContext(args []string) *Context {
 		Out:      os.Stdout,
 		Text: TextConfig{
 			// TODO: I don't like this, let me chew on this a bit more
-			Success:              ansi.ColorCode("green"),
-			SuccessIcon:          "✔",
-			Failure:              ansi.ColorCode("9"),
-			FailureIcon:          "✘",
-			Task:                 ansi.ColorCode("33"),
-			Warning:              ansi.ColorCode("185"),
-			Command:              ansi.ColorCode("reset"),
-			Args:                 ansi.ColorCode("162"),
-			Reset:                ansi.ColorCode("reset"),
-			TerminalNewLineReset: "\033[1000D\033[K",
-			TerminalNewLine:      "\033[1000D",
+			Success:     ansi.ColorCode("green"),
+			SuccessIcon: "✔",
+			Failure:     ansi.ColorCode("9"),
+			FailureIcon: "✘",
+			Task:        ansi.ColorCode("33"),
+			Warning:     ansi.ColorCode("185"),
+			Command:     ansi.ColorCode("reset"),
+			Args:        ansi.ColorCode("162"),
+			Reset:       ansi.ColorCode("reset"),
 
 			// Color codes
 			Grey:   ansi.ColorCode("238"),

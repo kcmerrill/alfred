@@ -59,29 +59,3 @@ tdd.go:
     watch: ".*?go$"
     every: 1s
     command: go test $(go list ./... | grep -v /vendor/)
-
-http.task:
-    summary: HTTP Task runner
-    http.tasks:
-        port: 8093
-        password: hi
-
-producer.task:
-    summary: We are going to produce a file
-    pipe: cat main.go
-
-
-tester:
-    summary: i will echo something
-    command: echo hello world
-
-tasker:
-    summary: Tasker! HTTP Style
-    http.tasks:
-        port: 8090
-
-compile:
-    summary: Compile on file changes
-    watch: ".*?go$"
-    command: go install
-    every: 1s

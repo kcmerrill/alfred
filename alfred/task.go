@@ -30,6 +30,9 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// set our taskname
 	context.TaskFile, context.TaskName = TaskParser(task, ":default")
 
+	// interactive mode?
+	context.Interactive = t.Interactive
+
 	components := []Component{
 		Component{"register", register},
 		Component{"log", log},
