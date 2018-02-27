@@ -25,10 +25,10 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 	var location string
 	var contents []byte
 
-	location, task = TaskParser(task, ":list")
+	location, task = TaskParser(task, "alfred:list")
 
 	// hmmm, the task does not exist. Lets try to load whatever possible
-	if location != ":local" {
+	if location != "" {
 		f, err := file.Get(location)
 		if err != nil {
 			// cannot use output, no task yet ...
@@ -69,7 +69,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		return task, Task{skip: true}, tasks
 	}
 
-	if task == ":list" {
+	if task == "alfred:list" {
 		list(context, tasks)
 		os.Exit(0)
 	}

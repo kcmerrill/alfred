@@ -26,8 +26,8 @@ func (h *HTTPTask) runner(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	url, name := TaskParser(vars["task"], ":default")
-	if url != ":local" || name == ":default" {
+	url, name := TaskParser(vars["task"], "alfred:list")
+	if url != "" || name == "alfred:list" {
 		resp.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(resp, "'"+vars["task"]+"' is invalid.")
 		return

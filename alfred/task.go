@@ -28,7 +28,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	context.Ok = true
 
 	// set our taskname
-	context.TaskFile, context.TaskName = TaskParser(task, ":default")
+	context.TaskFile, context.TaskName = TaskParser(task, "alfred:list")
 
 	// interactive mode?
 	context.Interactive = t.Interactive

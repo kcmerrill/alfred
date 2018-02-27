@@ -71,16 +71,15 @@ func main() {
 		context.Stdin = strings.TrimSpace(string(stdinContent))
 	}
 
-	// don't do this if they are :listing
-	if len(os.Args) >= 2 {
-		NewTask("__init", context, tasks)
+	url, _ := TaskParser(task, "alfred:list")
+	if url != "" {
+		url += ":"
 	}
 
+	// init
+	NewTask(url+"__init", context, tasks)
 	// start the task
 	NewTask(task, context, tasks)
-
-	// don't do this if they are :listing
-	if len(os.Args) >= 2 {
-		NewTask("__exit", context, tasks)
-	}
+	// exit
+	NewTask(url+"__exit", context, tasks)
 }

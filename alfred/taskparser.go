@@ -41,13 +41,13 @@ func TaskParser(task, defaultTask string) (string, string) {
 	}
 
 	if task == "" {
-		return ":local", defaultTask
+		return "", defaultTask
 	}
 
 	if strings.HasPrefix(task, "!") {
-		return ":local", "!exec.command"
+		return "", "!exec.command"
 	}
 
 	// alright, so it's not a url, it's not a github repo, it must be just a regular local task
-	return ":local", task
+	return "", task
 }
