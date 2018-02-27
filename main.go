@@ -71,15 +71,10 @@ func main() {
 		context.Stdin = strings.TrimSpace(string(stdinContent))
 	}
 
-	url, _ := TaskParser(task, "alfred:list")
-	if url != "" {
-		url += ":"
-	}
-
 	// init
-	NewTask(url+"__init", context, tasks)
+	NewTask(MagicTaskURL(task)+"__init", context, tasks)
 	// start the task
 	NewTask(task, context, tasks)
 	// exit
-	NewTask(url+"__exit", context, tasks)
+	NewTask(MagicTaskURL(task)+"__exit", context, tasks)
 }

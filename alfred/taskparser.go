@@ -5,6 +5,15 @@ import (
 	"strings"
 )
 
+// MagicTaskURL will parse "magic" tasks, as denoted by "__"
+func MagicTaskURL(task string) string {
+	url, _ := TaskParser(task, "alfred:list")
+	if url != "" {
+		url += ":"
+	}
+	return url
+}
+
 // TaskParser returns a url and a task(default if necessary)
 func TaskParser(task, defaultTask string) (string, string) {
 	// does it start with http?
