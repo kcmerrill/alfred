@@ -42,7 +42,7 @@ func (h *HTTPTask) runner(resp http.ResponseWriter, req *http.Request) {
 
 	if error != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(resp, "'"+vars["task"]+"' is invalid.")
+		fmt.Fprintf(resp, string(cmdOutput))
 	} else {
 		resp.WriteHeader(http.StatusOK)
 		fmt.Fprintf(resp, string(cmdOutput))
