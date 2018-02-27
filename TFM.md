@@ -30,11 +30,12 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [tasks | TaskGroup\{\}](#tasks--taskgroup)
     * [watch | string(regExp)](#watch--stringregexp)
     * [for | map[string]string](#for--mapstringstring)
-      * [tasks | TaskGroup\{\}](#tasks--taskgroup-1)
-      * [multitask | TaskGroup\{\}](#multitask--taskgroup-1)
-      * [args | string(command, text)](#args--stringcommand-text)
+    * [tasks | TaskGroup\{\}](#tasks--taskgroup-1)
+    * [multitask | TaskGroup\{\}](#multitask--taskgroup-1)
+    * [args | string(command, text)](#args--stringcommand-text)
     * [command | string](#command--string)
     * [commands | string](#commands--string)
+    * [exit | number](#exit--number)
     * [ok | TaskGroup\{\}](#ok--taskgroup)
     * [http\.tasks | map[string]string](#httptasks--mapstringstring)
     * [fail | TaskGroup\{\}](#fail--taskgroup)
@@ -754,6 +755,17 @@ demo.command.three:
 ### commands | string
 
 A new line separated string that will be run as a part of `bash -c <command>`. Identical to command, however, use commands component if you need every command to be evaulated for pass/fail.
+
+### exit | number
+
+Tasks can fail for a number of reasons, but one of the biggest use cases is if a command fails. If a command fails, alfred will simply carry on, unless you specify an exit code to exit with. This will completely halt alfred and will not continue on, not even to the `fail` tasks. 
+
+```yaml
+fail.command:
+    command: |
+        ls -alh /a/folder/that/does/not/exist
+    exit: 2
+```
 
 ### ok | TaskGroup{}
 
