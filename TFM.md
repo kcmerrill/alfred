@@ -825,7 +825,7 @@ http.task:
 
 ```sh
 01:21 AM ✘ kcmerrill  tmp ] curl -u "password:" -X POST -d "body.of.msg" http://localhost:8093/echo/alfredwashere
-[ 1m40s] (28 Dec 17 01:21 MST) echo started [alfredwashere] echo out some shit
+[ 1m40s] (28 Dec 17 01:21 MST) echo started [alfredwashere] echo out some stuff
 [ 1m40s] (28 Dec 17 01:21 MST) args: alfredwashere
 [ 1m40s] (28 Dec 17 01:21 MST) stdin: body.of.msg
 [ 1m40s] (28 Dec 17 01:21 MST) echo  ok [alfredwashere] elapsed time '1m40s'
