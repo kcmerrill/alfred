@@ -9,6 +9,7 @@ func TestDefaults(t *testing.T) {
 		Defaults: []string{"one", "two", "three"},
 	}
 	context := InitialContext([]string{"one", "two"})
+	context.Text.DisableFormatting = true
 	tasks := make(map[string]Task)
 
 	defaults(task, context, tasks)

@@ -20,8 +20,7 @@ func TestParseTaskGroup(t *testing.T) {
 		t.Fatalf("tg should contain task.three")
 	}
 
-	tgWArgs := task.ParseTaskGroup("task.one\n task.two(arg1, arg2 , arg3, {{ arg4 }}) \ntask.two\ntask.three(arg1)")
-	fmt.Println("args:", tgWArgs)
+	tgWArgs := task.ParseTaskGroup("task.one\n task.two(arg1, arg2 , arg3, arg4 ) \ntask.two\ntask.three(arg1)")
 
 	if tgWArgs[0].Name != "task.one" {
 		t.Fatalf("task with args name not set")

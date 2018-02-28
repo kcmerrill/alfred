@@ -22,6 +22,8 @@ func TestServeComponent(t *testing.T) {
 		Serve: "8088",
 	}
 	context := InitialContext([]string{})
+	context.Text.DisableFormatting = true
+
 	go serve(tasks["http.serve"], context, tasks)
 	response, err := http.Get("http://localhost:8088/serve_test.go")
 	if err != nil {

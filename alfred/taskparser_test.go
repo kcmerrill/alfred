@@ -64,3 +64,18 @@ func TestHTTPTaskParser(t *testing.T) {
 		t.Fatalf("Expected alfred:list to be returned when a task is not defined")
 	}
 }
+
+func TestMagicTaskURL(t *testing.T) {
+	tm := map[string]string{
+		"/slack": "https://raw.githubusercontent.com/kcmerrill/alfred-tasks/master/slack.yml:",
+		"slack":  "",
+		"http://somesite.com/sometask.yml:sometask": "http://somesite.com/sometask.yml:",
+	}
+
+	for task, result := range tm {
+		url := MagicTaskURL(task)
+		if url != result {
+			t.Fatal("expected", result, "actual", url)
+		}
+	}
+}

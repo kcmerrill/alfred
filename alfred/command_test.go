@@ -9,7 +9,9 @@ func TestCommandComponent(t *testing.T) {
 		Dir:     "/tmp/alfred/command",
 		Command: "touch myfile.txt",
 	}
-	commandC(task, InitialContext([]string{}), tasks)
+	c := InitialContext([]string{})
+	c.Text.DisableFormatting = true
+	commandC(task, c, tasks)
 
 	// validate that it worked and that directory was created
 	if _, exists := os.Stat("/tmp/alfred/command/myfile.txt"); exists != nil {

@@ -12,6 +12,7 @@ func TestCommandsComponent(t *testing.T) {
 	}
 
 	c := InitialContext([]string{})
+	c.Text.DisableFormatting = true
 	commands(task, c, tasks)
 
 	if c.Ok {

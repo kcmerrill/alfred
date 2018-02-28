@@ -4,6 +4,7 @@ import "testing"
 
 func TestInitialContext(t *testing.T) {
 	c := InitialContext([]string{"one", "two"})
+	c.Text.DisableFormatting = true
 
 	if c.TaskName == "" {
 		t.Fatalf("The taskname shouldn't be blank")
