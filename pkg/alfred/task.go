@@ -83,6 +83,10 @@ type Task struct {
 		MultiTask string
 		Args      string
 	}
+	SlackSlashCommands struct {
+		token string
+		port  string
+	} `yaml:"slack.slash.commands"`
 	HTTPTasks struct {
 		Port     string
 		Password string

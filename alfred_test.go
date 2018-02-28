@@ -83,7 +83,7 @@ func TestStdin(t *testing.T) {
 }
 
 func TestDir(t *testing.T) {
-	results, ok := execAlfred("ls ../alfred")
+	results, ok := execAlfred("ls ../pkg/alfred")
 	if !ok {
 		fmt.Println(results)
 		t.Fatalf("Expected a directory listing of ../alfred")
