@@ -25,7 +25,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 	var location string
 	var contents []byte
 
-	location, task = TaskParser(task, ":list")
+	location, task = TaskParser(task, "alfred:list")
 
 	// hmmm, the task does not exist. Lets try to load whatever possible
 	if location != "" {
@@ -60,18 +60,17 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		tasks[fetchedTaskName] = fetchedTask
 	}
 
-	if t, exists := tasks[task]; exists {
-		return "", t, tasks
-	}
-
-	if task == "__init" ||
-		task == "__exit" {
+	if task == "__init" || task == "__exit" {
 		return task, Task{skip: true}, tasks
 	}
 
-	if task == ":list" {
+	if task == "alfred:list" {
 		list(context, tasks)
 		os.Exit(0)
+	}
+
+	if t, exists := tasks[task]; exists {
+		return "", t, tasks
 	}
 
 	outFail("invalid task", "{{ .Text.Failure }}'"+task+"'", context)

@@ -9,12 +9,14 @@ import (
 
 	"github.com/mgutz/ansi"
 
-	. "github.com/kcmerrill/alfred/alfred"
+	. "github.com/kcmerrill/alfred/pkg/alfred"
 )
 
 var (
+	// Version of the Alfred application at compile time
 	Version = "Development"
-	Commit  = ""
+	// Commit hash of the Alfred application at compile time
+	Commit = ""
 )
 
 func main() {
@@ -44,6 +46,8 @@ func main() {
 
 	tasks := make(map[string]Task)
 	task, args := CLI(flag.Args())
+
+	// configure out initial context with defaults
 	context := InitialContext(args)
 
 	if *disableColors {
@@ -67,14 +71,11 @@ func main() {
 	// anything from stdin?
 	stdinFileInfo, _ := os.Stdin.Stat()
 	if stdinFileInfo.Mode()&os.ModeNamedPipe != 0 {
+		// yup. lets read it in and set it
 		stdinContent, _ := ioutil.ReadAll(os.Stdin)
 		context.Stdin = strings.TrimSpace(string(stdinContent))
 	}
 
-	// init
-	NewTask(MagicTaskURL(task)+"__init", context, tasks)
 	// start the task
 	NewTask(task, context, tasks)
-	// exit
-	NewTask(MagicTaskURL(task)+"__exit", context, tasks)
 }
