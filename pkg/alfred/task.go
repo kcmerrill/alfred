@@ -33,6 +33,11 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	// interactive mode?
 	context.Interactive = t.Interactive
 
+	if !context.hasBeenInited {
+		context.hasBeenInited = true
+		NewTask(MagicTaskURL(task)+"__init", context, tasks)
+	}
+
 	components := []Component{
 		Component{"register", register},
 		Component{"log", log},

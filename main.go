@@ -76,10 +76,6 @@ func main() {
 		context.Stdin = strings.TrimSpace(string(stdinContent))
 	}
 
-	// init
-	NewTask(MagicTaskURL(task)+"__init", context, tasks)
 	// start the task
 	NewTask(task, context, tasks)
-	// exit
-	NewTask(MagicTaskURL(task)+"__exit", context, tasks)
 }

@@ -12,24 +12,25 @@ import (
 
 // Context contains the state of a task
 type Context struct {
-	TaskName    string
-	TaskFile    string
-	Stdin       string
-	Started     time.Time
-	Log         map[string]*os.File
-	Args        []string
-	AllArgs     string
-	Register    map[string]string
-	Ok          bool
-	Text        TextConfig
-	Silent      bool
-	Status      string
-	Component   string
-	Vars        map[string]string
-	Lock        *sync.Mutex
-	Out         io.Writer
-	Debug       bool
-	Interactive bool
+	TaskName      string
+	TaskFile      string
+	Stdin         string
+	Started       time.Time
+	Log           map[string]*os.File
+	Args          []string
+	AllArgs       string
+	Register      map[string]string
+	Ok            bool
+	Text          TextConfig
+	Silent        bool
+	Status        string
+	Component     string
+	Vars          map[string]string
+	Lock          *sync.Mutex
+	Out           io.Writer
+	Debug         bool
+	Interactive   bool
+	hasBeenInited bool
 }
 
 // TextConfig contains configuration needed to display text
