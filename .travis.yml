@@ -1,5 +1,7 @@
 language: go
-
+sudo: required
+services:
+ - docker
 go:
     - 1.9
 
@@ -7,4 +9,4 @@ install:
     - go get
     - go install github.com/kcmerrill/alfred/
 
-script: go test $(go list ./... | grep -v /vendor/)
+script: docker run -ti --rm kcmerrill/alfred test
