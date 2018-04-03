@@ -9,4 +9,6 @@ install:
     - go get
     - go install github.com/kcmerrill/alfred/
 
-script: docker run -ti --rm kcmerrill/alfred test
+script:
+    - docker build -t kcmerrill/alfred .
+    - docker run -ti --rm kcmerrill/alfred test
