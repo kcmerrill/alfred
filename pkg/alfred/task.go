@@ -39,13 +39,13 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	}
 
 	components := []Component{
-		Component{"register", register},
 		Component{"log", log},
-		Component{"defaults", defaults},
 		Component{"summary", summary},
+		Component{"prompt", prompt},
+		Component{"register", register},
+		Component{"defaults", defaults},
 		Component{"stdin", stdin},
 		Component{"config", configC},
-		Component{"prompt", prompt},
 		Component{"env", env},
 		Component{"serve", serve},
 		Component{"setup", setup},
