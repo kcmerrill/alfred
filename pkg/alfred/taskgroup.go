@@ -35,7 +35,7 @@ func (t *Task) ParseTaskGroup(group string) []TaskGroup {
 		for _, task := range tasks {
 			re := regexp.MustCompile(`(.*?)\((.*?)\)`)
 			results := re.FindStringSubmatch(task)
-			if len(results) == 0 {
+			if len(results) == 0 || strings.HasPrefix(task, "!") {
 				tg = append(tg, TaskGroup{Name: strings.TrimSpace(task), Args: []string{}})
 			} else {
 				args := strings.Split(results[2], ",")

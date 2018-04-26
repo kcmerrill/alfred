@@ -56,9 +56,11 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		os.Exit(42)
 	}
 
+	context.lock.Lock()
 	for fetchedTaskName, fetchedTask := range fetched {
 		tasks[fetchedTaskName] = fetchedTask
 	}
+	context.lock.Unlock()
 
 	if task == "__init" || task == "__exit" {
 		return task, Task{skip: true}, tasks

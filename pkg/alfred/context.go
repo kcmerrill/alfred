@@ -31,6 +31,7 @@ type Context struct {
 	Debug         bool
 	Interactive   bool
 	hasBeenInited bool
+	lock          *sync.Mutex
 }
 
 // TextConfig contains configuration needed to display text
@@ -85,6 +86,7 @@ func InitialContext(args []string) *Context {
 		Vars:     make(map[string]string, 0),
 		Lock:     &sync.Mutex{},
 		Out:      os.Stdout,
+		lock:     &sync.Mutex{},
 		Text: TextConfig{
 			// TODO: I don't like this, let me chew on this a bit more
 			Success:     ansi.ColorCode("green"),
