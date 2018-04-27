@@ -21,6 +21,7 @@ type Context struct {
 	AllArgs       string
 	Register      map[string]string
 	Ok            bool
+	Skip          string
 	Text          TextConfig
 	Silent        bool
 	Status        string

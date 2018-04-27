@@ -61,6 +61,18 @@ tdd.go:
     command: go test $(go list ./... | grep -v /vendor/)
 
 bleh:
+    summary: bleh
     multitask: |
         !echo hello world
         !echo goodbye world
+
+checked:
+    summary: check
+    check: ls /tmp/
+    command: |
+        echo "should not see this"
+
+bingo:
+    summary: bingo was his nameo
+    command: |
+        echo bingo

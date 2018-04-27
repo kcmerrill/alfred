@@ -63,7 +63,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 	context.lock.Unlock()
 
 	if task == "__init" || task == "__exit" {
-		return task, Task{skip: true}, tasks
+		return task, Task{Skip: true}, tasks
 	}
 
 	if task == "alfred:list" {
