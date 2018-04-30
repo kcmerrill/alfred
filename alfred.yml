@@ -59,8 +59,3 @@ tdd.go:
     watch: ".*?go$"
     every: 1s
     command: go test $(go list ./... | grep -v /vendor/)
-
-bleh:
-    multitask: |
-        !echo hello world
-        !echo goodbye world

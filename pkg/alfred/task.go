@@ -17,7 +17,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	event.Trigger("tasks", &tasks)
 
 	// Skip the task, if we need to skip
-	if t.skip {
+	if t.Skip {
 		return
 	}
 
@@ -47,6 +47,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"stdin", stdin},
 		Component{"config", configC},
 		Component{"env", env},
+		Component{"check", check},
 		Component{"serve", serve},
 		Component{"setup", setup},
 		Component{"multitask", multitask},
@@ -70,6 +71,11 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		event.Trigger("before."+component.Name, context)
 		component.F(t, context, tasks)
 		event.Trigger("after."+component.Name, context)
+		if context.Skip != "" {
+			outOK(context.Skip, "skipped", context)
+			event.Trigger("task.skipped", context)
+			return
+		}
 	}
 	event.Trigger("task.completed", context)
 }
@@ -116,9 +122,10 @@ type Task struct {
 	Watch       string
 	Private     bool
 	ExitCode    int `yaml:"exit"`
-	skip        bool
+	Skip        bool
 	Interactive bool
 	Plugin      map[string]string
+	Check       string
 }
 
 // Exit determins whether a task should exit or not
@@ -128,6 +135,11 @@ func (t *Task) Exit(context *Context, tasks map[string]Task) {
 		outFail("["+strings.Join(context.Args, ", ")+"]", "{{ .Text.Failure }}{{ .Text.FailureIcon }} exiting ...", context)
 		NewTask("__exit", context, tasks)
 		os.Exit(t.ExitCode)
+	}
+
+	if t.Skip {
+		// skip
+		context.Skip = "command"
 	}
 }
 
