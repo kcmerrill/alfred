@@ -65,7 +65,7 @@ All tasks start where the alfred file/folder are located(unless it's a remote ta
 
 ### Remote tasks
 
-One bit of functionality that makes alfred so flexible is the ability to have private/remote repositories of alfred files. While this feature is not new to alfred, the way it's invoked is. By using a `/` at the start of the task name, alfred knows to lookup tasks in the newly created repository [kcmerrill/alfred-tasks](https://github.com/kcmerrill/alfred-tasks)
+One bit of functionality that makes alfred so flexible is the ability to have private/remote repositories of alfred files. While this feature is not new to alfred, the way it's invoked is. By using a `/` at the start of the task name, alfred knows to lookup tasks in the `remote-modules` directory within this repository. You can see a list of the [modules here](https://github.com/kcmerrill/alfred/tree/master/remote-modules).
 
 Also, you can use a web address in order to get access to tasks. Of course, if the web address is private, then your tasks are protected.
 
