@@ -28,7 +28,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 	location, task = TaskParser(task, "alfred:list")
 
 	// hmmm, the task does not exist. Lets try to load whatever possible
-	if location != "" {
+	if strings.HasPrefix(location, "http") {
 		f, err := file.Get(location)
 		if err != nil {
 			// cannot use output, no task yet ...
@@ -38,7 +38,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		contents = f
 	} else {
 		// must be local
-		dir, local, err := config.FindAndCombine("alfred", "yml")
+		dir, local, err := config.FindAndCombine(location+"alfred", "yml")
 		if err != nil {
 			// cannot use output, no task yet ...
 			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing task file.{{ .Text.Reset }}", emptyContext()))
@@ -72,10 +72,10 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 	}
 
 	if t, exists := tasks[task]; exists {
-		return "", t, tasks
+		return "./", t, tasks
 	}
 
 	outFail("invalid task", "{{ .Text.Failure }}'"+task+"'", context)
 	os.Exit(42)
-	return "", Task{}, tasks
+	return "./", Task{}, tasks
 }
