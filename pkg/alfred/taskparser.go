@@ -31,7 +31,7 @@ func TaskParser(task, defaultTask string) (string, string) {
 	// does it start with a /? Aka a remote task?
 	if strings.HasPrefix(task, "/") {
 		bits := strings.Split(task, ":")
-		url := fmt.Sprintf("https://raw.githubusercontent.com/kcmerrill/alfred-tasks/master%s.yml", bits[0])
+		url := fmt.Sprintf("https://raw.githubusercontent.com/kcmerrill/alfred/master/remote-modules/%s.yml", bits[0])
 
 		if len(bits) >= 2 {
 			return url, bits[1]

@@ -1,0 +1,51 @@
+ok:
+    summary: Used for OK notifications
+    usage: alfred /alfred/slack:ok "#general" "title" "http://titlelink.com" "My message"
+    tasks: |
+        attachment({{ index .Args 0 }}, good, {{ index .Args 1 }}, {{ index .Args 2 }}, {{ index .Args 3 }})
+    exit: 1
+
+warning:
+    summary: Used for Warning notifications
+    usage: alfred /alfred/slack:warning "#general" "title" "http://titlelink.com" "My message"
+    tasks: |
+        attachment({{ index .Args 0 }}, warning, {{ index .Args 1 }}, {{ index .Args 2 }}, {{ index .Args 3 }})
+    exit: 1
+
+critical:
+    summary: Used for HTTP Critical notifications
+    usage: alfred /alfred/slack:danger "#general" "title" "http://titlelink.com" "My message"
+    tasks: |
+        attachment({{ index .Args 0 }}, danger, {{ index .Args 1 }}, {{ index .Args 2 }}, {{ index .Args 3 }})
+    exit: 1
+
+msg:
+  summary: Send a simple slack message
+  usage: alfred /alfred/slack:msg "#general" "My simple message."
+  exit: 1
+  command: >
+        curl -X POST
+        --data-urlencode
+        'payload={
+        "channel": "{{ index .Args 0 }}", "text": "{{ index .Args 1 }}"}' ${SLACK_WEBHOOK_URL}
+
+attachment:
+  summary: Send a slack message attachment
+  usage: alfred /alfred/slack attachment "#general" "#hexcolor" "title" "http://titlelink.com" "My message"
+  exit: 1
+  command: >
+    curl --fail -X POST
+    --data-urlencode
+    'payload={
+    "channel": "{{ index .Args 0 }}",
+    "attachments": [
+        {
+            "fallback": "{{ index .Args 4 }}",
+            "color": "{{ index .Args 1 }}",
+            "title": "{{ index .Args 2 }}",
+            "title_link": "{{ index .Args 3 }}",
+            "text": "{{ index .Args 4}}",
+            "footer": "Alfred",
+            "footer_icon": "https://raw.githubusercontent.com/kcmerrill/alfred/master/assets/alfred_icon.png"
+        }]
+    }' ${SLACK_WEBHOOK_URL}

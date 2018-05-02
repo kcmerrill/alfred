@@ -41,7 +41,16 @@ run.go:
     defaults:
         - " "
 
+tdd:
+    summary: Start watching files, then run a command
+    watch: "{{ index .Args 0 }}"
+    command: |
+        {{ index .Args 1 }}
+    every: 2s
+    interactive: true
+    
 tdd.go:
     summary: Watch .go files and run test.go
     watch: ".*?go$"
     command: go test $(go list ./... | grep -v /vendor/) --race
+    every: 2s

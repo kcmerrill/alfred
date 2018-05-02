@@ -1,0 +1,45 @@
+kill.remove:
+    tasks: kill remove
+
+kill:
+    summary: Kill container
+    command: docker kill {{ index .Args 0 }}
+
+stop:
+    summary: Stop container
+    command: docker stop {{ index .Args 0 }}
+
+remove:
+    summary: Remove container
+    command: docker rm --volumes  {{ index .Args 0 }}
+
+exec:
+    command: docker exec -ti {{ index .Args 0 }} {{ index .Args 1 }}
+
+pull:
+    command: docker pull {{ index .Args 0 }}
+        
+clean: &docker_clean
+    summary: Stop + Start your docker containers
+    tasks: |
+        kill({{ index .Args 0 }})
+        remove({{ index .Args 0 }})
+
+reset:
+    <<: *docker_clean
+    
+prune:
+    summary: Docker prune <time.Duration>
+    command: |
+        docker system prune -a -f --filter "until={{ index .Args 0 }}"
+    defaults: 
+        - 5h
+    exit: 1
+        
+
+kill.all:
+    summary: Kill all running docker containers
+    for:
+        args: |
+            docker ps --format "table {{ "{{" }}.ID{{ "}}" }}" | grep -v CONTAINER
+        tasks: kill remove

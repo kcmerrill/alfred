@@ -1,0 +1,4 @@
+alert:
+    summary: Display a notification
+    command: |
+        osascript -e 'tell application (path to frontmost application as text) to display dialog "{{ .AllArgs }}" buttons {"OK"} default button "OK" with icon stop'

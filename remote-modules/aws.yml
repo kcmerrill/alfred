@@ -1,0 +1,5 @@
+ecr.login:
+  summary: Login to AWS ECR
+  command: |
+    $(aws ecr get-login --registry-ids {{ index .Args 0 }}  --region us-east-1 --no-include-email)
+  exit: 1

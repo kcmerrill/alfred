@@ -4,7 +4,7 @@ clone:
     command: |
         git clone git@github.com:{{ index .Args 0 }}.git
         cd $(ls -td -- */ | head -n 1)
-        alfred /git submodule-update-init
+        alfred /git:submodule-update-init
 
 checkout:
     summary: Checkout commit

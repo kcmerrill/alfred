@@ -1,0 +1,12 @@
+clone:
+    summary: Clone a repository
+    dir: ../
+    check: |
+        {{ $info := index .Args 0 }}{{ $gh := split "/" $info }}
+        ls -alh {{ $gh._1 }}
+    commands: |
+        git clone git@github.com:{{ index .Args 0 }}.git
+        {{ $info := index .Args 0 }}{{ $gh := split "/" $info }}cd {{ $gh._1 }} && git checkout {{ index .Args 1 }}
+    defaults:
+        - ""
+        - master
