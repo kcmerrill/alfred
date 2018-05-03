@@ -1,6 +1,8 @@
 package alfred
 
-import "strings"
+import (
+	"strings"
+)
 
 func tasksC(task Task, context *Context, tasks map[string]Task) {
 	tgs := task.ParseTaskGroup(task.Tasks)

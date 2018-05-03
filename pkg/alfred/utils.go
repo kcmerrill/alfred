@@ -1,6 +1,7 @@
 package alfred
 
 import (
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -56,4 +57,29 @@ func pad(word string, size int, padding string) string {
 	}
 
 	return padded
+}
+
+func mkdir(dir string, context *Context) (string, bool) {
+	d := evaluate(translate(context.relativePath(dir), context), ".")
+
+	if _, err := os.Stat(d); err == nil {
+		// woot!
+		return d, true
+	}
+
+	// ok, we have some work to do
+	if err := os.MkdirAll(d, 0755); err != nil {
+		// problem making directory
+		os.Exit(42)
+		return "./", false
+	}
+	return d, true
+}
+
+func curDir() string {
+	dir, err := os.Getwd()
+	if err == nil {
+		return dir
+	}
+	return "./"
 }

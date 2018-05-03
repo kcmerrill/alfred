@@ -23,7 +23,7 @@ func outArgs(component, text string, context *Context) {
 
 func outPrefix(color, component, text string, context *Context) string {
 	date := "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }}"
-	out := elapsed(context) + date + " {{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text + "{{ .Text.Reset }}"
+	out := elapsed(context) + date + "  [" + context.rootDir + "] {{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text + "{{ .Text.Reset }}"
 	return out
 }
 

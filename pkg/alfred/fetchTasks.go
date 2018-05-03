@@ -10,6 +10,25 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// AddTasks to the current task list
+func AddTasks(contents []byte, context *Context, tasks map[string]Task) map[string]Task {
+	var fetched map[string]Task
+	err := yaml.Unmarshal(contents, &fetched)
+	if err != nil {
+		outFail("yaml", "Unable to unmarshal", context)
+		outFail("yaml", "{{ .Text.Failure }}"+err.Error(), context)
+		os.Exit(42)
+	}
+
+	context.lock.Lock()
+	for fetchedTaskName, fetchedTask := range fetched {
+		tasks[fetchedTaskName] = fetchedTask
+	}
+	context.lock.Unlock()
+
+	return tasks
+}
+
 // FetchTask will fetch the tasks
 func FetchTask(task string, context *Context, tasks map[string]Task) (string, Task, map[string]Task) {
 	if t, exists := tasks[task]; exists {
@@ -21,14 +40,13 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		return "./", Task{Summary: "Executing Command", Command: task[1:len(task)], ExitCode: 42}, tasks
 	}
 
-	var fetched map[string]Task
 	var location string
 	var contents []byte
 
 	location, task = TaskParser(task, "alfred:list")
 
 	// hmmm, the task does not exist. Lets try to load whatever possible
-	if location != "" {
+	if strings.HasPrefix(location, "http") {
 		f, err := file.Get(location)
 		if err != nil {
 			// cannot use output, no task yet ...
@@ -37,33 +55,33 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		}
 		contents = f
 	} else {
-		// must be local
-		dir, local, err := config.FindAndCombine("alfred", "yml")
+		catalog := ""
+		// must be local? catalog?
+		if isCatalog(location) {
+			catalog = strings.TrimLeft(location, "@") + "/"
+		}
+
+		dir, local, err := config.FindAndCombine(curDir(), catalog+"alfred", "yml")
 		if err != nil {
 			// cannot use output, no task yet ...
 			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing task file.{{ .Text.Reset }}", emptyContext()))
 			os.Exit(42)
 		}
-		os.Chdir(dir)
+
+		// ok, we found a good catalog, lets update it
+		if isCatalog(location) && context.hasBeenInited {
+			updateCatalog(dir, context)
+			dir, local, err = config.FindAndCombine(curDir(), catalog+"alfred", "yml")
+		}
+
 		contents = local
+		location = dir + string(os.PathSeparator) + catalog
 	}
 
-	err := yaml.Unmarshal(contents, &fetched)
-	if err != nil {
-		// cannot use output, no task yet ...
-		outFail("yaml", "Unable to unmarshal "+location, context)
-		outFail("yaml", "{{ .Text.Failure }}"+err.Error(), context)
-		os.Exit(42)
-	}
-
-	context.lock.Lock()
-	for fetchedTaskName, fetchedTask := range fetched {
-		tasks[fetchedTaskName] = fetchedTask
-	}
-	context.lock.Unlock()
+	tasks = AddTasks(contents, context, tasks)
 
 	if task == "__init" || task == "__exit" {
-		return task, Task{Skip: true}, tasks
+		return location, Task{Skip: true}, tasks
 	}
 
 	if task == "alfred:list" {
@@ -72,10 +90,10 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 	}
 
 	if t, exists := tasks[task]; exists {
-		return "", t, tasks
+		return "./", t, tasks
 	}
 
 	outFail("invalid task", "{{ .Text.Failure }}'"+task+"'", context)
 	os.Exit(42)
-	return "", Task{}, tasks
+	return "./", Task{}, tasks
 }

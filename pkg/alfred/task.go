@@ -10,6 +10,7 @@ import (
 // NewTask will execute a task
 func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	dir, t, tasks := FetchTask(task, context, loadedTasks)
+
 	// register plugins ...
 	plugin(t, context, tasks)
 	event.Trigger("dir", &dir)
@@ -21,14 +22,11 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		return
 	}
 
-	// switch the directory
-	os.Chdir(dir)
-
 	// innocent until proven guilty
 	context.Ok = true
 
 	// set our taskname
-	context.TaskFile, context.TaskName = TaskParser(task, "alfred:list")
+	_, context.TaskName = TaskParser(task, "alfred:list")
 
 	// interactive mode?
 	context.Interactive = t.Interactive
@@ -58,6 +56,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"commands", commands},
 		Component{"httptasks", httptasks},
 		Component{"result", result},
+		Component{"include", include},
 		Component{"ok", ok},
 		Component{"fail", fail},
 		Component{"wait", wait},
@@ -71,6 +70,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		event.Trigger("before."+component.Name, context)
 		component.F(t, context, tasks)
 		event.Trigger("after."+component.Name, context)
+
 		if context.Skip != "" {
 			outOK(context.Skip, "skipped", context)
 			event.Trigger("task.skipped", context)
@@ -126,6 +126,7 @@ type Task struct {
 	Interactive bool
 	Plugin      map[string]string
 	Check       string
+	Include     string
 }
 
 // Exit determins whether a task should exit or not
