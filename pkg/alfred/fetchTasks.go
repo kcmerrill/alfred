@@ -71,12 +71,11 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		// ok, we found a good catalog, lets update it
 		if isCatalog(location) && context.hasBeenInited {
 			updateCatalog(dir, context)
-			dir, local, err = config.FindAndCombine(curDir(), location+"alfred", "yml")
+			dir, local, err = config.FindAndCombine(curDir(), catalog+"alfred", "yml")
 		}
 
 		contents = local
 		location = dir + string(os.PathSeparator) + catalog
-		os.Chdir(location)
 	}
 
 	tasks = AddTasks(contents, context, tasks)

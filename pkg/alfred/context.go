@@ -33,6 +33,7 @@ type Context struct {
 	hasBeenInited bool
 	lock          *sync.Mutex
 	rootDir       string
+	initalDir     string
 }
 
 // TextConfig contains configuration needed to display text
