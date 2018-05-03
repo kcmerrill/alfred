@@ -3,6 +3,7 @@ package alfred
 import (
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -33,7 +34,6 @@ type Context struct {
 	hasBeenInited bool
 	lock          *sync.Mutex
 	rootDir       string
-	initalDir     string
 }
 
 // TextConfig contains configuration needed to display text
@@ -89,6 +89,7 @@ func InitialContext(args []string) *Context {
 		Lock:     &sync.Mutex{},
 		Out:      os.Stdout,
 		lock:     &sync.Mutex{},
+		rootDir:  curDir(),
 		Text: TextConfig{
 			// TODO: I don't like this, let me chew on this a bit more
 			Success:     ansi.ColorCode("green"),
@@ -142,4 +143,14 @@ func copyContex(context *Context, args []string) Context {
 	c.Log = logs
 
 	return c
+}
+
+func (c *Context) relativePath(dir string) string {
+	if strings.HasPrefix(dir, string(os.PathSeparator)) {
+		return dir
+	}
+
+	combined := filepath.Clean(c.rootDir + string(os.PathSeparator) + dir)
+
+	return combined
 }

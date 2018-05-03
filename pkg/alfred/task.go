@@ -11,9 +11,6 @@ import (
 func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	dir, t, tasks := FetchTask(task, context, loadedTasks)
 
-	// set the initial directory
-	context.initalDir = curDir()
-
 	// register plugins ...
 	plugin(t, context, tasks)
 	event.Trigger("dir", &dir)
@@ -59,7 +56,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"commands", commands},
 		Component{"httptasks", httptasks},
 		Component{"result", result},
-		Component{"include", includeC},
+		Component{"include", include},
 		Component{"ok", ok},
 		Component{"fail", fail},
 		Component{"wait", wait},
@@ -74,13 +71,6 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		component.F(t, context, tasks)
 		event.Trigger("after."+component.Name, context)
 
-		//keys := make([]string, 0)
-		/*for tn := range tasks {
-			keys = append(keys, tn)
-		}
-
-		fmt.Println("tasks:", keys)
-		*/
 		if context.Skip != "" {
 			outOK(context.Skip, "skipped", context)
 			event.Trigger("task.skipped", context)

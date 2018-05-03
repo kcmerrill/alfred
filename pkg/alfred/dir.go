@@ -1,13 +1,11 @@
 package alfred
 
+import "path/filepath"
+
 func (t *Task) dir(context *Context) (string, bool) {
 	if t.Dir != "" {
 		return mkdir(t.Dir, context)
 	}
 
-	if context.rootDir == "" {
-		return "./", true
-	}
-
-	return context.rootDir, true
+	return filepath.Clean(context.rootDir+"/") + "/", true
 }

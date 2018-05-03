@@ -15,6 +15,10 @@ func updateCatalog(dir string, context *Context) {
 	context.lock.Lock()
 	_, ok := execute("git pull", dir)
 	context.lock.Unlock()
+
+	// switch the directory
+	context.rootDir = dir
+
 	if ok {
 		outOK("@catalog", "updated!", context)
 		return

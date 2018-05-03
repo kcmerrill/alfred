@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 )
@@ -25,21 +24,19 @@ func FindAndCombine(currentDir, query, extension string) (string, []byte, error)
 			file = path[1]
 		}
 
-		patterns := []string{
-			currentDir + "/" + file + "." + extension,
-			currentDir + "/." + file + "/*" + file + "." + extension,
-			currentDir + "/*" + file + "." + extension,
-			currentDir + "/" + file + "/*" + file + "." + extension}
+		patterns := map[string]string{
+			currentDir + "/" + file + "." + extension:               currentDir + "/",
+			currentDir + "/*" + file + "." + extension:              currentDir + "/",
+			currentDir + "/" + file + "/*" + file + "." + extension: currentDir + "/"}
 
 		if dir != "" {
-			patterns = []string{
-				currentDir + dir + file + "." + extension,
-				currentDir + dir + "." + file + "/*" + file + "." + extension,
-				currentDir + dir + "*" + file + "." + extension,
-				currentDir + dir + file + "/*" + file + "." + extension}
+			patterns = map[string]string{
+				currentDir + dir + file + "." + extension:               currentDir + dir,
+				currentDir + dir + "*" + file + "." + extension:         currentDir + dir,
+				currentDir + dir + file + "/*" + file + "." + extension: currentDir + dir}
 		}
 
-		for _, pattern := range patterns {
+		for pattern, dirToUse := range patterns {
 			if configFiles, filesErr := filepath.Glob(pattern); filesErr == nil && len(configFiles) > 0 {
 				for _, configFile := range configFiles {
 					if contents, readErr := ioutil.ReadFile(configFile); readErr == nil {
@@ -48,11 +45,13 @@ func FindAndCombine(currentDir, query, extension string) (string, []byte, error)
 						combinedContents = append(combinedContents, contents...)
 					}
 				}
+				currentDir = dirToUse
 				return currentDir, combinedContents, nil
 			}
 		}
 
-		currentDir = path.Dir(currentDir)
+		currentDir = filepath.Dir(currentDir)
+
 		if currentDir == "/" {
 			// We've gone too far ...
 			break
