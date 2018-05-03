@@ -1,7 +1,6 @@
 package alfred
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -62,8 +61,6 @@ func pad(word string, size int, padding string) string {
 
 func mkdir(dir string, context *Context) (string, bool) {
 	d := evaluate(translate(context.relativePath(dir), context), ".")
-
-	fmt.Println("d", d)
 
 	if _, err := os.Stat(d); err == nil {
 		// woot!
