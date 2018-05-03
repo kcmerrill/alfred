@@ -10,6 +10,25 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// AddTasks to the current task list
+func AddTasks(contents []byte, context *Context, tasks map[string]Task) map[string]Task {
+	var fetched map[string]Task
+	err := yaml.Unmarshal(contents, &fetched)
+	if err != nil {
+		outFail("yaml", "Unable to unmarshal", context)
+		outFail("yaml", "{{ .Text.Failure }}"+err.Error(), context)
+		os.Exit(42)
+	}
+
+	context.lock.Lock()
+	for fetchedTaskName, fetchedTask := range fetched {
+		tasks[fetchedTaskName] = fetchedTask
+	}
+	context.lock.Unlock()
+
+	return tasks
+}
+
 // FetchTask will fetch the tasks
 func FetchTask(task string, context *Context, tasks map[string]Task) (string, Task, map[string]Task) {
 	if t, exists := tasks[task]; exists {
@@ -21,7 +40,6 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		return "./", Task{Summary: "Executing Command", Command: task[1:len(task)], ExitCode: 42}, tasks
 	}
 
-	var fetched map[string]Task
 	var location string
 	var contents []byte
 
@@ -37,35 +55,31 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		}
 		contents = f
 	} else {
+		catalog := ""
 		// must be local? catalog?
-		if strings.HasPrefix(location, "@") {
-			location = strings.TrimLeft(location, "@") + "/"
+		if isCatalog(location) {
+			catalog = strings.TrimLeft(location, "@") + "/"
 		}
 
-		dir, local, err := config.FindAndCombine(location+"alfred", "yml")
+		dir, local, err := config.FindAndCombine(curDir(), catalog+"alfred", "yml")
 		if err != nil {
 			// cannot use output, no task yet ...
 			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing task file.{{ .Text.Reset }}", emptyContext()))
 			os.Exit(42)
 		}
+
+		// ok, we found a good catalog, lets update it
+		if isCatalog(location) && context.hasBeenInited {
+			updateCatalog(dir, context)
+			dir, local, err = config.FindAndCombine(curDir(), location+"alfred", "yml")
+		}
+
 		contents = local
-		location = dir + string(os.PathSeparator) + location
+		location = dir + string(os.PathSeparator) + catalog
 		os.Chdir(location)
 	}
 
-	err := yaml.Unmarshal(contents, &fetched)
-	if err != nil {
-		// cannot use output, no task yet ...
-		outFail("yaml", "Unable to unmarshal "+location, context)
-		outFail("yaml", "{{ .Text.Failure }}"+err.Error(), context)
-		os.Exit(42)
-	}
-
-	context.lock.Lock()
-	for fetchedTaskName, fetchedTask := range fetched {
-		tasks[fetchedTaskName] = fetchedTask
-	}
-	context.lock.Unlock()
+	tasks = AddTasks(contents, context, tasks)
 
 	if task == "__init" || task == "__exit" {
 		return location, Task{Skip: true}, tasks

@@ -29,7 +29,7 @@ func TaskParser(task, defaultTask string) (string, string) {
 	}
 
 	// is this a catalog?
-	if strings.HasPrefix(task, "@") {
+	if isCatalog(task) {
 		bits := strings.Split(task, ":")
 		if len(bits) >= 2 {
 			return bits[0], bits[1]

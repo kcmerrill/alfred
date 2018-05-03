@@ -6,39 +6,56 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 // FindAndCombine will go up directories looking for a file + extension and combine all the files into one []byte{}
-func FindAndCombine(file, extension string) (string, []byte, error) {
+func FindAndCombine(currentDir, query, extension string) (string, []byte, error) {
 	// Grab the current directory
-	dir, err := os.Getwd()
 	combinedContents := []byte{}
-	if err == nil {
-		// Just keep going ...
-		for {
-			// Did we find a bunch of config files?
-			patterns := []string{
-				dir + "/" + file + "." + extension,
-				dir + "/." + file + "/*" + file + "." + extension,
-				dir + "/" + file + "/*" + file + "." + extension}
-			for _, pattern := range patterns {
-				if configFiles, filesErr := filepath.Glob(pattern); filesErr == nil && len(configFiles) > 0 {
-					for _, configFile := range configFiles {
-						if contents, readErr := ioutil.ReadFile(configFile); readErr == nil {
-							// Sweet. We found an config file. Lets save it off and return
-							combinedContents = append(combinedContents, []byte("\n\n")...)
-							combinedContents = append(combinedContents, contents...)
-						}
-					}
-					return dir, combinedContents, nil
-				}
-			}
+	// Just keep going ...
+	for {
+		// Did we find a bunch of config files?
 
-			dir = path.Dir(dir)
-			if dir == "/" {
-				// We've gone too far ...
-				break
+		dir := ""
+		file := query
+		if strings.Contains(query, string(os.PathSeparator)) {
+			path := strings.SplitN(query, string(os.PathSeparator), 2)
+			dir = string(os.PathSeparator) + path[0] + string(os.PathSeparator)
+			file = path[1]
+		}
+
+		patterns := []string{
+			currentDir + "/" + file + "." + extension,
+			currentDir + "/." + file + "/*" + file + "." + extension,
+			currentDir + "/*" + file + "." + extension,
+			currentDir + "/" + file + "/*" + file + "." + extension}
+
+		if dir != "" {
+			patterns = []string{
+				currentDir + dir + file + "." + extension,
+				currentDir + dir + "." + file + "/*" + file + "." + extension,
+				currentDir + dir + "*" + file + "." + extension,
+				currentDir + dir + file + "/*" + file + "." + extension}
+		}
+
+		for _, pattern := range patterns {
+			if configFiles, filesErr := filepath.Glob(pattern); filesErr == nil && len(configFiles) > 0 {
+				for _, configFile := range configFiles {
+					if contents, readErr := ioutil.ReadFile(configFile); readErr == nil {
+						// Sweet. We found an config file. Lets save it off and return
+						combinedContents = append(combinedContents, []byte("\n\n")...)
+						combinedContents = append(combinedContents, contents...)
+					}
+				}
+				return currentDir, combinedContents, nil
 			}
+		}
+
+		currentDir = path.Dir(currentDir)
+		if currentDir == "/" {
+			// We've gone too far ...
+			break
 		}
 	}
 	// We didn't find anything. /cry

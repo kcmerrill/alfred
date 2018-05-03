@@ -11,9 +11,6 @@ import (
 func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	dir, t, tasks := FetchTask(task, context, loadedTasks)
 
-	// set the root directory
-	context.rootDir = dir
-
 	// register plugins ...
 	plugin(t, context, tasks)
 	event.Trigger("dir", &dir)
@@ -59,6 +56,7 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		Component{"commands", commands},
 		Component{"httptasks", httptasks},
 		Component{"result", result},
+		Component{"include", includeC},
 		Component{"ok", ok},
 		Component{"fail", fail},
 		Component{"wait", wait},
@@ -127,6 +125,7 @@ type Task struct {
 	Interactive bool
 	Plugin      map[string]string
 	Check       string
+	Include     string
 }
 
 // Exit determins whether a task should exit or not
