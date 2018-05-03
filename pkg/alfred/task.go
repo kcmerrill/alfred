@@ -10,6 +10,10 @@ import (
 // NewTask will execute a task
 func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 	dir, t, tasks := FetchTask(task, context, loadedTasks)
+
+	// set the root directory
+	context.rootDir = dir
+
 	// register plugins ...
 	plugin(t, context, tasks)
 	event.Trigger("dir", &dir)
@@ -21,14 +25,11 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 		return
 	}
 
-	// switch the directory
-	os.Chdir(dir)
-
 	// innocent until proven guilty
 	context.Ok = true
 
 	// set our taskname
-	context.TaskFile, context.TaskName = TaskParser(task, "alfred:list")
+	_, context.TaskName = TaskParser(task, "alfred:list")
 
 	// interactive mode?
 	context.Interactive = t.Interactive

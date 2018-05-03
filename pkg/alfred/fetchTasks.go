@@ -37,15 +37,20 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		}
 		contents = f
 	} else {
-		// must be local
+		// must be local? catalog?
+		if strings.HasPrefix(location, "@") {
+			location = strings.TrimLeft(location, "@") + "/"
+		}
+
 		dir, local, err := config.FindAndCombine(location+"alfred", "yml")
 		if err != nil {
 			// cannot use output, no task yet ...
 			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing task file.{{ .Text.Reset }}", emptyContext()))
 			os.Exit(42)
 		}
-		os.Chdir(dir)
 		contents = local
+		location = dir + string(os.PathSeparator) + location
+		os.Chdir(location)
 	}
 
 	err := yaml.Unmarshal(contents, &fetched)
@@ -63,7 +68,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 	context.lock.Unlock()
 
 	if task == "__init" || task == "__exit" {
-		return task, Task{Skip: true}, tasks
+		return location, Task{Skip: true}, tasks
 	}
 
 	if task == "alfred:list" {

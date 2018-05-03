@@ -2,7 +2,6 @@ package alfred
 
 import (
 	"fmt"
-	"os"
 	"strings"
 )
 
@@ -15,9 +14,8 @@ func MagicTaskURL(task string) string {
 	return url
 }
 
-// TaskParser returns a url and a task(default if necessary)
+// TaskParser returns a url and a task(default if necessary) (location, task)
 func TaskParser(task, defaultTask string) (string, string) {
-	fmt.Println("debug", "taskParser()", "task", task, "default", defaultTask)
 	// does it start with http?
 	if strings.HasPrefix(task, "http") && strings.Contains(task, "://") {
 		// we have to get the http: colon out of the way :(
@@ -34,14 +32,13 @@ func TaskParser(task, defaultTask string) (string, string) {
 	if strings.HasPrefix(task, "@") {
 		bits := strings.Split(task, ":")
 		if len(bits) >= 2 {
-			return bits[0][1:] + string(os.PathSeparator), bits[1]
+			return bits[0], bits[1]
 		}
-		return bits[0][1:] + string(os.PathSeparator), defaultTask
+		return bits[0], defaultTask
 	}
 
 	// does it start with a /? AND not a local directory? Aka a remote task?
-	_, dirStat := os.Stat(task)
-	if strings.HasPrefix(task, "/") && os.IsNotExist(dirStat) {
+	if strings.HasPrefix(task, "/") {
 		bits := strings.Split(task, ":")
 		url := fmt.Sprintf("https://raw.githubusercontent.com/kcmerrill/alfred/master/remote-modules%s.yml", bits[0])
 
@@ -51,8 +48,8 @@ func TaskParser(task, defaultTask string) (string, string) {
 		return url, defaultTask
 	}
 
-	// lets check if this is a github file
-	if strings.Contains(task, "/") {
+	// lets check if this is a github file(and not a local ./ task)
+	if !strings.HasPrefix(task, "./") && strings.Contains(task, "/") {
 		bits := strings.Split(task, ":")
 		url := fmt.Sprintf("https://raw.githubusercontent.com/%s/master/alfred.yml", bits[0])
 		if len(bits) >= 2 {
@@ -70,5 +67,9 @@ func TaskParser(task, defaultTask string) (string, string) {
 	}
 
 	// alright, so it's not a url, it's not a github repo, it must be just a regular local task
-	return "./", task
+	bits := strings.Split(task, ":")
+	if len(bits) >= 2 {
+		return bits[0], bits[1]
+	}
+	return "./", bits[0]
 }

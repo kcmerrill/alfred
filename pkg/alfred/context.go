@@ -13,7 +13,6 @@ import (
 // Context contains the state of a task
 type Context struct {
 	TaskName      string
-	TaskFile      string
 	Stdin         string
 	Started       time.Time
 	Log           map[string]*os.File
@@ -33,6 +32,7 @@ type Context struct {
 	Interactive   bool
 	hasBeenInited bool
 	lock          *sync.Mutex
+	rootDir       string
 }
 
 // TextConfig contains configuration needed to display text
