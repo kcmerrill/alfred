@@ -25,9 +25,13 @@ func (t *Task) ParseTaskGroup(group string) []TaskGroup {
 	// I need to research tokenizers
 	if strings.Index(group, "\n") == -1 && !strings.Contains(group, "(") {
 		// This means we have a regular space delimited list, probably
-		tasks := strings.Split(group, " ")
-		for _, task := range tasks {
-			tg = append(tg, TaskGroup{Name: task, Args: []string{}})
+		if strings.HasPrefix(group, "!") {
+			tg = append(tg, TaskGroup{Name: group, Args: []string{}})
+		} else {
+			tasks := strings.Split(group, " ")
+			for _, task := range tasks {
+				tg = append(tg, TaskGroup{Name: task, Args: []string{}})
+			}
 		}
 	} else {
 		// mix and match here
