@@ -7,6 +7,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
 * [Usage](#usage)
   * [Tasks](#tasks)
     * [Local tasks](#local-tasks)
+    * [Catalog of tasks](#catalog-of-tasks)
     * [Remote tasks](#remote-tasks)
     * [Magic Tasks](#magic-tasks)
   * [Arguments](#arguments)
@@ -63,6 +64,23 @@ By default, alfred will look in the current directory for an `alfred.yml` file. 
 If your alfred files are getting large, you can break up your files by creating a `.alfred` or `alfred` folder, and inside create new .yml files named `something.alfred.yml`. Each file is then concatonated together, so be sure you do not have any task name collisions.
 
 All tasks start where the alfred file/folder are located(unless it's a remote task)
+
+### Catalog of tasks
+
+By using an `@` symbol, you can call another directory and it's alfred files. It works in the same way that looking for alfred files works, however, it looks for a parent directory or directory on the same level to look for the tasks. 
+
+Lets use the following folder structure as an example:
+
+```yaml
+├── current_project
+│   └── alfred.yml
+├── folderA
+│   └── alfred.yml
+└── folderB
+    └── alfred.yml
+```
+
+Lets say you're in `current_project` and you're working, but there is a task in folderB that you want to use. You can call it via `alfred @folderB:taskname.to.call`. 
 
 ### Remote tasks
 
