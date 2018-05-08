@@ -36,6 +36,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [command | string](#command--string)
     * [commands | string](#commands--string)
     * [exit | number](#exit--number)
+    * [include | string](#include--string)
     * [ok | TaskGroup\{\}](#ok--taskgroup)
     * [http\.tasks | map[string]string](#httptasks--mapstringstring)
     * [fail | TaskGroup\{\}](#fail--taskgroup)
