@@ -1,6 +1,6 @@
 clone:
     summary: Clone a repository
-    dir: ../
+    dir: "{{ index .Args 2 }}"
     check: |
         {{ $info := index .Args 0 }}{{ $gh := split "/" $info }}
         ls -alh {{ $gh._1 }}
@@ -10,3 +10,4 @@ clone:
     defaults:
         - ""
         - master
+        - "../"

@@ -7,6 +7,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
 * [Usage](#usage)
   * [Tasks](#tasks)
     * [Local tasks](#local-tasks)
+    * [Catalog of tasks](#catalog-of-tasks)
     * [Remote tasks](#remote-tasks)
     * [Magic Tasks](#magic-tasks)
   * [Arguments](#arguments)
@@ -36,6 +37,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [command | string](#command--string)
     * [commands | string](#commands--string)
     * [exit | number](#exit--number)
+    * [include | string](#include--string)
     * [ok | TaskGroup\{\}](#ok--taskgroup)
     * [http\.tasks | map[string]string](#httptasks--mapstringstring)
     * [fail | TaskGroup\{\}](#fail--taskgroup)
@@ -62,6 +64,23 @@ By default, alfred will look in the current directory for an `alfred.yml` file. 
 If your alfred files are getting large, you can break up your files by creating a `.alfred` or `alfred` folder, and inside create new .yml files named `something.alfred.yml`. Each file is then concatonated together, so be sure you do not have any task name collisions.
 
 All tasks start where the alfred file/folder are located(unless it's a remote task)
+
+### Catalog of tasks
+
+By using an `@` symbol, you can call another directory and it's alfred files. It works in the same way that looking for alfred files works, however, it looks for a parent directory or directory on the same level to look for the tasks. 
+
+Lets use the following folder structure as an example:
+
+```yaml
+├── current_project
+│   └── alfred.yml
+├── folderA
+│   └── alfred.yml
+└── folderB
+    └── alfred.yml
+```
+
+Lets say you're in `current_project` and you're working, but there is a task in folderB that you want to use. You can call it via `alfred @folderB:taskname.to.call`. 
 
 ### Remote tasks
 
@@ -350,7 +369,9 @@ md5:
 
 Set the directory to where the task should be run. Any component or command run will be relative to `dir`. The string will be `evaluated` and if a valid exit code is returned, will be the value set. By default, the directory is set to where the alfred files are found.
 
-One thing to note. Be careful when using dir with `multitask`, as the order is not guarenteed to be run.
+This is multitask safe. 
+
+One key thing to note is that the task is run relative to `dir` relative to where the previous task that spawned the current task was run. So if have task A that calls B and C, and task A changes directory, task B and C are now relative to where task A changed directories to.
 
 ```yaml
 dir:
@@ -765,6 +786,19 @@ fail.command:
     command: |
         ls -alh /a/folder/that/does/not/exist
     exit: 2
+```
+
+### include | string
+
+There are times where you'll want to include another folder's task files ... as if they were already included in the current alfred tasks. A great use for this is a microservice catalog, essentially a folder that glues everything together as an example. 
+
+Imagine you had another folder(relative to the current alfred files) tasks where you wanted to include them as if they were part of the current alfred context. 
+
+```yaml
+task.that.runs.another:
+    summary: Lets start a task from another alfred directory
+    include: ../another.alfred.dir/
+    ok: other.alfred.dir.task
 ```
 
 ### ok | TaskGroup{}
