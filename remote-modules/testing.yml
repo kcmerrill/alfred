@@ -43,7 +43,7 @@ run.go:
 
 tdd:
     summary: Start watching files, then run a command
-    watch: "{{ index .Args 0 }}"
+    watch: ".*?{{ index .Args 0 }}$"
     command: |
         {{ index .Args 1 }}
     every: 2s
