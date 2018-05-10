@@ -8,10 +8,10 @@ import (
 // MagicTaskURL will parse "magic" tasks, as denoted by "__"
 func MagicTaskURL(task string) string {
 	url, _ := TaskParser(task, "alfred:list")
-	if url != "" {
-		url += ":"
+	if strings.HasPrefix(url, "http") {
+		return url + ":"
 	}
-	return url
+	return ""
 }
 
 // TaskParser returns a url and a task(default if necessary) (location, task)
