@@ -46,6 +46,13 @@ func FindAndCombine(currentDir, query, extension string) (string, []byte, error)
 					}
 				}
 				currentDir = dirToUse
+
+				// Are we inside the folder we are looking? If so, escape out of it ...
+				base := filepath.Base(currentDir)
+				if base == file && len(configFiles) >= 2 {
+					currentDir = filepath.Dir(filepath.Dir(currentDir))
+				}
+
 				return currentDir, combinedContents, nil
 			}
 		}
