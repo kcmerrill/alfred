@@ -23,7 +23,7 @@ func outArgs(component, text string, context *Context) {
 
 func outPrefix(color, component, text string, context *Context) string {
 	date := "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }}"
-	out := elapsed(context) + date + "  [" + context.rootDir + "] {{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text + "{{ .Text.Reset }}"
+	out := elapsed(context) + date + " [" + context.rootDir + "] {{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text + "{{ .Text.Reset }}"
 	return out
 }
 
@@ -54,8 +54,8 @@ func cmdFail(text string, context *Context) {
 func outputCommand(color, component, text string, context *Context) {
 	if !context.Text.DisableFormatting {
 		date := "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }}"
-		out := elapsed(context) + date + " {{ .Text." + color + " }} " + text
-		t := translate(out, context)
+		out := elapsed(context) + date + " {{ .Text." + color + " }}"
+		t := translate(out, context) + text
 		fmt.Fprintln(context.Out, t)
 	} else {
 		fmt.Fprintln(context.Out, text)
