@@ -11,41 +11,43 @@ import (
 
 func TestAlfredComponents(t *testing.T) {
 	tt := map[string]TestComponent{
-		"invalid.task":                 TestComponent{fail: true},
-		"invalid.task:formatted":       TestComponent{fail: true, expectedOutput: []string{"0s"}},
-		"invalid.task:not.formatted":   TestComponent{args: "--no-formatting", fail: true, noOutput: []string{"0s"}},
+		"|show.tasks":                  TestComponent{expectedOutput: []string{" summary            | TESTING SUMMARY"}, failWithOutput: []string{"hidden.task"}},
+		"invalid.task":                 TestComponent{shouldFail: true},
+		"invalid.task|formatted":       TestComponent{shouldFail: true, expectedOutput: []string{"0s"}},
+		"invalid.task|not.formatted":   TestComponent{args: "--no-formatting", shouldFail: true, failWithOutput: []string{"0s"}},
 		"summary":                      TestComponent{expectedOutput: []string{"TESTING SUMMARY"}},
+		"hidden.task":                  TestComponent{expectedOutput: []string{"Testing a hidden task"}},
 		"command":                      TestComponent{expectedOutput: []string{"HELLO ALFRED", "HELLO NEWLINE"}},
-		"commands":                     TestComponent{fail: true, expectedOutput: []string{"HELLO ALFRED"}, noOutput: []string{"THIS LINE NOT SHOWN"}},
-		"exit":                         TestComponent{fail: true},
-		"arguments:without":            TestComponent{fail: true},
+		"commands":                     TestComponent{shouldFail: true, expectedOutput: []string{"HELLO ALFRED"}, failWithOutput: []string{"THIS LINE NOT SHOWN"}},
+		"exit":                         TestComponent{shouldFail: true},
+		"arguments|without":            TestComponent{shouldFail: true},
 		"arguments":                    TestComponent{params: "ARG1", expectedOutput: []string{"ARG::ARG1"}},
 		"default.arguments":            TestComponent{expectedOutput: []string{"ARG::ARG1"}},
-		"required.arguments":           TestComponent{fail: true, noOutput: []string{"ARG::ARG2"}},
-		"required.arguments:with_args": TestComponent{params: "ARG1", expectedOutput: []string{"ARG::ARG1 ARG::ARG2"}},
+		"required.arguments":           TestComponent{shouldFail: true, failWithOutput: []string{"ARG::ARG2"}},
+		"required.arguments|with_args": TestComponent{params: "ARG1", expectedOutput: []string{"ARG::ARG1 ARG::ARG2"}},
 		"ok":                TestComponent{expectedOutput: []string{"TEST::OK", "ARG::ARG1", "ARG::OKTEST"}},
-		"ok:witharg":        TestComponent{params: "DEFAULTARG", expectedOutput: []string{"TEST::OK", "ARG::DEFAULTARG", "ARG::OKTEST"}},
+		"ok|witharg":        TestComponent{params: "DEFAULTARG", expectedOutput: []string{"TEST::OK", "ARG::DEFAULTARG", "ARG::OKTEST"}},
 		"fail":              TestComponent{expectedOutput: []string{"TEST::FAIL", "ARG::ARG1", "ARG::FAILTEST"}},
 		"tasks":             TestComponent{expectedOutput: []string{"ARG::ARG1", "ARG::TASKTEST"}},
 		"multitask":         TestComponent{expectedOutput: []string{"ARG::ARG1", "ARG::MULTITASKTEST"}},
-		"check:should_skip": TestComponent{params: "alfred.yml", expectedOutput: []string{"skipped"}, noOutput: []string{"TEST::CHECK"}},
-		"check:should_run":  TestComponent{params: "doesnotexist", expectedOutput: []string{"TEST::CHECK"}},
-		"config:file":       TestComponent{params: "config.yml", expectedOutput: []string{"FOO::BAR", "FIZZ::BUZZ"}},
-		"config:text":       TestComponent{params: "'foo: BAR\nfizz: BUZZ'", expectedOutput: []string{"FOO::BAR", "FIZZ::BUZZ"}},
+		"check|should_skip": TestComponent{params: "alfred.yml", expectedOutput: []string{"skipped"}, failWithOutput: []string{"TEST::CHECK"}},
+		"check|should_run":  TestComponent{params: "doesnotexist", expectedOutput: []string{"TEST::CHECK"}},
+		"config|file":       TestComponent{params: "config.yml", expectedOutput: []string{"FOO::BAR", "FIZZ::BUZZ"}},
+		"config|text":       TestComponent{params: "'foo: BAR\nfizz: BUZZ'", expectedOutput: []string{"FOO::BAR", "FIZZ::BUZZ"}},
 		"dir":               TestComponent{params: "/tmp/", expectedOutput: []string{"PWD::/private/tmp|PWD::/tmp"}},
-		"wait":              TestComponent{expectedOutput: []string{"wait wait 2s"}},
-		"template:sprig":    TestComponent{expectedOutput: []string{"HELLO!HELLO!HELLO!HELLO!HELLO!"}},
-		"for":               TestComponent{expectedOutput: []string{"ARG::0", "ARG::1", "ARG::2", "ARG::3", "ARG::4"}, noOutput: []string{"ARG::5"}},
+		"dir|with_alfred_folder": TestComponent{dir: "catalog2", failWithOutput: []string{"tests/catalog2/alfred"}},
+		"wait":           TestComponent{expectedOutput: []string{"wait wait 2s"}},
+		"template|sprig": TestComponent{expectedOutput: []string{"HELLO!HELLO!HELLO!HELLO!HELLO!"}},
+		"for":            TestComponent{expectedOutput: []string{"ARG::0", "ARG::1", "ARG::2", "ARG::3", "ARG::4"}, failWithOutput: []string{"ARG::5"}},
+		"include":        TestComponent{expectedOutput: []string{"taska.alfred.yml", "taskb.alfred.yml"}},
+		"@catalog":       TestComponent{expectedOutput: []string{"taska"}, failWithOutput: []string{"taskb"}},
+		"@catalog:taska": TestComponent{expectedOutput: []string{"taska.alfred.yml"}},
+		"env":            TestComponent{expectedOutput: []string{"ARG::TESTENV"}},
+		"register":       TestComponent{expectedOutput: []string{"REGISTER::var", "WHOAMI::(kcmerrill|root)"}},
 
 		// Tests that _should_ be working(read: bugs)
-		"arguments:empty_log":   TestComponent{skip: true, fail: true, args: "--log scratch/test_empty.log", filesExist: []string{"scratch/"}},
-		"arguments:log_written": TestComponent{skip: true, args: "--log scratch/test.log", filesExist: []string{"scratch/test.log"}},
-
-		// Tests to write
-		"dir:with_alfred_folder":        TestComponent{skip: true, fail: true},
-		"dir:without_alfred_folder":     TestComponent{skip: true, fail: true},
-		"dir:catalog":                   TestComponent{skip: true, fail: true},
-		"dir:catalog_on_same_dir_level": TestComponent{skip: true, fail: true},
+		"arguments|empty_log":   TestComponent{skip: true, shouldFail: true, args: "--log scratch/test_empty.log", filesExist: []string{"scratch/"}},
+		"arguments|log_written": TestComponent{skip: true, args: "--log scratch/test.log", filesExist: []string{"scratch/test.log"}},
 	}
 
 	/* SHOULD NOT HAVE TO CHANGE TOO MUCH BELOW. Add tests above ^^^^ */
@@ -65,12 +67,18 @@ func TestAlfredComponents(t *testing.T) {
 			// we should skip this test
 			continue
 		}
-		taskBits := strings.Split(task, ":")
+		taskBits := strings.Split(task, "|")
 		taskName := taskBits[0]
 		output, ok := runAlfredCommand(taskName, tc)
 
-		if !tc.fail != ok {
-			t.Fatalf("[" + task + "]TaskResult: Expected task to fail ...")
+		if tc.shouldFail && tc.shouldFail != !ok {
+			fmt.Println(output)
+			t.Fatalf("[" + task + "] Expected task failure ...")
+		}
+
+		if !tc.shouldFail && !ok {
+			fmt.Println(output)
+			t.Fatalf("[" + task + "] Expected task success ...")
 		}
 
 		for _, expectedOutput := range tc.expectedOutput {
@@ -88,7 +96,7 @@ func TestAlfredComponents(t *testing.T) {
 			}
 		}
 
-		for _, ignoreOutput := range tc.noOutput {
+		for _, ignoreOutput := range tc.failWithOutput {
 			found := false
 			for _, actualOutput := range strings.Split(output, "\n") {
 				if strings.Contains(actualOutput, ignoreOutput) {
@@ -115,11 +123,12 @@ type TestComponent struct {
 	fileContents   map[string]string
 	tasksStarted   []string
 	expectedOutput []string
-	noOutput       []string
+	failWithOutput []string
 	params         string
 	args           string
-	fail           bool
+	shouldFail     bool
 	skip           bool
+	dir            string
 }
 
 func testCommand(command, dir string) (string, bool) {
@@ -144,6 +153,9 @@ func runAlfredCommand(task string, tc TestComponent) (string, bool) {
 		cmd += " " + tc.params
 	}
 
-	fmt.Println("Command:", cmd)
-	return testCommand(cmd, ".")
+	dir := "."
+	if tc.dir != "" {
+		dir = tc.dir
+	}
+	return testCommand(cmd, dir)
 }

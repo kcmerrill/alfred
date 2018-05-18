@@ -1,3 +1,6 @@
+hidden.task:
+  command: |
+    echo "Testing a hidden task"
 summary:
   summary: TESTING SUMMARY
 
@@ -100,7 +103,34 @@ template:
     echo {{ "hello!" | upper | repeat 5 }}
 
 for:
-  summary: Iterate X number of times
+  summary: TESTING FOR LOOPS
   for:
     args: "{{range $i, $e := until 5}}{{$i}}\n{{end}}"
     tasks: arguments
+
+include:
+  summary: TESTING INCLUDE
+  include: catalog/
+  ok: taska
+
+prompt:
+  summary: TESTING PROMPT
+  prompt:
+    input: Hello. How are you today?
+  command: |
+    echo RESPONSE::{{ .Vars.input }}
+    
+env:
+  summary: TESTING ENV
+  env: 
+    setvar: TESTENV
+  ok: arguments($setvar)
+
+register:
+  summary: TESTING REGISTER
+  register:
+    setvar: var
+    whoami: whoami
+  command: |
+    echo "REGISTER::{{ .Vars.setvar }}"
+    echo "WHOAMI::{{ .Vars.whoami }}"

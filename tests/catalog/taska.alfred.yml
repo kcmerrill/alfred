@@ -1,0 +1,4 @@
+taska:
+  summary: ::TASKA SUMMARY
+  command: |
+    ls -alh .
