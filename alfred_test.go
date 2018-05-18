@@ -12,6 +12,8 @@ import (
 func TestAlfredComponents(t *testing.T) {
 	tt := map[string]TestComponent{
 		"invalid.task":                 TestComponent{fail: true},
+		"invalid.task:formatted":       TestComponent{fail: true, expectedOutput: []string{"0s"}},
+		"invalid.task:not.formatted":   TestComponent{args: "--no-formatting", fail: true, noOutput: []string{"0s"}},
 		"summary":                      TestComponent{expectedOutput: []string{"TESTING SUMMARY"}},
 		"command":                      TestComponent{expectedOutput: []string{"HELLO ALFRED", "HELLO NEWLINE"}},
 		"commands":                     TestComponent{fail: true, expectedOutput: []string{"HELLO ALFRED"}, noOutput: []string{"THIS LINE NOT SHOWN"}},
