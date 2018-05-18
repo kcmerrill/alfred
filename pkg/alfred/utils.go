@@ -60,7 +60,7 @@ func pad(word string, size int, padding string) string {
 }
 
 func mkdir(dir string, context *Context) (string, bool) {
-	d := evaluate(translate(context.relativePath(dir), context), ".")
+	d := evaluate(context.relativePath(translate(dir, context)), ".")
 
 	if _, err := os.Stat(d); err == nil {
 		// woot!

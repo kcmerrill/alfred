@@ -25,6 +25,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [config | string(filename, yaml)](#config--stringfilename-yaml)
     * [prompt | map[string]string](#prompt--mapstringstring)
     * [env | map[string]string](#env--mapstringstring)
+    * [include | string](#include--string)
     * [serve | string(port)](#serve--stringport)
     * [setup | TaskGroup\{\}](#setup--taskgroup)
     * [multitask | TaskGroup\{\}](#multitask--taskgroup)
@@ -37,7 +38,6 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [command | string](#command--string)
     * [commands | string](#commands--string)
     * [exit | number](#exit--number)
-    * [include | string](#include--string)
     * [ok | TaskGroup\{\}](#ok--taskgroup)
     * [http\.tasks | map[string]string](#httptasks--mapstringstring)
     * [fail | TaskGroup\{\}](#fail--taskgroup)
@@ -480,6 +480,21 @@ env:
 09:54 PM ✔ kcmerrill (v0.2) demo ]
 ```
 
+### include | string
+
+There are times where you'll want to include another folder's task files ... as if they were already included in the current alfred tasks. A great use for this is a microservice catalog, essentially a folder that glues everything together as an example. 
+
+Imagine you had another folder(relative to the current alfred files) tasks where you wanted to include them as if they were part of the current alfred context. 
+
+```yaml
+task.that.runs.another:
+    summary: Lets start a task from another alfred directory
+    include: ../another.alfred.dir/
+    ok: other.alfred.dir.task
+```
+
+
+
 ### serve | string(port)
 
 This component will allow you to serve static context based on `dir`. The string provided will be the port, and the server will only last for as long as tasks are running.
@@ -786,19 +801,6 @@ fail.command:
     command: |
         ls -alh /a/folder/that/does/not/exist
     exit: 2
-```
-
-### include | string
-
-There are times where you'll want to include another folder's task files ... as if they were already included in the current alfred tasks. A great use for this is a microservice catalog, essentially a folder that glues everything together as an example. 
-
-Imagine you had another folder(relative to the current alfred files) tasks where you wanted to include them as if they were part of the current alfred context. 
-
-```yaml
-task.that.runs.another:
-    summary: Lets start a task from another alfred directory
-    include: ../another.alfred.dir/
-    ok: other.alfred.dir.task
 ```
 
 ### ok | TaskGroup{}

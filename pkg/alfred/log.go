@@ -1,8 +1,8 @@
 package alfred
 
 import (
+	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -17,11 +17,8 @@ func log(task Task, context *Context, tasks map[string]Task) {
 	if task.Log != "" {
 		l := translate(strings.TrimSpace(task.Log), context)
 
-		// attempt to make the dir structure
-		dir, _ := filepath.Split(l)
-		os.MkdirAll(dir, 0600)
-
-		f, err := os.OpenFile(l, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+		os.Exit(43)
+		f, err := os.OpenFile(l, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755)
 		if err == nil {
 			context.Lock.Lock()
 			context.Log[l] = f
@@ -38,6 +35,7 @@ func logger(text string, context *Context) {
 	// strip away all the color
 	c.Text = TextConfig{}
 	for _, f := range context.Log {
+		fmt.Println("logger")
 		f.WriteString(translate(text, context))
 	}
 }

@@ -1,0 +1,88 @@
+summary:
+  summary: TESTING SUMMARY
+
+command:
+  summary: TESTING COMMAND
+  command: |
+    echo "HELLO ALFRED"
+    echo "HELLO NEWLINE"
+
+commands:
+  summary: TESTING COMMANDS
+  commands: |
+    echo "HELLO ALFRED" && false
+    echo "THIS LINE NOT SHOWN" 
+  exit: 42
+
+exit: 
+  summary: TESTING EXIT
+  commands: |
+    false
+  exit: 100
+
+arguments:
+  summary: TESTING ARGUMENTS
+  command: |
+    echo "ARG::{{ index .Args 0 }}"
+
+default.arguments:
+  summary: TESTING DEFAULT ARGUMENTS
+  command: |
+    echo "ARG::{{ index .Args 0 }}"
+  defaults:
+    - "ARG1"
+
+required.arguments:
+  summary: TESTING REQUIRED ARGS
+  command: |
+    echo "ARG::{{ index .Args 0 }} ARG::{{ index .Args 1 }}"
+  defaults:
+    - ""
+    - "ARG2"
+
+ok:
+  summary: TESTING OK COMPONENT
+  command: |
+    echo "TEST::OK"
+  ok: |
+    default.arguments
+    default.arguments(OKTEST)
+
+fail:
+  summary: TESTING FAIL COMPONENT
+  command: |
+    echo "TEST::FAIL" && false
+  fail: |
+    default.arguments
+    default.arguments(FAILTEST)
+
+tasks:
+  summary: TESTING TASK COMPONENT
+  tasks: |
+    default.arguments
+    default.arguments(TASKTEST)
+
+multitask:
+  summary: TESTING TASK COMPONENT
+  multitask: |
+    default.arguments
+    default.arguments(MULTITASKTEST)
+
+check:
+  summary: TESTING CHECK COMPONENT
+  check: ls -alh {{ index .Args 0 }}
+  command: |
+    echo "TEST::CHECK"
+
+config:
+  summary: TESTING CONFIG COMPONENT
+  config: "{{ index .Args 0 }}"
+  command: |
+    echo "FOO::{{ .Vars.foo }}"
+    echo "FIZZ::{{ .Vars.fizz }}"
+
+dir:
+  summary: TESTING DIRECTORY COMPONENT
+  dir: "{{ index .Args 0 }}"
+  command: |
+    echo PWD::`pwd`

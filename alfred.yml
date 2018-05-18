@@ -56,6 +56,9 @@ docker.push:
 
 tdd.go:
     summary: Watch .go files and run test.go
-    watch: ".*?go$"
+    watch: ".*?(go|yml)$"
     every: 1s
-    command: go test $(go list ./... | grep -v /vendor/)
+    command: |
+        go install 
+        go test alfred_test.go
+    include: ./
