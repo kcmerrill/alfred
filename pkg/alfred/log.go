@@ -17,7 +17,6 @@ func log(task Task, context *Context, tasks map[string]Task) {
 	if task.Log != "" {
 		l := translate(strings.TrimSpace(task.Log), context)
 
-		os.Exit(43)
 		f, err := os.OpenFile(l, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755)
 		if err == nil {
 			context.Lock.Lock()
