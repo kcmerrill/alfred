@@ -86,3 +86,21 @@ dir:
   dir: "{{ index .Args 0 }}"
   command: |
     echo PWD::`pwd`
+
+wait:
+  summary: TESTING WAIT COMPONENT
+  command: |
+    echo WAIT::TIME.DURATION
+  ok: summary
+  wait: 2s
+
+template:
+  summary: TESTING TEMPLATES
+  command: |
+    echo {{ "hello!" | upper | repeat 5 }}
+
+for:
+  summary: Iterate X number of times
+  for:
+    args: "{{range $i, $e := until 5}}{{$i}}\n{{end}}"
+    tasks: arguments

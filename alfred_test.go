@@ -33,6 +33,9 @@ func TestAlfredComponents(t *testing.T) {
 		"config:file":       TestComponent{params: "config.yml", expectedOutput: []string{"FOO::BAR", "FIZZ::BUZZ"}},
 		"config:text":       TestComponent{params: "'foo: BAR\nfizz: BUZZ'", expectedOutput: []string{"FOO::BAR", "FIZZ::BUZZ"}},
 		"dir":               TestComponent{params: "/tmp/", expectedOutput: []string{"PWD::/private/tmp|PWD::/tmp"}},
+		"wait":              TestComponent{expectedOutput: []string{"wait wait 2s"}},
+		"template:sprig":    TestComponent{expectedOutput: []string{"HELLO!HELLO!HELLO!HELLO!HELLO!"}},
+		"for":               TestComponent{expectedOutput: []string{"ARG::0", "ARG::1", "ARG::2", "ARG::3", "ARG::4"}, noOutput: []string{"ARG::5"}},
 
 		// Tests that _should_ be working(read: bugs)
 		"arguments:empty_log":   TestComponent{skip: true, fail: true, args: "--log scratch/test_empty.log", filesExist: []string{"scratch/"}},
