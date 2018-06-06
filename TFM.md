@@ -25,6 +25,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [config | string(filename, yaml)](#config--stringfilename-yaml)
     * [prompt | map[string]string](#prompt--mapstringstring)
     * [env | map[string]string](#env--mapstringstring)
+    * [check | string(command)(#check--stringcommand)
     * [serve | string(port)](#serve--stringport)
     * [setup | TaskGroup\{\}](#setup--taskgroup)
     * [include | string](#include--string)
@@ -478,6 +479,18 @@ env:
 [ 0s] (25 Dec 17 21:54 MST) who:kcmerrill
 [ 0s] (25 Dec 17 21:54 MST) env ✔ ok [@themayor] elapsed time '0s'
 09:54 PM ✔ kcmerrill (v0.2) demo ]
+```
+
+### check | string(port)
+
+Sometimes you might not want to run a task if the condition is already satisfied. You could come up with an `ok` and `fail` task to do this, or you can use the check component. It takes in a `string` and if the command exits with a 0 exit code, then the task itself is skipped completely.
+
+```yaml
+check:
+  summary: Check to see if a file exists. If not, lets create it
+  check: ls -alh /tmp/idonotexist.txt
+  command: |
+    touch /tmp/idonotexist.txt
 ```
 
 ### serve | string(port)
