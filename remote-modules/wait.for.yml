@@ -1,0 +1,8 @@
+port:
+  summary: Waiting for TCP port to become available
+  command: |
+    lsof -nP -i4TCP:{{ index .Args 0 }}
+  fail: pause port
+
+pause:
+    wait: 1s
