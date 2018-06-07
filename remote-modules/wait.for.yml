@@ -8,7 +8,7 @@ url:
   summary: Wait for URL to become available
   command: |
     curl {{ index .Args 0 }}
-   fail: |
+  fail: |
     pause 
     url({{ index .Args 0 }})
 
