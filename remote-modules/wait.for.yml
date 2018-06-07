@@ -4,5 +4,13 @@ port:
     lsof -nP -i4TCP:{{ index .Args 0 }}
   fail: pause port
 
+url:
+  summary: Wait for URL to become available
+  command: |
+    curl {{ index .Args 0 }}
+   fail: |
+    pause 
+    url({{ index .Args 0 }})
+
 pause:
     wait: 1s
