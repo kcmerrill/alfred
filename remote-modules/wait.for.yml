@@ -11,6 +11,14 @@ url:
   fail: |
     pause 
     url({{ index .Args 0 }})
+    
+cmd:
+  summary: Wait for Command to exit properly
+  command: |
+    {{ index .Args 0 }}
+  fail: |
+    pause 
+    cmd({{ index .Args 0 }})
 
 pause:
     wait: 1s
