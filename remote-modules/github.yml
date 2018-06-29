@@ -1,14 +1,13 @@
 clone:
-    summary: Clone a repository <repo.name> <branch> <dir> <folder_name>
+    summary: Clone a repository <repo.name> <branch> <dir>
     dir: "{{ index .Args 2 }}"
     check: |
         {{ $info := index .Args 0 }}{{ $gh := split "/" $info }}
         ls -alh {{ $gh._1 }}
     commands: |
-        git clone git@github.com:{{ index .Args 0 }}.git {{ index .Args 3 }}
+        git clone git@github.com:{{ index .Args 0 }}.git
         {{ $info := index .Args 0 }}{{ $gh := split "/" $info }}cd {{ $gh._1 }} && git checkout {{ index .Args 1 }}
     defaults:
         - ""
         - master
         - "../"
-        - "  "
