@@ -11,3 +11,15 @@ clone:
         - ""
         - master
         - "../"
+
+clone.dir:
+    summary: Clone a repository <repo.name> <dir> <folder.name>
+    dir: "{{ index .Args 1 }}"
+    check: |
+        ls -alh {{ index .Args 2 }}
+    commands: |
+        git clone git@github.com:{{ index .Args 0 }}.git {{ index .Args 2 }}
+    defaults:
+        - ""
+        - "../"
+        - ""
