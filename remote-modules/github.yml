@@ -1,5 +1,5 @@
 clone:
-    summary: Clone a repository
+    summary: Clone a repository <repo.name> <branch> <dir> <folder_name>
     dir: "{{ index .Args 2 }}"
     check: |
         {{ $info := index .Args 0 }}{{ $gh := split "/" $info }}
