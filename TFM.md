@@ -25,7 +25,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [config | string(filename, yaml)](#config--stringfilename-yaml)
     * [prompt | map[string]string](#prompt--mapstringstring)
     * [env | map[string]string](#env--mapstringstring)
-    * [check | string(command)(#check--stringcommand)
+    * [check | string(command)](#check--stringcommand)
     * [serve | string(port)](#serve--stringport)
     * [setup | TaskGroup\{\}](#setup--taskgroup)
     * [include | string](#include--string)
@@ -38,6 +38,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [args | string(command, text)](#args--stringcommand-text)
     * [command | string](#command--string)
     * [commands | string](#commands--string)
+    * [interactive | bool](#interactive--bool)
     * [exit | number](#exit--number)
     * [ok | TaskGroup\{\}](#ok--taskgroup)
     * [http\.tasks | map[string]string](#httptasks--mapstringstring)
@@ -812,6 +813,18 @@ fail.command:
     command: |
         ls -alh /a/folder/that/does/not/exist
     exit: 2
+```
+
+### interactive | bool
+
+Sometimes you'll need to run commands in interactive mode where you can type, and give inputs to certain commands. To do so, you'll want to use `interactive: true`. Interactive mode will be set for the task specified so no need to turn it off in downstream tasks. Here is a quick example.
+
+```yaml
+interactive.mode:
+    summary: A task that requires user input
+    command: |
+        docker run -ti ubuntu
+    interactive: true
 ```
 
 ### ok | TaskGroup{}
