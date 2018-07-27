@@ -68,6 +68,8 @@ If your alfred files are getting large, you can break up your files by creating 
 
 All tasks start where the alfred file/folder are located(unless it's a remote task)
 
+Not wanting to use `alfred.yml` or `alfred/*.alfred.yml` but instead wanted to change the file/foldername? You can simply use the `-f` flag. By default, `-f` defaults to alfred, however, you can change it to whatever you'd like, so in the above example, you can switch `alfred.yml` to whatever you set the `-f` flag to.
+
 ### Catalog of tasks
 
 By using an `@` symbol, you can call another directory and it's alfred files. It works in the same way that looking for alfred files works, however, it looks for a parent directory or directory on the same level to look for the tasks. 
@@ -84,8 +86,6 @@ Lets use the following folder structure as an example:
 ```
 
 Lets say you're in `current_project` and you're working, but there is a task in folderB that you want to use. You can call it via `alfred @folderB:taskname.to.call`. 
-
-Want to change the filename to use? You can simply use the `-f` flag. By default, `-f` defaults to alfred, however, you can change it to whatever you'd like, so in the above example, you can switch `alfred.yml` to whatever you set the `-f` flag to.
 
 ### Remote tasks
 
