@@ -20,6 +20,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [log | string](#log--string)
     * [defaults | []string](#defaults--string)
     * [summary | string](#summary--string)
+    * [private | bool](#private--bool)
     * [stdin | string(text, command)](#stdin--stringtext-command)
     * [dir | string(dir, command)](#dir--stringdir-command)
     * [config | string(filename, yaml)](#config--stringfilename-yaml)
@@ -324,7 +325,7 @@ arguments.task:
 
 ### summary | string
 
-The task can be described by it's summary. When performing a list of the tasks, or when the task is started, the summary will be displayed.
+The task can be described by it's summary. When performing a list of the tasks, or when the task is started, the summary will be displayed. If left blank(as it's optional) it will _not_ be shown in the list of available tasks.
 
 ```yaml
 show.summary:
@@ -337,6 +338,13 @@ show.summary:
 [ 0s] (25 Dec 17 21:21 MST) show.summary ✔ ok [] elapsed time '0s'
 09:21 PM ✔ kcmerrill (v0.2) demo ]
 ```
+
+### private | bool
+
+There are times where you'll want to create a task, document it(you can use yaml comments) or just want to let the user know what's going on via the summary, but it's not intended to be a standalone task. You can think of it like a private method on an object. Other tasks may depend on it, but run by itself it's useless. 
+
+To do that, you can use the `private: true`. All this component does is ensure that the task is available to be run whenever, it just will not show up in the task list. 
+
 
 ### stdin | string(text, command)
 
