@@ -85,6 +85,8 @@ Lets use the following folder structure as an example:
 
 Lets say you're in `current_project` and you're working, but there is a task in folderB that you want to use. You can call it via `alfred @folderB:taskname.to.call`. 
 
+Want to change the filename to use? You can simply use the `-f` flag. By default, `-f` defaults to alfred, however, you can change it to whatever you'd like, so in the above example, you can switch `alfred.yml` to whatever you set the `-f` flag to.
+
 ### Remote tasks
 
 One bit of functionality that makes alfred so flexible is the ability to have private/remote repositories of alfred files. While this feature is not new to alfred, the way it's invoked is. By using a `/` at the start of the task name, alfred knows to lookup tasks in the `remote-modules` directory within this repository. You can see a list of the [modules here](https://github.com/kcmerrill/alfred/tree/master/remote-modules).
@@ -168,8 +170,6 @@ taskgroup.mixed:
         task.two
 ```
 
-
-###
 
 ## Golang Templating
 
