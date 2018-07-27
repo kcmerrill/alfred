@@ -21,7 +21,7 @@ If given enough building blocks anything is possible, so alfred really is up to 
     * [defaults | []string](#defaults--string)
     * [summary | string](#summary--string)
     * [private | bool](#private--bool)
-    * [stdin | string(text, command)](#stdin--stringtext-command)
+    * [stdin | string(text, command)](#stdin--stringtext-command)
     * [dir | string(dir, command)](#dir--stringdir-command)
     * [config | string(filename, yaml)](#config--stringfilename-yaml)
     * [prompt | map[string]string](#prompt--mapstringstring)
