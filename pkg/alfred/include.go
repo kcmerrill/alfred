@@ -20,7 +20,7 @@ func include(task Task, context *Context, tasks map[string]Task) {
 		return
 	}
 
-	_, contents, err := config.FindAndCombine(rp, "alfred", "yml")
+	_, contents, err := config.FindAndCombine(rp, context.FileName, "yml")
 	if err != nil {
 		// cannot use output, no task yet ...
 		fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing task file.{{ .Text.Reset }}", emptyContext()))

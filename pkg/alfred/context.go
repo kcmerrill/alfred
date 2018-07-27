@@ -30,6 +30,7 @@ type Context struct {
 	Lock          *sync.Mutex
 	Out           io.Writer
 	Debug         bool
+	FileName      string
 	Interactive   bool
 	hasBeenInited bool
 	lock          *sync.Mutex
@@ -90,6 +91,7 @@ func InitialContext(args []string) *Context {
 		Out:      os.Stdout,
 		lock:     &sync.Mutex{},
 		rootDir:  curDir(),
+		FileName: "alfred",
 		Text: TextConfig{
 			// TODO: I don't like this, let me chew on this a bit more
 			Success:     ansi.ColorCode("green"),

@@ -25,6 +25,7 @@ func main() {
 	disableFormatting := flag.Bool("no-formatting", false, "Show only raw command output")
 	debug := flag.Bool("debug", false, "Only show commands to be run")
 	log := flag.String("log", "", "Log all tasks to <file>")
+	file := flag.String("f", "alfred", "Filename to use")
 	flag.Parse()
 
 	/* Giddy up! */
@@ -67,6 +68,8 @@ func main() {
 		context.Text.DisableFormatting = true
 		context.Debug = true
 	}
+
+	context.FileName = *file
 
 	// anything from stdin?
 	stdinFileInfo, _ := os.Stdin.Stat()

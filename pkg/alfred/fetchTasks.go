@@ -61,7 +61,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 			catalog = strings.TrimLeft(location, "@") + "/"
 		}
 
-		foundDir, local, err := config.FindAndCombine(context.rootDir, catalog+"alfred", "yml")
+		foundDir, local, err := config.FindAndCombine(context.rootDir, catalog+context.FileName, "yml")
 		if err != nil {
 			// cannot use output, no task yet ...
 			fmt.Println(translate("{{ .Text.Failure }}{{ .Text.FailureIcon }} Missing task file.{{ .Text.Reset }}", emptyContext()))
@@ -71,7 +71,7 @@ func FetchTask(task string, context *Context, tasks map[string]Task) (string, Ta
 		// ok, we found a good catalog, lets update it
 		if isCatalog(location) && context.hasBeenInited {
 			updateCatalog(foundDir, context)
-			foundDir, local, err = config.FindAndCombine(foundDir, catalog+"alfred", "yml")
+			foundDir, local, err = config.FindAndCombine(foundDir, catalog+context.FileName, "yml")
 		}
 
 		contents = local
