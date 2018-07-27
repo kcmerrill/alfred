@@ -482,7 +482,7 @@ env:
 09:54 PM ✔ kcmerrill (v0.2) demo ]
 ```
 
-### check | string(port)
+### check | string(command)
 
 Sometimes you might not want to run a task if the condition is already satisfied. You could come up with an `ok` and `fail` task to do this, or you can use the check component. It takes in a `string` and if the command exits with a 0 exit code, then the task itself is skipped completely.
 
