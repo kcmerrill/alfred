@@ -39,16 +39,17 @@ type Context struct {
 
 // TextConfig contains configuration needed to display text
 type TextConfig struct {
-	DisableFormatting bool
-	Success           string
-	SuccessIcon       string
-	Failure           string
-	FailureIcon       string
-	Task              string
-	Warning           string
-	Args              string
-	Command           string
-	Reset             string
+	DisableFormatting  bool
+	ExtendedFormatting bool
+	Success            string
+	SuccessIcon        string
+	Failure            string
+	FailureIcon        string
+	Task               string
+	Warning            string
+	Args               string
+	Command            string
+	Reset              string
 
 	// color codes
 	Grey   string
