@@ -16,6 +16,7 @@ type Context struct {
 	TaskName      string
 	Stdin         string
 	Started       time.Time
+	TaskStarted   time.Time
 	Log           map[string]*os.File
 	Args          []string
 	AllArgs       string
@@ -78,20 +79,21 @@ func (c *Context) GetVar(key, defaults string) string {
 // InitialContext will return an empty context
 func InitialContext(args []string) *Context {
 	return &Context{
-		TaskName: "n/a",
-		Args:     args,
-		AllArgs:  strings.Join(args, " "),
-		Register: make(map[string]string),
-		Log:      make(map[string]*os.File, 0),
-		Ok:       true, // innocent until proven guilty
-		Started:  time.Now(),
-		Status:   "",
-		Vars:     make(map[string]string, 0),
-		Lock:     &sync.Mutex{},
-		Out:      os.Stdout,
-		lock:     &sync.Mutex{},
-		rootDir:  curDir(),
-		FileName: "alfred",
+		TaskName:    "n/a",
+		Args:        args,
+		AllArgs:     strings.Join(args, " "),
+		Register:    make(map[string]string),
+		Log:         make(map[string]*os.File, 0),
+		Ok:          true, // innocent until proven guilty
+		Started:     time.Now(),
+		TaskStarted: time.Now(),
+		Status:      "",
+		Vars:        make(map[string]string, 0),
+		Lock:        &sync.Mutex{},
+		Out:         os.Stdout,
+		lock:        &sync.Mutex{},
+		rootDir:     curDir(),
+		FileName:    "alfred",
 		Text: TextConfig{
 			// TODO: I don't like this, let me chew on this a bit more
 			Success:     ansi.ColorCode("green"),

@@ -3,6 +3,7 @@ package alfred
 import (
 	"os"
 	"strings"
+	"time"
 
 	event "github.com/kcmerrill/hook"
 )
@@ -24,6 +25,9 @@ func NewTask(task string, context *Context, loadedTasks map[string]Task) {
 
 	// innocent until proven guilty
 	context.Ok = true
+
+	// start time of the task
+	context.TaskStarted = time.Now()
 
 	// set our taskname
 	_, context.TaskName = TaskParser(task, "alfred:list")
