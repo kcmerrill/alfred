@@ -9,7 +9,7 @@ import (
 
 	"github.com/mgutz/ansi"
 
-	. "github.com/kcmerrill/alfred/pkg/alfred"
+	. "./pkg/alfred"
 )
 
 var (
