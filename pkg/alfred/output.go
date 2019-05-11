@@ -23,11 +23,7 @@ func outArgs(component, text string, context *Context) {
 
 func outPrefix(color, component, text string, context *Context) string {
 	date := "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }}"
-	dateAndDir := ""
-	if context.Text.ExtendedFormatting {
-		dateAndDir = date + " [" + context.rootDir + "] "
-	}
-	out := elapsed(context) + dateAndDir + "{{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text + "{{ .Text.Reset }}"
+	out := elapsed(context) + date + " [" + context.rootDir + "] {{ .Text.Task }}" + context.TaskName + "{{ .Text.Reset }} {{ .Text." + color + " }}" + component + " {{ .Text.Reset}}" + text + "{{ .Text.Reset }}"
 	return out
 }
 
@@ -57,11 +53,8 @@ func cmdFail(text string, context *Context) {
 
 func outputCommand(color, component, text string, context *Context) {
 	if !context.Text.DisableFormatting {
-		date := ""
-		if context.Text.ExtendedFormatting {
-			date = "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }} "
-		}
-		out := elapsed(context) + date + "{{ .Text." + color + " }}"
+		date := "{{ .Text.Grey }}(" + time.Now().Format(time.RFC822) + "){{ .Text.Reset }}"
+		out := elapsed(context) + date + " {{ .Text." + color + " }}"
 		t := translate(out, context) + text
 		fmt.Fprintln(context.Out, t)
 	} else {

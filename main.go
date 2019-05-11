@@ -9,7 +9,7 @@ import (
 
 	"github.com/mgutz/ansi"
 
-	. "./pkg/alfred"
+	. "github.com/kcmerrill/alfred/pkg/alfred"
 )
 
 var (
@@ -23,7 +23,6 @@ func main() {
 	version := flag.Bool("version", false, "Alfred's version number")
 	disableColors := flag.Bool("no-colors", false, "Disable colors")
 	disableFormatting := flag.Bool("no-formatting", false, "Show only raw command output")
-	extendedFormatting := flag.Bool("extended-formatting", false, "Show date and path for each command")
 	debug := flag.Bool("debug", false, "Only show commands to be run")
 	log := flag.String("log", "", "Log all tasks to <file>")
 	file := flag.String("f", "alfred", "Filename to use")
@@ -62,10 +61,6 @@ func main() {
 
 	if *disableFormatting {
 		context.Text.DisableFormatting = *disableFormatting
-	}
-
-	if *extendedFormatting {
-		context.Text.ExtendedFormatting = *extendedFormatting
 	}
 
 	if *debug {
